@@ -273,6 +273,8 @@ router.post('/api/login', (req, res) => {
     .toLowerCase();
   let password = req.body.password
 
+  console.log(credential,password);
+
   User.findOne({
     email: credential
   }, (err, data) => {
@@ -280,27 +282,22 @@ router.post('/api/login', (req, res) => {
       res.sendStatus(401);
     } else if (data && data !== null) {
       let pass = data.password;
-      bcrypt
-        .compare(password, pass)
-        .then(result => {
-          if (result) {
-            let user = {
-              result,
-              id: data._id,
-              name: data.fullname
-            }
-            req.session.user = user;
-            req.session.user.expires = new Date(Date.now() + (3 * 24 * 3600 * 1000));
-            User.findOneAndUpdate(data._id, {
-              last_login: new Date().getTime()
-            });
-            res.send({message: "Welcome!", status: '200'});
-          } else {
-            res.sendStatus(401);
-          }
-        })
+      if(bcrypt.compareSync(password, pass)){
+        let user = {
+          id: data._id,
+          name: data.fullname
+        }
+        req.session.user = user;
+        req.session.user.expires = new Date(Date.now() + (3 * 24 * 3600 * 1000));
+        User.findOneAndUpdate(data._id, {
+          last_login: new Date().getTime()
+        });
+        res.send({message: "Welcome!", status: '200'});
+      } else {
+        res.status(401).send("login details doesn't match");
+      }
     } else {
-      res.sendStatus(401);
+      res.status(401).send("invalid credentials");
     }
   });
 });
