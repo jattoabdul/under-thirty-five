@@ -1,0 +1,73 @@
+{{> head }}
+
+</head>
+
+<body class="under35blue">
+  <ul id='menu_drop' class='dropdown-content'>
+  </ul>
+  <nav class="transparent">
+    <div class="nav-wrapper container">
+      <a href="/" class="brand-logo left">
+          <img src="/images/logo.png" alt="Under35">
+      </a>
+      <ul class="right hide-on-small-only">
+        <li><a href="#">ABOUT US</a></li>
+        <li><a href="#">EVENTS</a></li>
+        <li><a href="#">BLOG</a></li>
+        <li><a href="#">&nbsp;</a></li>
+        <li>
+          <a href="/login">
+            <u>Sign in</u>
+          </a>
+        </li>
+        <li><a href="/register" class="btn green">Sign up</a></li>
+      </ul>
+      <ul class="hide-on-med-and-up right">
+        <li><a class='dropdown-button' href='#' data-activates='dropdown1' data-hover="true" data-belowOrigin="true" data-constrainWidth="false"><i class="icon ion-navicon x2"></i></a></li>
+
+        <!-- Dropdown Structure -->
+        <ul id='dropdown1' class='dropdown-content'>
+          <li><a href="#">ABOUT US</a></li>
+          <li><a href="#">EVENTS</a></li>
+          <li><a href="#">BLOG</a></li>
+          <li><a href="/login">Sign in</a></li>
+          <li><a href="/register" class="sign_up">Sign up</a></li>
+        </ul>
+      </ul>
+    </div>
+  </nav>
+  <main class="row zmb">
+    <div class="col s12">
+      <div id="login" class="card-panel access-panel center">
+        <div id="step-1_reg">
+          <h1 class="panel-head">Welcome back</h1>
+          <h4 class="panel-info">Sign in to your account</h4>
+          <form class="row" onsubmit="attemptLogin(); return false;">
+            <br>
+            <div class="col s12 input-field">
+              <input type="text" name="login_id" id="login_id">
+              <label for="login_id">USERNAME/EMAIL</label>
+            </div>
+            <div class="col s12 input-field">
+              <input type="password" name="login_pass" id="login_pass">
+              <label for="login_pass">PASSWORD</label>
+              <p class="center">
+                <button type="submit" class="btn green waves-effect waves-light"><i class="loginSpinner hide fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                  &nbsp; Sign in</button>
+              </p>
+              <p class="center social_login">
+                <span class="btn indigo white-text waves-effect waves-light"><i class="icon ion-social-facebook"></i> &nbsp; Sign in with facebook</span>
+              </p>
+              <p class="step-info center"><br> Have an account?
+                <a class="indigo-text" href="/register">
+                  <u>Sign up</u>
+                </a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  {{> footer }}

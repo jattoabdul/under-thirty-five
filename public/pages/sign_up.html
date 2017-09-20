@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Under35</title>
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/ionicons.min.css">
+  <link rel="stylesheet" href="css/materialize.min.css">
+  <link rel="stylesheet" href="css/animate.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="under35blue">
+  <ul id='menu_drop' class='dropdown-content'>
+  </ul>
+  <nav class="transparent">
+    <div class="nav-wrapper container">
+      <a href="index.html" class="brand-logo left">
+                    <img src="./images/logo.png" alt="Under35">
+                </a>
+      <ul class="right hide-on-small-only">
+        <li><a href="#">ABOUT US</a></li>
+        <li><a href="#">EVENTS</a></li>
+        <li><a href="#">BLOG</a></li>
+        <li><a href="#">&nbsp;</a></li>
+        <li>
+          <a href="./sign_in.html">
+            <u>Sign in</u>
+          </a>
+        </li>
+        <li><a href="./sign_up.html" class="btn green">Sign up</a></li>
+      </ul>
+      <ul class="hide-on-med-and-up right">
+        <li><a class='dropdown-button' href='#' data-activates='dropdown1' data-hover="true" data-belowOrigin="true" data-constrainWidth="false"><i class="icon ion-navicon x2"></i></a></li>
+
+        <!-- Dropdown Structure -->
+        <ul id='dropdown1' class='dropdown-content'>
+          <li><a href="#">ABOUT US</a></li>
+          <li><a href="#">EVENTS</a></li>
+          <li><a href="#">BLOG</a></li>
+          <li><a href="#">Sign in</a></li>
+          <li><a href="#" class="sign_up">Sign up</a></li>
+        </ul>
+      </ul>
+    </div>
+  </nav>
+  <main class="row zmb">
+    <div class="col s12">
+      <div id="reg" class="card-panel access-panel center">
+        <div id="step-1_reg">
+          <h1 class="panel-head">Hello!</h1>
+          <h4 class="panel-info">Create your account</h4>
+          <form class="row">
+            <div class="col s12 input-field">
+              <input type="text" name="fullname_reg" id="fullname_reg">
+              <label for="fullname_reg">FULL NAME</label>
+            </div>
+            <div class="col s12 input-field">
+              <input type="email" name="email_reg" id="email_reg">
+              <label for="email_reg">EMAIL ADDRESS</label>
+            </div>
+            <div class="col s12 input-field">
+              <div id="gender_reg" class="toggle-input left">
+                <span class="option selected">Male</span>
+                <span class="option">Female</span>
+              </div>
+            </div>
+            <div class="col s12 input-field">
+              <input type="tel" name="phone_reg" id="phone_reg">
+              <label for="phone_reg">PHONE NUMBER</label>
+              <p class="step-info center">Step 1 of 3</p>
+              <p class="center">
+                <span class="next-step btn green waves-effect">Continue</span>
+              </p>
+            </div>
+          </form>
+        </div>
+        <div id="step-2_reg" class="hide">
+          <h4 class="panel-info">Complete this form to continue</h4>
+          <form class="row">
+            <div class="col s12 input-field">
+              <input type="number" name="age_reg" id="age_reg">
+              <label for="age_reg">AGE</label>
+            </div>
+            <div class="col s12 input-field">
+              <input type="text" name="current_address_reg" id="current_address_reg">
+              <label for="current_address_reg">CURRENT ADDRESS</label>
+            </div>
+            <div class="col s12 input-field">
+              <input type="text" name="state_origin_reg" id="state_origin_reg">
+              <label for="state_origin_reg">STATE OF ORIGIN</label>
+            </div>
+            <div class="col s12 input-field">
+              <input type="text" name="town_origin_reg" id="town_origin_reg">
+              <label for="town_origin_reg">TOWN OF ORIGIN</label>
+              <p class="step-info center">Step 2 of 3</p>
+              <p class="center">
+                <span class="next-step btn green waves-effect">Continue</span>
+              </p>
+            </div>
+          </form>
+        </div>
+        <div id="step-3_reg" class="hide">
+          <h4 class="panel-info">Create your personalized password</h4>
+          <br>
+          <form class="row">
+            <div class="col s12 input-field">
+              <input type="password" name="password_reg" id="password_reg">
+              <label for="password_reg">PASSWORD</label>
+            </div>
+            <div class="col s12 input-field">
+              <input type="password" name="password_confirm_reg" id="password_confirm_reg">
+              <label for="password_confirm_reg">CONFIRM PASSWORD</label>
+              <p class="step-info center">Step 3 of 3</p>
+              <p class="center">
+                <span class="next-step btn green waves-effect">Continue</span>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div id="success_reg" class="card access-panel center hide">
+        <div class="green white-text">
+          <p class="animated"><i class="icon ion-ios-checkmark-outline"></i></p>
+        </div>
+        <h4 class="head">Sign up successful!</h4>
+        <p class="instruction">Kindly check your mailbox to confirm your account </p>
+        <button class="btn green finish waves-effect waves-light">Finish</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/materialize.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
