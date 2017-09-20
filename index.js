@@ -21,9 +21,16 @@ const express = require("express"),
 
 mongoose.Promise = global.Promise;
 
-cloudinary.config({cloud_name: 'jalasem', api_key: '977684335728887', api_secret: 'DQkLl9L0x843jwLcXXivqDiNWxc'});
+cloudinary.config({
+  cloud_name: config.cloud_name,
+  api_key: config.api_key,
+  api_secret: config.api_secret
+});
 
-mongoose.connect(`mongodb://localhost:27017/under35`, {
+const online_DB_uri = `mongodb://${config.db_user}:${config.db_pass}@ds143754.mlab.com:43754/under35`,
+  local_DB_uri = `mongodb://localhost:27017/under35`;
+
+mongoose.connect(online_DB_uri, {
   useMongoClient: true
 }, (err, db) => {
   if (err) {

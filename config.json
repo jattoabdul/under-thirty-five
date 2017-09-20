@@ -1,4 +1,9 @@
 {
-  "db_user": "flower",
-  "db_pass": "flower"
+  "db_user": "gecko",
+  "db_pass": "closure_10",
+  "cloudinary": {
+    "cloud_name": "jalasem",
+    "api_key": "977684335728887",
+    "api_secret": "DQkLl9L0x843jwLcXXivqDiNWxc"
+  }
 }
