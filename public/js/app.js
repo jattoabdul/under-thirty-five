@@ -6,8 +6,16 @@ $(document)
       closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
       draggable: true // Choose whether you can drag to open on touch screens
     });
-    $('#gender_reg.toggle-input .option').click(function () {
-      $('#gender_reg.toggle-input .option').toggleClass('selected');
+    $('select').material_select();
+
+
+    $('#gender_reg.toggle-input .male').click(function () {
+      $('#gender_reg.toggle-input .option').removeClass('selected');
+      $('#gender_reg.toggle-input .male').addClass('selected');
+    });
+    $('#gender_reg.toggle-input .female').click(function () {
+      $('#gender_reg.toggle-input .option').removeClass('selected');
+      $('#gender_reg.toggle-input .female').addClass('selected');
     });
 
     $('#reg > #step-1_reg .next-step').click(function () {
@@ -40,12 +48,39 @@ $(document)
       } else {
         Materialize.toast('Please fill all field appropriately', 4000);
       }
-
     });
 
     $('#reg > #step-3_reg .next-step').click(function () {
-      createNewUser();
-      return false;
+      var pass = $('#password_reg').val().trim();
+      var verPass = $('#password_confirm_reg').val().trim();
+      if(pass === verPass){
+        createNewUser();
+        return false;
+      } else {
+        Materialize.toast("Passwords do not match", 3000, 'rounded');
+        return false;
+      }
+    });
+
+    $('#email_reg').blur(function(){
+      var typedMail = document.getElementById('email_reg').value;
+      if(isValidEmail(typedMail)){
+        $.ajax({
+          type: "POST",
+          url: '/checkemailExistence',
+          data: {
+            query: typedMail
+          },
+          success: function(msg) {
+            if(msg){
+              $('#step-1_reg > form > div:nth-child(4) > p:nth-child(4) > span').addClass('disabled');
+              Materialize.toast("Email have been used before", 3000, 'rounded');
+            } else {
+              $('#step-1_reg > form > div:nth-child(4) > p:nth-child(4) > span').removeClass('disabled');
+            }
+          }
+        });
+      }
     });
   });
 
@@ -64,7 +99,7 @@ function createNewUser() {
       currentAddress: $('#current_address_reg').val(),
       originState: $('#state_origin_reg').val(),
       originTown: $('#town_origin_reg').val(),
-      password: $('#password_reg').val()
+      password: $('#password_reg').val().trim()
     },
     success: function (data) {
       $('#reg > div').addClass('hide');
@@ -73,28 +108,19 @@ function createNewUser() {
       $('#success_reg').removeClass('hide');
 
       $('#success_reg > div:first-child p').addClass('rubberBand');
-      Materialize.toast(data.message, 4000);
+      Materialize.toast(data, 4000);
     },
     error: function (error) {
       Materialize.toast("Sorry, there was an error creating you account", 5000);
-      window
-      .location
-      .reload();
+      // window
+      // .location
+      // .reload();
+      $('#reg > div').addClass('hide');
+      $('#reg #step-1_reg').removeClass('hide');
     }
   });
   return false;
 }
-
-// function attemptLogin() {   $.ajax({     type: "POST",     url: "/api/login",
-//     data: {       loginCred: $("#cred_login").val(),       password:
-// $("#password_login").val()     },     success: function (data) {
-// $(".loginSpinner").addClass("hide");       Materialize.toast(data + "
-// Redirecting to Admin Page...", 4000);       window         .location
-// .reload();     },     error: function (error) {
-// $(".loginSpinner").addClass("hide");       Materialize.toast("Incorrect login
-// credentials", 5000);       // $("#email_login").val('');
-// $("#password_login").val('');       $("#password_login").focus();     }   });
-//   return false; }
 
 function attemptLogin() {
   $(".loginSpinner").removeClass("hide");
@@ -107,7 +133,7 @@ function attemptLogin() {
     },
     success: function (data) {
       $(".loginSpinner").addClass("hide");
-      Materialize.toast(data.message + " Opening timeline...", 4000);
+      Materialize.toast(data + " Opening timeline...", 4000);
       window
         .location
         .reload();
@@ -121,6 +147,29 @@ function attemptLogin() {
     }
   });
   return false;
+}
+
+function attemptReset(){
+  $(".loginSpinner").removeClass("hide");
+  var emailReset = $('#login_id').val();
+  var passReset = $('#phone_num').val();
+  if(isValidEmail(emailReset) && isDigitsOnly(passReset)) {
+    $.ajax({
+      type: 'POST',
+      url: '/forgot',
+      data: {
+        mail: emailReset,
+        phone: passReset
+      },
+      success: function(data){
+        Materialize.toast(data, 3000, 'rounded');
+      },
+      error: function(e){
+        Materialize.toast("there was an error resetting you password");
+        console.log(JSON.stringify(e, undefined,2));
+      }
+    });
+  }
 }
 
 

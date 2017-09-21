@@ -1,7 +1,7 @@
 {
-  "name": "new_coloured",
+  "name": "under35",
   "version": "1.0.0",
-  "description": "Coloured Blog",
+  "description": "Under35 #NotTooYoungToRun",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jalasem/coloured.git"
+    "url": "git+https://github.com/jalasem/under35.git"
   },
   "dependencies": {
     "async": "^2.5.0",
@@ -40,7 +40,7 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jalasem/coloured/issues"
+    "url": "https://github.com/jalasem/under35/issues"
   },
-  "homepage": "https://github.com/jalasem/coloured#readme"
+  "homepage": "https://github.com/jalasem/under35#readme"
 }

@@ -52,8 +52,8 @@
             </div>
             <div class="col s12 input-field">
               <div id="gender_reg" class="toggle-input left">
-                <span class="option selected">Male</span>
-                <span class="option">Female</span>
+                <span class="option selected male">Male</span>
+                <span class="option female">Female</span>
               </div>
             </div>
             <div class="col s12 input-field">
@@ -64,7 +64,7 @@
                 <span class="next-step btn green waves-effect">Continue</span>
               </p>
               <p class="step-info center"><br> Have an account?
-                <a class="indigo-text" href="/register">
+                <a class="indigo-text" href="/login">
                   <u>Sign in</u>
                 </a>
               </p>
@@ -82,8 +82,47 @@
               <input type="text" name="current_address_reg" id="current_address_reg">
               <label for="current_address_reg">CURRENT ADDRESS</label>
             </div>
-            <div class="col s12 input-field">
-              <input type="text" name="state_origin_reg" id="state_origin_reg">
+            <div class="input-field col s12">
+              <select name="state_origin_reg" id="state_origin_reg">
+                <option value="" disabled selected>Choose your option</option>
+                <option value="abuja">ABUJA FCT</option>
+                <option value="abia">ABIA</option>
+                <option value="adamawa">ADAMAWA</option>
+                <option value="akwa_ibom">AKWA IBOM</option>
+                <option value="anambra">ANAMBRA</option>
+                <option value="bauchi">BAUCHI</option>
+                <option value="bayelsa">BAYELSA</option>
+                <option value="benue">BENUE</option>
+                <option value="borno">BORNO</option>
+                <option value="cross_river">CROSS RIVER</option>
+                <option value="delta">DELTA</option>
+                <option value="ebonyi">EBONYI</option>
+                <option value="edo">EDO</option>
+                <option value="ekiti">EKITI</option>
+                <option value="enugu">ENUGU</option>
+                <option value="gombe">GOMBE</option>
+                <option value="imo">IMO</option>
+                <option value="jigawa">JIGAWA</option>
+                <option value="kaduna">KADUNA</option>
+                <option value="kano">KANO</option>
+                <option value="katsina">KATSINA</option>
+                <option value="kebbi">KEBBI</option>
+                <option value="kogi">KOGI</option>
+                <option value="kwara">KWARA</option>
+                <option value="lagos">LAGOS</option>
+                <option value="nassarawa">NASSARAWA</option>
+                <option value="niger">NIGER</option>
+                <option value="ogun">OGUN</option>
+                <option value="ondo">ONDO</option>
+                <option value="osun">OSUN</option>
+                <option value="oyo">OYO</option>
+                <option value="plateau">PLATEAU</option>
+                <option value="rivers">RIVERS</option>
+                <option value="sokoto">SOKOTO</option>
+                <option value="taraba">TARABA</option>
+                <option value="yobe">YOBE</option>
+                <option value="zamfara">ZAMFARA</option>
+              </select>
               <label for="state_origin_reg">STATE OF ORIGIN</label>
             </div>
             <div class="col s12 input-field">

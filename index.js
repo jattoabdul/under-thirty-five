@@ -6,6 +6,7 @@ const express = require("express"),
   session = require('express-session'),
   cookieParser = require('cookie-parser'),
   bcrypt = require('bcrypt'),
+  crypto = require('crypto'),
   path = require('path'),
   config = require('./config.json'),
   fs = require('fs'),
@@ -21,11 +22,7 @@ const express = require("express"),
 
 mongoose.Promise = global.Promise;
 
-cloudinary.config({
-  cloud_name: config.cloud_name,
-  api_key: config.api_key,
-  api_secret: config.api_secret
-});
+cloudinary.config({cloud_name: config.cloud_name, api_key: config.api_key, api_secret: config.api_secret});
 
 const online_DB_uri = `mongodb://${config.db_user}:${config.db_pass}@ds143754.mlab.com:43754/under35`,
   local_DB_uri = `mongodb://localhost:27017/under35`;
@@ -60,146 +57,28 @@ const GetPosts = () => {
       }
     });
 };
-const GetPublishedPosts = () => {
-  return Post
-    .find({published: true})
-    .exec((err, data) => {
-      if (err) {
-        console.log(JSON.stringify(err, undefined, 2));
-        return err;
-      } else {
-        return data;
-      }
-    });
-};
-const GetUnpublishedPosts = () => {
-  return Post
-    .find({published: false})
-    .exec((err, data) => {
-      if (err) {
-        console.log(JSON.stringify(err, undefined, 2));
-        return err;
-      } else {
-        return data;
-      }
-    });
-};
-const GetFeaturedPosts = () => {
-  return Post
-    .find({featured: true})
-    .exec((err, data) => {
-      if (err) {
-        return err;
-      } else {
-        return data;
-      }
-    });
-};
-const GetCategories = cat => {
-  return Category
-    .find({})
-    .select('name')
-    .exec((err, cats) => {
-      return cats;
-    });
-};
-const GetPostsByCategory = cat => {
-  return Post
-    .find({category: cat})
-    .exec((err, data) => {
-      if (err) {
-        console.log(JSON.stringify(err, undefined, 2));
-        return err;
-      } else {
-        return data;
-      }
-    });
-};
-const GetPublishedPostsByCategory = cat => {
-  return Post
-    .find({category: cat, published: true})
-    .exec((err, data) => {
-      if (err) {
-        console.log(JSON.stringify(err, undefined, 2));
-        return err;
-      } else {
-        return data;
-      }
-    });
-};
-const GetsinglePost = (year, month, slug) => {
-  return Post.findOne({
-    slug: slug
-  }, (err, post) => {
-    if (err)
-      return 0;
-    return post;
-  });
-};
-const GetPostWithSlug = (slug) => {
-  return Post.findOne({
-    slug: slug
-  }, (err, post) => {
-    if (err)
-      return 0;
-    return post;
-  });
-}
-const GetNoOfPosts = () => {
-  return Post.count({}, (err, count) => {
-    if (err)
-      return 0;
-    return count;
-  });
-};
-const GetNoOfPublishedPosts = () => {
-  return Post.count({
-    published: true
-  }, (err, count) => {
-    if (err)
-      return 0;
-    return count;
-  });
-};
-const GetNoOfUnpublishedPosts = () => {
-  return Post.count({
-    published: false
-  }, (err, count) => {
-    if (err)
-      return 0;
-    return count;
-  });
-};
-const GetNoOfPostsInCategory = cat => {
-  return Post.count({
-    category: cat
-  }, (err, count) => {
-    if (err)
-      return 0;
-    return count;
-  });
-};
-const GetNoOfPublishedPostsInCategory = cat => {
-  return Post.count({
-    category: cat,
-    published: true
-  }, (err, count) => {
-    if (err)
-      return 0;
-    return count;
-  });
+
+
+/**
+ * generate a Picture profile link via gravatar
+ * function accepts email, hash it(md5), then generate a gravatar link with it
+ * @param {String} email
+ * @return url or false if email supplied is invalid
+ */
+const generateProfilepicLink = (email) => {
+  if(validator.isEmail(email)) {
+    return `https://www.gravatar.com/avatar/${crypto.createHash('md5').update(email).digest('hex')}`;
+  } else {
+    return false;
+  }
 };
 
-const GetMetadata = () => {
-  return Metadata
-    .find()
-    .exec((err, data) => {
-      if (err)
-        return 0;
-      return data;
-    });
-};
-
+/**
+ * logout user
+ * @param {Object} request
+ * @param {Object} response
+ * @param {function} callback
+ */
 let logout = (req, res, next) => {
   delete req.session.user
   req
@@ -209,11 +88,17 @@ let logout = (req, res, next) => {
   res.redirect('/controls/login');
 };
 
+/**
+ * Authenticate user
+ * @param {Object} request
+ * @param {Object} response
+ * @param {function} callback
+ */
 let authorize = (req, res, next) => {
   if (req.session.user) {
-    next()
+    next();
   } else {
-    res.send("<h1>login</h1>")
+    res.redirect('/login');
   }
 };
 
@@ -269,9 +154,11 @@ router.get('/register', (req, res) => {
   res.render('register', {title: "Under35 | Sign up"});
 });
 
-// *****  public APIs  ********
-// &&&&&&&&&&&&&&&&&&&&&&&&&&&&
-// login
+router.get('/forgot', (req, res) => {
+  res.render('forgot_pass', {title: "Under35 | Password Help"});
+});
+
+// *****  public APIs  ******** &&&&&&&&&&&&&&&&&&&&&&&&&&&& login
 router.post('/api/login', (req, res) => {
   console.log(req.body);
   let credential = req
@@ -280,7 +167,7 @@ router.post('/api/login', (req, res) => {
     .toLowerCase();
   let password = req.body.password
 
-  console.log(credential,password);
+  console.log(credential, password);
 
   User.findOne({
     email: credential
@@ -289,7 +176,7 @@ router.post('/api/login', (req, res) => {
       res.sendStatus(401);
     } else if (data && data !== null) {
       let pass = data.password;
-      if(bcrypt.compareSync(password, pass)){
+      if (bcrypt.compareSync(password, pass)) {
         let user = {
           id: data._id,
           name: data.fullname
@@ -299,49 +186,116 @@ router.post('/api/login', (req, res) => {
         User.findOneAndUpdate(data._id, {
           last_login: new Date().getTime()
         });
-        res.send({message: "Welcome!", status: '200'});
+        res.status(200).send("Welcome!");
       } else {
-        res.status(401).send("login details doesn't match");
+        res
+          .status(401)
+          .send("login details doesn't match");
       }
     } else {
-      res.status(401).send("invalid credentials");
+      res
+        .status(401)
+        .send("invalid credentials");
     }
   });
 });
+
 // sign up
 router.post('/api/signup', (req, res) => {
   let rcvData = req.body;
 
-  const saltRounds = 5;
-  const userpass = rcvData.password;
+  console.log(JSON.stringify(rcvData, undefined, 2));
 
-  bcrypt.hash(userpass, saltRounds, function (err, hash) {
-    // Store hash in your password DB.
-    let regData = {
-      fullname: rcvData.fullname,
-      email: rcvData.mail,
-      gender: rcvData.gender,
-      phone_number: rcvData.phone,
-      age: rcvData.age,
-      current_address: rcvData.currentAddress,
-      origin_state: rcvData.originState,
-      origin_town: rcvData.originTown,
-      password: hash
-    }
+  let email = rcvData.mail || null;
+  let gender = rcvData.gender || null;
+  if(gender){
+    gender = gender.toLowerCase();
+  }
+  let phone_number = rcvData.phone || null;
+  let age = rcvData.age || null;
+  let current_address = rcvData.currentAddress || null;
+  let origin_state = rcvData.originState || null;
+  let origin_town = rcvData.originTown || null;
+  let password = rcvData.password || null;
 
-    newUser = new User(regData);
+  if(email && gender && phone_number && age && current_address && origin_state && origin_town && password){
+    if (!(validator.isEmail(email))) {
+      res
+        .status(400)
+        .send("You have supplied a badly formatted email");
+    } else if (["male", "female"].indexOf(gender) < 0) {
+      res
+        .status(400)
+        .send("chairman! you supplied an invalid gender, Stop messing with me!!!");
+    } else if (!(validator.isNumeric(phone_number))) {
+      res
+        .status(400)
+        .send("Your phone number is invalid");
+    } else if (config.nigerian_states.indexOf(origin_state) < 0) {
+      res
+        .status(400)
+        .send("Your state of origin is invalid");
+    } else {
+      const saltRounds = 5;
+      const userpass = rcvData.password;
 
-    newUser
-      .save()
-      .then(() => {
-        res.send({message: 'Welcome on board!', code: 'OK'});
-      })
-      .catch(err => {
-        console.log(JSON.stringify(err, undefined, 2));
-        res.send({message: 'error creating user', code: 'NOT_OK'});
+      bcrypt.hash(userpass, saltRounds, function (err, hash) {
+        // Store hash in your password DB.
+        let regData = {
+          fullname: rcvData.fullname,
+          email: rcvData.mail,
+          gender: rcvData.gender,
+          phone_number: rcvData.phone,
+          age: rcvData.age,
+          current_address: rcvData.currentAddress,
+          origin_state: rcvData.originState,
+          origin_town: rcvData.originTown,
+          password: hash
+        }
+
+        newUser = new User(regData);
+
+        newUser
+          .save()
+          .then(() => {
+            res.send({message: 'Welcome on board!', code: 'OK'});
+          })
+          .catch(err => {
+            console.log(JSON.stringify(err, undefined, 2));
+            res.status(412).send("error creating user");
+          });
       });
-  });
+    }
+  } else {
+    res.status(400).send("incomplete data sent for registration!");
+  }
+});
 
+router.post('/forgot', (req, res) => {
+  var resetData = req.body;
+  var email = resetData.mail;
+  var phone = resetData.phone;
+  if((validator.isEmail(email)) && (validator.isNumeric(phone))) {
+    User.findOne().where()
+  }
+});
+
+router.post('/checkemailExistence', (req, res) => {
+  if(req.body.query){
+    let email = req.body.query;
+    if(validator.isEmail(email)){
+      User.find({"email": email}).count().exec((err, result) => {
+        console.log("email:",email, "was queried for existence");
+        if(result > 0){
+          res.status(200).send(true);
+        } else {
+          res.status(200).send(false);
+        }
+      });
+    } else {
+      res.status(400).send("invalid query!");
+    }
+  }
 })
 
 // / authorization middleware
@@ -368,18 +322,21 @@ router.get('/followers', (req, res) => {
   res.render('timeline', {title: "Under35 | Followers"});
 })
 
-
-
-// prottection APIs
+// protected APIs
 router.put('/api/changePass', (req, res) => {
   let username = req.session.user.username;
   let newPass = req.body.newpass;
   let salt = bcrypt.genSaltSync(5);
   let password = bcrypt.hashSync(newPass, salt);
 
-  User.findOneAndUpdate({username: username}, {password: password, salt: salt}, err => {
-    if(!err) {
-      res.send({message: "sucess", code: 'OK'});
+  User.findOneAndUpdate({
+    username: username
+  }, {
+    password: password,
+    salt: salt
+  }, err => {
+    if (!err) {
+      res.status(200).send("sucess");
     } else {
       res.send({message: "error", code: 'NOT_OK'});
     }
@@ -393,11 +350,17 @@ router.put('/api/changeDetails', (req, res) => {
   let newlname = req.body.lastname;
   let newEmail = req.body.email;
 
-  User.findOneAndUpdate({username: username}, {firstname: newfname, lastname: newlname, email: newEmail}, (err, data) => {
-    if(!err) {
+  User.findOneAndUpdate({
+    username: username
+  }, {
+    firstname: newfname,
+    lastname: newlname,
+    email: newEmail
+  }, (err, data) => {
+    if (!err) {
       console.log(JSON.stringify(data, undefined, 2));
       res.send({message: 'update successful', code: 'OK'});
-       req.session.user.name = data.fullname;
+      req.session.user.name = data.fullname;
     } else {
       console.log(JSON.stringify(err, undefined, 2));
       res.send({message: 'update failed', code: 'NOT_OK'});
@@ -459,20 +422,20 @@ router.post('/api/createPost', (req, res) => {
 
 router.post('/api/editPost/:slug', (req, res) => {
   let slug = req.params.slug;
-    title = req.body.title,
-    author = req.session.user.name || 'robotester',
-    description = req.body.description,
-    body = req.body.body,
-    category = req.body.category;
-    thisTime = new Date(),
-    createdOn = thisTime.getTime();
-    month = config.monthNames[thisTime.getMonth()],
-    year = thisTime.getFullYear(),
-    published = req.body.published,
-    media = req.body.media
+  title = req.body.title,
+  author = req.session.user.name || 'robotester',
+  description = req.body.description,
+  body = req.body.body,
+  category = req.body.category;
+  thisTime = new Date(),
+  createdOn = thisTime.getTime();
+  month = config.monthNames[thisTime.getMonth()],
+  year = thisTime.getFullYear(),
+  published = req.body.published,
+  media = req.body.media
 
   let postUpdate = {}
-  if(media != null){
+  if (media != null) {
     postUpdate = {
       author,
       title,
@@ -497,9 +460,10 @@ router.post('/api/editPost/:slug', (req, res) => {
     }
   }
 
-
-  Post.findOneAndUpdate({slug: slug}, postUpdate, (err) => {
-    if(!err){
+  Post.findOneAndUpdate({
+    slug: slug
+  }, postUpdate, (err) => {
+    if (!err) {
       res.send({message: 'Post modified successfully', code: 'OK'});
     } else {
       res.send({message: 'error creating post', code: 'NOT_OK'});
@@ -509,8 +473,10 @@ router.post('/api/editPost/:slug', (req, res) => {
 
 router.delete('/api/deletePost', (req, res) => {
   let slug = req.body.postID;
-  Post.deleteOne({slug: slug}, err => {
-    if(!err){
+  Post.deleteOne({
+    slug: slug
+  }, err => {
+    if (!err) {
       res.send({message: 'post deleted successfully', code: 'OK'});
     } else {
       res.send({message: 'Could not delete post', code: 'NOT_OK'});
@@ -518,23 +484,10 @@ router.delete('/api/deletePost', (req, res) => {
   });
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
 app.use('/', router);
-
-
 
 const port = app.set('PORT', process.env.PORT || 8080);
 app.listen(app.get('PORT'), () => {
   console.log(`server running on port ${app.get('PORT')}`);
 });
+

@@ -40,29 +40,20 @@
     <div class="col s12">
       <div id="login" class="card-panel access-panel center">
         <div id="step-1_reg">
-          <h1 class="panel-head">Welcome back</h1>
-          <h4 class="panel-info">Sign in to your account</h4>
-          <form class="row" onsubmit="attemptLogin(); return false;">
+          {{!-- <h1 class="panel-head">Forgot Password</h1> --}}
+          <h4 class="panel-info">Forgot Password</h4>
+          <form class="row" onsubmit="attemptReset(); return false;">
             <br>
             <div class="col s12 input-field">
-              <input type="text" name="login_id" id="login_id" required autofocus>
-              <label for="login_id">USERNAME/EMAIL</label>
+              <input type="email" name="login_id" id="login_id" required autofocus>
+              <label for="login_id">EMAIL</label>
             </div>
             <div class="col s12 input-field">
-              <input type="password" name="login_pass" id="login_pass" required>
-              <label for="login_pass">PASSWORD</label>
-              <p class="step-info center">
-                <a class="indigo-text" href="/forgot">
-                  <u>Forgot Password?</u>
-                </a>
-                We can help
-              </p>
+              <input type="number" name="phone_num" id="phone_num" required>
+              <label for="phone_num">PHONE</label>
               <p class="center">
                 <button type="submit" class="btn green waves-effect waves-light"><i class="loginSpinner hide fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                  &nbsp; Sign in</button>
-              </p>
-              <p class="center social_login">
-                <span class="btn indigo white-text waves-effect waves-light"><i class="icon ion-social-facebook"></i> &nbsp; Sign in with facebook</span>
+                  &nbsp; Reset Password</button>
               </p>
               <p class="step-info center"><br> Don&rsquo;t have an account?
                 <a class="indigo-text" href="/register">
