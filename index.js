@@ -334,7 +334,7 @@ router.post('/api/signup', (req, res) => {
     newUser
       .save()
       .then(() => {
-        res.send({message: 'User created successfully', code: 'OK'});
+        res.send({message: 'Welcome on board!', code: 'OK'});
       })
       .catch(err => {
         console.log(JSON.stringify(err, undefined, 2));

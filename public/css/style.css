@@ -1036,8 +1036,7 @@ body.board .card-panel {
 	}
 	header {
 		height: auto;
-		padding-bottom: 10%;
-		padding: 3%;
+		padding: 3% 3% 10%;
 	}
 	#from_blog .card.horizontal .card-stacked .card-content {
 		padding-top: 0%;

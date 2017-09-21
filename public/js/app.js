@@ -14,11 +14,13 @@ $(document)
       var reg_name = $('#fullname_reg').val();
       var reg_mail = $('#email_reg').val();
       var reg_gender = $('#gender_reg>.option.selected').text();
-      var reg_phone = $('#gender_reg>.option.selected').text();
-      console.log(reg_gender, reg_gender, reg_mail, reg_phone);
-      if (reg_name < 3 || reg_mail.length < 6 || reg_phone.length < 11) {
-        Materialize.toast("Please fill all fields to proceed");
-      } else if (reg_name > 3 && reg_mail.length > 5 && reg_phone.length >= 11) {
+      var reg_phone = $('#phone_reg').val();
+
+      if (reg_name.length < 3 || reg_phone.length < 11) {
+          Materialize.toast("Please fill all fields to proceed");
+      } else if(!isValidEmail(reg_mail)) {
+        Materialize.toast("Please enter your email correctly");
+      } else if (reg_name.length > 3 && reg_mail.length > 5 && reg_phone.length >= 11) {
         $('#reg > div').addClass('hide');
         $('#reg #step-2_reg').removeClass('hide');
       } else {
@@ -27,20 +29,22 @@ $(document)
     });
 
     $('#reg > #step-2_reg .next-step').click(function () {
-      $('#reg > div').addClass('hide');
-      $('#reg #step-3_reg').removeClass('hide');
+      var reg_age = Number($('#age_reg').val());
+      var reg_address = $('#current_address_reg').val();
+      var reg_state = $('#state_origin_reg').val();
+      var reg_town = $('#town_origin_reg').val();
+
+      if(reg_age >= 15 && reg_address.length > 5 && reg_state.length >= 3 && reg_town.length >= 3) {
+        $('#reg > div').addClass('hide');
+        $('#reg #step-3_reg').removeClass('hide');
+      } else {
+        Materialize.toast('Please fill all field appropriately', 4000);
+      }
+
     });
 
     $('#reg > #step-3_reg .next-step').click(function () {
       createNewUser();
-
-      $('#reg > div').addClass('hide');
-      $('#reg #step-1_reg').removeClass('hide');
-      $('#reg').addClass('hide');
-      $('#success_reg').removeClass('hide');
-
-      $('#success_reg > div:first-child p').addClass('rubberBand');
-
       return false;
     });
   });
@@ -50,8 +54,8 @@ function createNewUser() {
     type: "POST",
     url: "/api/signup",
     data: {
-      fullname: $("#fullname_reg").val(),
-      mail: $("#email_reg").val(),
+      fullname: $("#fullname_reg").val().trim(),
+      mail: $("#email_reg").val().trim(),
       gender: $('#gender_reg>.option.selected')
         .text()
         .toLowerCase(),
@@ -63,15 +67,19 @@ function createNewUser() {
       password: $('#password_reg').val()
     },
     success: function (data) {
-      // Materialize.toast(data + " Redirecting to Admin Page...", 4000); window
-      // .location   .reload();
+      $('#reg > div').addClass('hide');
+      $('#reg #step-1_reg').removeClass('hide');
+      $('#reg').addClass('hide');
+      $('#success_reg').removeClass('hide');
+
+      $('#success_reg > div:first-child p').addClass('rubberBand');
       Materialize.toast(data.message, 4000);
     },
     error: function (error) {
-      Materialize.toast("Incorrect login credentials", 5000);
-      // $("#email_login").val('');
-      $("#password_login").val('');
-      $("#password_login").focus();
+      Materialize.toast("Sorry, there was an error creating you account", 5000);
+      window
+      .location
+      .reload();
     }
   });
   return false;
@@ -113,4 +121,22 @@ function attemptLogin() {
     }
   });
   return false;
+}
+
+
+function isValidEmail(email) {
+  "use strict";
+
+  if (!email || email == "") return false;
+
+  email = email.trim();
+  if (email == "" || !email) return false;
+  let regex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+  return regex.test(email);
+}
+
+function isDigitsOnly(string) {
+  "use strict";
+
+  return (!isNaN(parseInt(string)) && isFinite(string));
 }

@@ -45,11 +45,11 @@
           <form class="row" onsubmit="attemptLogin(); return false;">
             <br>
             <div class="col s12 input-field">
-              <input type="text" name="login_id" id="login_id">
+              <input type="text" name="login_id" id="login_id" required autofocus>
               <label for="login_id">USERNAME/EMAIL</label>
             </div>
             <div class="col s12 input-field">
-              <input type="password" name="login_pass" id="login_pass">
+              <input type="password" name="login_pass" id="login_pass" required>
               <label for="login_pass">PASSWORD</label>
               <p class="center">
                 <button type="submit" class="btn green waves-effect waves-light"><i class="loginSpinner hide fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -58,7 +58,7 @@
               <p class="center social_login">
                 <span class="btn indigo white-text waves-effect waves-light"><i class="icon ion-social-facebook"></i> &nbsp; Sign in with facebook</span>
               </p>
-              <p class="step-info center"><br> Have an account?
+              <p class="step-info center"><br> Don&rsquo;t have an account?
                 <a class="indigo-text" href="/register">
                   <u>Sign up</u>
                 </a>
