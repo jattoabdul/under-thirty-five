@@ -19,6 +19,7 @@ var userSchema = new Schema({
     type: String,
     required: true
   },
+  passResetKey: String,
   current_address: {
     type: String
   },

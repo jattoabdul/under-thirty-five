@@ -6,6 +6,10 @@
     "api_key": "977684335728887",
     "api_secret": "DQkLl9L0x843jwLcXXivqDiNWxc"
   },
+  "email": {
+    "user":"newandroidohone",
+    "pass": "35353672"
+  },
   "nigerian_states": ["abuja", "abia", "akwa_ibom", "adamawa", "anambra", "bauchi", "bayelsa", "benue", "borno", "cross_river", "delta", "ebonyi", "edo", "ekiti", "enugu", "gombe", "imo", "jigawa", "kaduna", "kano", "kebbi", "katsina", "kogi", "kwara", "lagos", "nassarawa", "niger", "ogun", "ondo", "osun", "oyo", "plateau", "sokoto", "taraba", "yobe", "zamfara"],
   "forbidden_usernames": ["under35", "login", "index", "register", "profile", "logout", "login", "about", "timeline", "status"]
 }

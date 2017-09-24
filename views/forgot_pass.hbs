@@ -40,31 +40,70 @@
     <div class="col s12">
       <div id="login" class="card-panel access-panel center">
         <div id="step-1_reg">
-          {{!-- <h1 class="panel-head">Forgot Password</h1> --}}
-          <h4 class="panel-info">Forgot Password</h4>
-          <form class="row" onsubmit="attemptReset(); return false;">
-            <br>
-            <div class="col s12 input-field">
-              <input type="email" name="login_id" id="login_id" required autofocus>
-              <label for="login_id">EMAIL</label>
-            </div>
-            <div class="col s12 input-field">
-              <input type="number" name="phone_num" id="phone_num" required>
-              <label for="phone_num">PHONE</label>
-              <p class="center">
-                <button type="submit" class="btn green waves-effect waves-light"><i class="loginSpinner hide fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+          {{!--
+          <h1 class="panel-head">Forgot Password</h1> --}}
+          <div id="forget_step1" class="forget-view">
+            <h4 class="panel-info">Forgot Password</h4>
+            <form class="row" onsubmit="attemptReset(); return false;">
+              <br>
+              <div class="col s12 input-field">
+                <input class="animated" type="email" name="login_id" id="login_id" required autofocus>
+                <label for="login_id">EMAIL</label>
+              </div>
+              <div class="col s12 input-field">
+                <input type="number" name="phone_num" class="animated" id="phone_num" required>
+                <label for="phone_num">PHONE</label>
+                <p class="center">
+                  <button type="submit" class="btn green waves-effect waves-light"><i class="loginSpinner hide fa fa-spinner fa-pulse fa-3x fa-fw"></i>
                   &nbsp; Reset Password</button>
-              </p>
-              <p class="step-info center"><br> Don&rsquo;t have an account?
-                <a class="indigo-text" href="/register">
-                  <u>Sign up</u>
-                </a>
-              </p>
+                </p>
+                <p class="step-info center"><br> Don&rsquo;t have an account?
+                  <a class="indigo-text" href="/register">
+                    <u>Sign up</u>
+                  </a>
+                </p>
+              </div>
+            </form>
+          </div>
+          <div id="forget_step2" class="forget-view hide">
+            <!--<h1 class="panel-head">Enter your reset code</h1>-->
+            <h4 class="panel-info">Enter reset code</h4>
+            <br>
+            <form onsubmit="proceedToChangePass(); return false;" class="row">
+              <div class="col s12 input-field">
+                <label for="reset_code">Password Reset Code</label>
+                <input type="text" id="reset_code" class="animated" required>
+                <p class="step-info center">Please check your email or
+                  <a class="indigo-text" style="cursor:pointer" onclick="attemptReset(); return false;">
+                    <u>Resend Code</u>
+                  </a>
+                </p>
+                <p class="center">
+                  <button type="submit" class="btn green waves-effect waves-light"><i class="loginSpinner hide fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                  &nbsp; Submit</button>
+                </p>
+              </div>
+            </form>
+          </div>
+          <div id="forget_step3" class="forget-view hide">
+            <h1 class="panel-head">Enter your reset code</h1>
+            <!--<h4 class="panel-info">Forgot Password</h4>-->
+            <form onsubmit="changePassword(); return false;" class="row">
+              <div class="col s12 input-field">
+                <input type="password" name="password_reset" id="password_reset">
+                <label for="password_reset">PASSWORD</label>
+              </div>
+              <div class="col s12 input-field">
+                <input type="password" name="password_confirm_reset" id="password_confirm_reset">
+                <label for="password_confirm_reset">CONFIRM PASSWORD</label>
+                <p class="center">
+                  <button class="next-step btn green waves-effect">Change password</button>
+                </p>
+            </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
   </main>
 
   {{> footer }}

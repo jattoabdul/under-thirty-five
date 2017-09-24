@@ -67,7 +67,7 @@ $(document)
       if(isValidEmail(typedMail)){
         $.ajax({
           type: "POST",
-          url: '/checkemailExistence',
+          url: '/api/checkemailExistence',
           data: {
             query: typedMail
           },
@@ -150,23 +150,91 @@ function attemptLogin() {
 }
 
 function attemptReset(){
+  $('input').removeClass('shake');
   $(".loginSpinner").removeClass("hide");
   var emailReset = $('#login_id').val();
   var passReset = $('#phone_num').val();
   if(isValidEmail(emailReset) && isDigitsOnly(passReset)) {
     $.ajax({
       type: 'POST',
-      url: '/forgot',
+      url: '/api/forgot',
       data: {
-        mail: emailReset,
+        email: emailReset,
         phone: passReset
       },
       success: function(data){
+        $(".loginSpinner").addClass("hide");
         Materialize.toast(data, 3000, 'rounded');
+        $('.forget-view').addClass('hide');
+        $('#forget_step2').removeClass('hide');
       },
       error: function(e){
-        Materialize.toast("there was an error resetting you password");
-        console.log(JSON.stringify(e, undefined,2));
+        $(".loginSpinner").addClass("hide");
+        if(e.responseText === "Phone number is incorrect"){
+          $('#phone_num').addClass('shake');
+          $('#phone_num').focus();
+          Materialize.toast(e.responseText, 4000, 'rounded');
+        } else if(e.responseText === "Email doesn't exist") {
+          $('#login_id').addClass('shake');
+          $('#login_id').focus();
+          Materialize.toast(e.responseText, 4000, 'rounded');
+        } else {
+          Materialize.toast("there was an error resetting you password", 4000, 'rounded');
+        }
+      }
+    });
+  }
+}
+
+function proceedToChangePass() {
+  $(".loginSpinner").removeClass("hide");
+  $('input').removeClass('shake');
+  var resetKey = $('#reset_code').val();
+  $.ajax({
+    url: '/api/check_reset_code',
+    type: 'POST',
+    data: {
+      code: resetKey,
+      email: $('#login_id').val()
+    },
+    success: function(data){
+      console.log(data);
+      if(data){
+        $('.forget-view').addClass('hide');
+        $('#forget_step3').removeClass('hide');
+      } else {
+        toast('code invalid', 4000);
+        $('#reset_code').addClass('shake');
+        $('#reset_code').focus();
+      }
+    },
+    error: function(e) {
+      toast('there was an error verifying your code', 4000);
+    }
+  });
+}
+
+function changePassword() {
+  var pass = $('#password_reset').val().trim();
+  var verPass = $('#password_confirm_reset').val().trim();
+  if(pass !== verPass){
+    toast('Passwords do not match', 4000);
+  } else {
+    $.ajax({
+      url: '/api/change_password/',
+      type: 'POST',
+      data: {
+        email: $('#login_id').val(),
+        newPass: $('#password_reset').val(),
+        code: $('#reset_code').val()
+      },
+      success: function(data){
+        toast(data);
+        window.location.pathname = login;
+      },
+      error: function(e) {
+        toast(e.responseText);
+        console.log(e);
       }
     });
   }
@@ -188,4 +256,16 @@ function isDigitsOnly(string) {
   "use strict";
 
   return (!isNaN(parseInt(string)) && isFinite(string));
+}
+
+function toast(message, duration){
+  if(message){
+    if(duration){
+      Materialize.toast(message, duration,'rounded');
+    } else {
+      Materialize.toast(message, 3000, 'rounded');
+    }
+  } else {
+    console.log("doing nothing");
+  }
 }

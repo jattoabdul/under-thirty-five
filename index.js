@@ -8,9 +8,11 @@ const express = require("express"),
   bcrypt = require('bcrypt'),
   crypto = require('crypto'),
   path = require('path'),
+  shortid = require('shortid'),
   config = require('./config.json'),
   fs = require('fs'),
   nodemailer = require('nodemailer'),
+  smtpTransport = require("nodemailer-smtp-transport"),
   cloudinary = require('cloudinary'),
   fileParser = require('connect-multiparty')(),
   validator = require('validator'),
@@ -58,7 +60,6 @@ const GetPosts = () => {
     });
 };
 
-
 /**
  * generate a Picture profile link via gravatar
  * function accepts email, hash it(md5), then generate a gravatar link with it
@@ -66,12 +67,28 @@ const GetPosts = () => {
  * @return url or false if email supplied is invalid
  */
 const generateProfilepicLink = (email) => {
-  if(validator.isEmail(email)) {
-    return `https://www.gravatar.com/avatar/${crypto.createHash('md5').update(email).digest('hex')}`;
+  if (validator.isEmail(email)) {
+    return `https://www.gravatar.com/avatar/${crypto
+      .createHash('md5')
+      .update(email)
+      .digest('hex')}`;
   } else {
     return false;
   }
 };
+
+/**
+ * Generate a clean alphanumeric key
+ * @return {String} random key
+ */
+const generateKey = () => {
+  var key = shortid.generate();
+  while(!(validator.isAlphanumeric(key))) {
+    key = shortid.generate();
+  }
+  return key;
+};
+
 
 /**
  * logout user
@@ -160,14 +177,12 @@ router.get('/forgot', (req, res) => {
 
 // *****  public APIs  ******** &&&&&&&&&&&&&&&&&&&&&&&&&&&& login
 router.post('/api/login', (req, res) => {
-  console.log(req.body);
+  // TODO: validate inputs here
   let credential = req
     .body
     .loginCred
     .toLowerCase();
   let password = req.body.password
-
-  console.log(credential, password);
 
   User.findOne({
     email: credential
@@ -180,13 +195,15 @@ router.post('/api/login', (req, res) => {
         let user = {
           id: data._id,
           name: data.fullname
-        }
+        };
         req.session.user = user;
         req.session.user.expires = new Date(Date.now() + (3 * 24 * 3600 * 1000));
         User.findOneAndUpdate(data._id, {
           last_login: new Date().getTime()
         });
-        res.status(200).send("Welcome!");
+        res
+          .status(200)
+          .send("Welcome!");
       } else {
         res
           .status(401)
@@ -204,11 +221,9 @@ router.post('/api/login', (req, res) => {
 router.post('/api/signup', (req, res) => {
   let rcvData = req.body;
 
-  console.log(JSON.stringify(rcvData, undefined, 2));
-
   let email = rcvData.mail || null;
   let gender = rcvData.gender || null;
-  if(gender){
+  if (gender) {
     gender = gender.toLowerCase();
   }
   let phone_number = rcvData.phone || null;
@@ -218,7 +233,7 @@ router.post('/api/signup', (req, res) => {
   let origin_town = rcvData.originTown || null;
   let password = rcvData.password || null;
 
-  if(email && gender && phone_number && age && current_address && origin_state && origin_town && password){
+  if (email && gender && phone_number && age && current_address && origin_state && origin_town && password) {
     if (!(validator.isEmail(email))) {
       res
         .status(400)
@@ -251,49 +266,262 @@ router.post('/api/signup', (req, res) => {
           origin_state: rcvData.originState,
           origin_town: rcvData.originTown,
           password: hash
-        }
+        };
 
         newUser = new User(regData);
 
         newUser
           .save()
           .then(() => {
-            res.send({message: 'Welcome on board!', code: 'OK'});
+            res.status(200).send('Welcome on board!');
           })
           .catch(err => {
             console.log(JSON.stringify(err, undefined, 2));
-            res.status(412).send("error creating user");
+            res
+              .status(412)
+              .send("error creating user");
           });
       });
     }
   } else {
-    res.status(400).send("incomplete data sent for registration!");
+    res
+      .status(400)
+      .send("incomplete data sent for registration!");
   }
 });
 
-router.post('/forgot', (req, res) => {
-  var resetData = req.body;
-  var email = resetData.mail;
-  var phone = resetData.phone;
-  if((validator.isEmail(email)) && (validator.isNumeric(phone))) {
-    User.findOne().where()
-  }
-});
+router.post('/api/forgot', (req, res) => {
+  let resetData = req.body;
+  let {email, phone} = resetData;
+  if (email && phone) {
+    if ((validator.isEmail(email)) && (validator.isNumeric(phone))) {
+      User.findOne({
+        email
+      }, 'password phone_number fullname', (err, result) => {
+        if (!err && result) {
+          let userId = result._id;
+          let firstname = result
+            .fullname
+            .split(' ')[0];
+          if (phone == result.phone_number) {
+            let passResetKey = generateKey();
+            let userEmail = result.email;
+            User.findByIdAndUpdate(userId, {
+              passResetKey
+            }, (err, rez) => {
+              if (!err) {
+                let transporter = nodemailer.createTransport({
+                  // host: 'smtp.zoho.com', port: 465, secure: true, // use SSL auth: {   user:
+                  // 'ohotu@coloured.com.ng',   pass: 'Flower10@@' }
 
-router.post('/checkemailExistence', (req, res) => {
-  if(req.body.query){
-    let email = req.body.query;
-    if(validator.isEmail(email)){
-      User.find({"email": email}).count().exec((err, result) => {
-        console.log("email:",email, "was queried for existence");
-        if(result > 0){
-          res.status(200).send(true);
+                  service: "gmail",
+                  port: 465,
+                  auth: {
+                    user: config.email.user,
+                    pass: config.email.pass
+                  }
+                });
+
+                let mailOptions = {
+                  subject: `Under35 | Password reset`,
+                  to: email,
+                  from: `Under35 <newandroidohone@gmail.com>`,
+                  html: `
+                            <h1>Hi ${firstname}!</h1>
+                            <h2>Here is your password reset key</h2>
+                            <h2><code contenteditable="false" style="font-weight:200;font-size:1.5rem;padding:5px 10px; background: #EEEEEE; border:0">${passResetKey}</code></h4>
+                        `
+                };
+
+                try {
+                  transporter.sendMail(mailOptions, (error, response) => {
+                    if (error) {
+                      console.log("error:\n", error, "\n");
+                      res
+                        .status(500)
+                        .send("could not sent reset code");
+                    } else {
+                      console.log("email sent:\n", response);
+                      res
+                        .status(200)
+                        .send('Reset Code sent');
+                    }
+                  });
+                } catch (error) {
+                  console.log(error);
+                  res
+                    .status(500)
+                    .send("could not sent reset code");
+                }
+              }
+            });
+          } else {
+            res
+              .status(400)
+              .send("Phone number is incorrect");
+            console.log("phone number doesnt match");
+          }
         } else {
-          res.status(200).send(false);
+          res
+            .status(400)
+            .send("Email doesn't exist");
         }
       });
+    }
+  } else {
+    res
+      .status(200)
+      .send("empty data sent");
+  }
+});
+
+router.post('/api/change_password/', (req, res) => {
+  let rcvData = req.body;
+  let {email, newPass, code} = rcvData;
+  if (!(validator.isEmail(email))) {
+    res
+      .status(400)
+      .send('invalid Email sent');
+  } else if (!(validator.isAlphanumeric(code))) {
+    res
+      .status(200)
+      .send('you don\'t have to tamper with the reset code please');
+  } else {
+    User.findOne({email},'passResetKey', (err, rez) => {
+      console.log(rez.passResetKey, code);
+      if(!err){
+        if(rez.passResetKey === code){
+          const saltRounds = 5;
+          bcrypt.hash(newPass, saltRounds, (error, hash) => {
+            if (!error) {
+              User.findOneAndUpdate({
+                email
+              }, {
+                password: hash
+              }, (err, result) => {
+                if (!err) {
+
+                  res
+                    .status(200)
+                    .send("Passsword reset successfull!");
+                } else {
+                  res
+                    .status(500)
+                    .send("Could not reset password");
+                }
+              });
+            } else {
+              res
+                .status(500)
+                .send("Could not reset password");
+            }
+          });
+        } else {
+          res.status(400).send("incorrect code supplied");
+        }
+      } else {
+        console.log(JSON.stringify(err, undefined, 2));
+        res.status(500).send("Server could not verify your reset code");
+      }
+    });
+  }
+})
+
+router.post('/api/change_password/', (req, res) => {
+  let rcvData = req.body;
+  let {email, newPass, code} = rcvData;
+  if (!(validator.isEmail(email))) {
+    res
+      .status(400)
+      .send('invalid Email sent');
+  } else if (!(validator.isAlphanumeric(code))) {
+    res
+      .status(200)
+      .send('you don\'t have to tamper with the reset code please');
+  } else {
+    User.findOne({email},'passResetKey', (err, rez) => {
+      console.log(rez.passResetKey, code);
+      if(!err){
+        if(rez.passResetKey === code){
+          const saltRounds = 5;
+          bcrypt.hash(newPass, saltRounds, (error, hash) => {
+            if (!error) {
+              User.findOneAndUpdate({
+                email
+              }, {
+                password: hash
+              }, (err, result) => {
+                if (!err) {
+                  res
+                    .status(200)
+                    .send("Passsword reset successfull!");
+                } else {
+                  res
+                    .status(500)
+                    .send("Could not reset password");
+                }
+              });
+            } else {
+              res
+                .status(500)
+                .send("Could not reset password");
+            }
+          });
+        } else {
+          res.status(400).send("incorrect code supplied");
+        }
+      } else {
+        console.log(JSON.stringify(err, undefined, 2));
+        res.status(500).send("Server could not verify your reset code");
+      }
+    });
+  }
+})
+
+router.post('/api/check_reset_code', (req, res) => {
+  let { code, email } = req.body;
+  if(code && email){
+    if(!(validator.isEmail(email))){
+      res.status(400).send('Email is invalid');
+    } else if(!(validator.isAlphanumeric(code))) {
+      res.status(400).send('Oga! try again');
     } else {
-      res.status(400).send("invalid query!");
+      User.findOne({email}, 'passResetKey',(err, rez) => {
+        if(code === rez.passResetKey) {
+          res.status(200).send(true);
+        } else {
+          res.status(400).send(false);
+        }
+      })
+    }
+  } else {
+    res.status(400).send('Email and password must be supplied');
+  }
+})
+
+router.post('/checkemailExistence', (req, res) => {
+  if (req.body.query) {
+    let email = req.body.query;
+    if (validator.isEmail(email)) {
+      User
+        .find({"email": email})
+        .count()
+        .exec((err, result) => {
+          console.log("email:", email, "was queried for existence");
+          if (result > 0) {
+            res
+              .status(200)
+              .send(true);
+          } else {
+            res
+              .status(200)
+              .send(false);
+          }
+        });
+    } else {
+      res
+        .status(400)
+        .send("invalid query!");
     }
   }
 })
@@ -323,7 +551,7 @@ router.get('/followers', (req, res) => {
 })
 
 // protected APIs
-router.put('/api/changePass', (req, res) => {
+router.put('/api/changePass/onDash', (req, res) => {
   let username = req.session.user.username;
   let newPass = req.body.newpass;
   let salt = bcrypt.genSaltSync(5);
@@ -336,7 +564,9 @@ router.put('/api/changePass', (req, res) => {
     salt: salt
   }, err => {
     if (!err) {
-      res.status(200).send("sucess");
+      res
+        .status(200)
+        .send("success");
     } else {
       res.send({message: "error", code: 'NOT_OK'});
     }
@@ -484,10 +714,9 @@ router.delete('/api/deletePost', (req, res) => {
   });
 });
 
-app.use('/', router);
+app.use(router);
 
 const port = app.set('PORT', process.env.PORT || 8080);
 app.listen(app.get('PORT'), () => {
   console.log(`server running on port ${app.get('PORT')}`);
 });
-
