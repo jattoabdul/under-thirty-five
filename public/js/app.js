@@ -9,7 +9,6 @@ $(document)
     $('select').material_select();
     $('.modal').modal();
     $('.card-panel.write').click(function(){
-      console.log('clicked');
       $('#writeModal').modal('open');
     });
 
