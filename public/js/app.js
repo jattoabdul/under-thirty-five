@@ -7,7 +7,11 @@ $(document)
       draggable: true // Choose whether you can drag to open on touch screens
     });
     $('select').material_select();
-
+    $('.modal').modal();
+    $('.card-panel.write').click(function(){
+      console.log('clicked');
+      $('#writeModal').modal('open');
+    });
 
     $('#gender_reg.toggle-input .male').click(function () {
       $('#gender_reg.toggle-input .option').removeClass('selected');

@@ -21,8 +21,8 @@ nav>.container {
 	color: #0b2c76;
 }
 
-.dropdown-content li>a.sign_up,
-.dropdown-content li>span {
+body.board nav .dropdown-content li>a.sign_up,
+body.board nav .dropdown-content li>span {
 	background: #00b55b;
 	color: white;
 }
@@ -704,6 +704,7 @@ body.board .navbar-fixedd nav {
 .navbar-fixedd nav a.profile img {
 	max-width: 2.9rem;
 	margin-top: 10%;
+	padding-bottom: 0.5rem;
 }
 
 .navbar-fixedd nav li a span.new {
@@ -844,7 +845,8 @@ body.board .card-panel {
 }
 
 .write {
-	margin-bottom: 2rem;
+  margin-bottom: 2rem;
+  cursor: pointer;
 }
 
 .write .tab_fence {
@@ -862,7 +864,7 @@ body.board .card-panel {
 
 .write > .tab_fence > a.active {
   border-bottom: #55ba6f solid 2px;
-  padding-bottom: 1rem;
+  padding-bottom: 1.2rem;
 }
 
 .write p.guide {
@@ -874,7 +876,7 @@ body.board .card-panel {
 }
 
 .update.card-panel {
-	padding: 25px 30px;
+  padding: 25px 2rem 3rem;
 }
 
 .update .head {
@@ -924,29 +926,17 @@ body.board .card-panel {
 .update .foot {
 	padding: 0.5rem 0.5rem 0;
 }
-.update .foot .no_of_views {
-	font-size: 9px;
-	text-align: left;
-	color: #4a4a4a;
-	margin-right: 2rem;
+.update .foot .post-widget {
+  font-size: 12px;
+  text-align: left;
+  color: #4a4a4a;
+  margin-right: 2rem;
 }
-.update .foot .no_of_comments {
-	font-size: 9px;
-	text-align: left;
-	color: #4a4a4a;
-}
-.update .foot .no_of_comments img {
-	width: 15px;
-	display: inline-block;
-}
+
 .update .foot p > .no_of_views i.icon {
 	font-size: 14px;
   margin-right: 1px;
 }
-.update .foot .no_of_comments li {
-	display: inline-block;
-}
-
 .update .title {
 	font-size: 14px;
 	font-weight: 600;

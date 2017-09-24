@@ -20,7 +20,7 @@
         <ul class="right">
           <li><a href="#" class="notification"><img src="./images/message_icon.jpg" alt="m"></a></li>
           <li><a href="#" class="notification"><span class="new"></span><img src="./images/alert_icon.jpg" alt="m"></a></li>
-          <li><a href="#" class="profile"><img src="./images/abiola-4.jpg" alt="m"></a></li>
+          <li><a href="#" class="profile"><img class="dropdown-button" data-activates='profileDrop' data-hover="false" data-belowOrigin="true" data-constrainWidth="false" src="./images/abiola-4.jpg" alt="m"></a></li>
         </ul>
       </div>
     </nav>
@@ -80,7 +80,6 @@
             <div class="card-panel write">
               <div class="tab_fence">
                 <a href="#" class="tabb active">Write a post</a>
-                <a href="#" class="tabb">Post a queiry</a>
               </div>
               <p class="guide">Write something…</p>
             </div>
@@ -98,64 +97,14 @@
               </div>
               <div class="foot">
                 <p>
-                  <span class="no_of_views left">
+                  <span class="no_of_views left post-widget">
                     <i class="icon ion-ios-eye-outline"></i>
                     1299 views
                   </span>
-                  <ul class="no_of_comments">
-                    <li><img src="./images/comment_icon.jpg" alt=""></li>
-                    <li>6 Comments</li>
-                    </span>
-                </p>
-              </div>
-            </div>
-            <div class="card-panel update">
-              <div class="head">
-                <img src="./images/abiola-4.jpg" alt="Abiola" class="profile">
-                <h4 class="creator_fullname">Ariwoola Roqeeb</h4>
-                <p class="creator_origin">Itesiwaju Local Government</p>
-                <p class="posted_when">Just now</p>
-              </div>
-              <div class="body">
-                <p>Computers and Technologies are exponentially getting more powerful and will take away millions of jobs but
-                  creating even bigger opportunities. Companies and Organisations are now virtualizing key business value
-                  chain processes into Platforms and Digital networks</p>
-              </div>
-              <div class="foot">
-                <p>
-                  <span class="no_of_views left">
-                      <i class="icon ion-ios-eye-outline"></i>
-                      1299 views
-                    </span>
-                  <ul class="no_of_comments">
-                    <li><img src="./images/comment_icon.jpg" alt=""></li>
-                    <li>6 Comments</li>
-                    </span>
-                </p>
-              </div>
-            </div>
-            <div class="card-panel update">
-              <div class="head">
-                <img src="./images/abiola-4.jpg" alt="Abiola" class="profile">
-                <h4 class="creator_fullname">Ariwoola Roqeeb</h4>
-                <p class="creator_origin">Itesiwaju Local Government</p>
-                <p class="posted_when">Just now</p>
-              </div>
-              <div class="body">
-                <p>Computers and Technologies are exponentially getting more powerful and will take away millions of jobs but
-                  creating even bigger opportunities. Companies and Organisations are now virtualizing key business value
-                  chain processes into Platforms and Digital networks</p>
-              </div>
-              <div class="foot">
-                <p>
-                  <span class="no_of_views left">
-                      <i class="icon ion-ios-eye-outline"></i>
-                      1299 views
-                    </span>
-                  <ul class="no_of_comments">
-                    <li><img src="./images/comment_icon.jpg" alt=""></li>
-                    <li>6 Comments</li>
-                    </span>
+                  <span class="no_of_queries left post-widget">
+                    <i class="icon ion-ios-chatboxes-outline"></i>
+                    4 queries
+                  </span>
                 </p>
               </div>
             </div>
@@ -164,6 +113,21 @@
       </div>
     </div>
   </main>
+
+  <ul id='profileDrop' class='dropdown-content' style="top: 60px !important;">
+    <li><a href="/logout" style="line-height: 40px;margin-top: 0px;text-align: center;">Logout</a></li>
+  </ul>
+
+  <div id="writeModal" class="modal">
+    <div class="modal-content">
+      <!-- <h4>Modal Header</h4> -->
+      <p>A bunch of text</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Post</a>
+    </div>
+  </div>
+
 
   <script src="js/jquery.min.js"></script>
   <script src="js/materialize.min.js"></script>
