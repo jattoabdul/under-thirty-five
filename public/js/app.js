@@ -75,6 +75,7 @@ $(document)
             query: typedMail
           },
           success: function(msg) {
+            console.log(msg);
             if(msg){
               $('#step-1_reg > form > div:nth-child(4) > p:nth-child(4) > span').addClass('disabled');
               Materialize.toast("Email have been used before", 3000, 'rounded');

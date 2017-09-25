@@ -29,7 +29,7 @@ cloudinary.config({cloud_name: config.cloud_name, api_key: config.api_key, api_s
 const online_DB_uri = `mongodb://${config.db_user}:${config.db_pass}@ds143754.mlab.com:43754/under35`,
   local_DB_uri = `mongodb://localhost:27017/under35`;
 
-mongoose.connect(online_DB_uri, {
+mongoose.connect(local_DB_uri, {
   useMongoClient: true
 }, (err, db) => {
   if (err) {
@@ -67,11 +67,9 @@ const GetPosts = () => {
  * @return url or false if email supplied is invalid
  */
 const generateProfilepicLink = (email) => {
+  let hash = crypto.createHash('md5').update(email).digest('hex');
   if (validator.isEmail(email)) {
-    return `https://www.gravatar.com/avatar/${crypto
-      .createHash('md5')
-      .update(email)
-      .digest('hex')}`;
+    return `https://www.gravatar.com/avatar/${hash}`;
   } else {
     return false;
   }
@@ -499,12 +497,12 @@ router.post('/api/check_reset_code', (req, res) => {
   }
 })
 
-router.post('/checkemailExistence', (req, res) => {
+router.post('/api/checkemailExistence', (req, res) => {
   if (req.body.query) {
     let email = req.body.query;
     if (validator.isEmail(email)) {
       User
-        .find({"email": email})
+        .find({email})
         .count()
         .exec((err, result) => {
           console.log("email:", email, "was queried for existence");
