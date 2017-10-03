@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Under35 | Edit Profile </title>
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/ionicons.min.css">
+  <link rel="stylesheet" href="css/materialize.min.css">
+  <link rel="stylesheet" href="css/animate.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="board">
+  <div class="navbar-fixedd">
+    <nav class="white">
+      <div class="nav-wrapper">
+        <a href="#" class="brand-logo left">
+          <img src="./images/logo_coloured.jpg" alt="Under35">
+        </a>
+        <ul class="right">
+          <li><a href="#" class="notification"><img src="./images/message_icon.jpg" alt="m"></a></li>
+          <li><a href="#" class="notification"><span class="new"></span><img src="./images/alert_icon.jpg" alt="m"></a></li>
+          <li><a href="#" class="profile"><img class="dropdown-button" data-activates='profileDrop' data-hover="false" data-belowOrigin="true" data-constrainWidth="false" src="./images/abiola-4.jpg" alt="m"></a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <main class="row zmb">
+    <div class="container">
+      <br>
+      <div class="row">
+        <div class="edit board-layout col s12 row">
+          <br>
+          <div class="container">
+            <div class="col s12 m12 l12 followers">
+              <div class="card-panel update">
+                <h5>Edit Profile</h5>
+                <!-- <button class="round-btn btn right update-btn top waves-effect waves-light">Update</button> -->
+                <hr><br>
+                <form class="row">
+                  <div class="col s12 m6 l6 input-field">
+                    <input type="text" id="fullname_edit" placeholder="fullname">
+                    <label for="fullname_edit">Firstname Lastname</label>
+                  </div>
+                  <div class="col s12 m6 l6 input-field">
+                    <input type="email" id="email_edit">
+                    <label for="email_edit">Email</label>
+                  </div>
+
+                  <div class="col s12 m12 l12 input-field">
+                    <input type="text" id="address_edit">
+                    <label for="address_edit">Current Address</label>
+                  </div>
+                  <div class="col s12 m12 l6 input-field">
+                    <input type="text" id="occupation_edit">
+                    <label for="occupation_edit">Occupation</label>
+                  </div>
+                  <div class="col s12 m6 l3 input-field">
+                    <input type="number" id="phone_edit">
+                    <label for="phone_edit">Phone No.</label>
+                  </div>
+                  <div class="col s12 m6 l3 input-field">
+                    <select name="state_edit" id="state_edit">
+                        <option value="" disabled selected>Choose your option</option>
+                        <option value="abuja">ABUJA FCT</option>
+                        <option value="abia">ABIA</option>
+                        <option value="adamawa">ADAMAWA</option>
+                        <option value="akwa_ibom">AKWA IBOM</option>
+                        <option value="anambra">ANAMBRA</option>
+                        <option value="bauchi">BAUCHI</option>
+                        <option value="bayelsa">BAYELSA</option>
+                        <option value="benue">BENUE</option>
+                        <option value="borno">BORNO</option>
+                        <option value="cross_river">CROSS RIVER</option>
+                        <option value="delta">DELTA</option>
+                        <option value="ebonyi">EBONYI</option>
+                        <option value="edo">EDO</option>
+                        <option value="ekiti">EKITI</option>
+                        <option value="enugu">ENUGU</option>
+                        <option value="gombe">GOMBE</option>
+                        <option value="imo">IMO</option>
+                        <option value="jigawa">JIGAWA</option>
+                        <option value="kaduna">KADUNA</option>
+                        <option value="kano">KANO</option>
+                        <option value="katsina">KATSINA</option>
+                        <option value="kebbi">KEBBI</option>
+                        <option value="kogi">KOGI</option>
+                        <option value="kwara">KWARA</option>
+                        <option value="lagos">LAGOS</option>
+                        <option value="nassarawa">NASSARAWA</option>
+                        <option value="niger">NIGER</option>
+                        <option value="ogun">OGUN</option>
+                        <option value="ondo">ONDO</option>
+                        <option value="osun">OSUN</option>
+                        <option value="oyo">OYO</option>
+                        <option value="plateau">PLATEAU</option>
+                        <option value="rivers">RIVERS</option>
+                        <option value="sokoto">SOKOTO</option>
+                        <option value="taraba">TARABA</option>
+                        <option value="yobe">YOBE</option>
+                        <option value="zamfara">ZAMFARA</option>
+                      </select>
+                      <label for="state_edit">STATE OF ORIGIN</label>
+                  </div>
+                  <div class="col s12 m6 l3 input-field">
+                    <input type="text" id="town_edit">
+                    <label for="town_edit">TOWN OF ORIGIN</label>
+                  </div>
+                  <div class="col s12 m6 l3 input-field">
+                    <input type="text" id="local_gov_edit">
+                    <label for="local_gov_edit">Local Government</label>
+                  </div>
+                  <div class="col s12 m6 l4 input-field">
+                    <select name="party_edit" id="party_edit">
+                        <option value="" disabled selected>Choose your Party</option>
+                        <option value="APC">APC</option>
+                        <option value="PDP">PDP</option>
+                        <option value="APGA">APGA</option>
+                    </select>
+                    <label for="party_edit">Party</label>
+                  </div>
+                  <div class="col s12 m6 l3 input-field">
+                    <input type="text" id="fb_edit">
+                    <label for="fb_edit">facebook</label>
+                  </div>
+                  <div class="col s12 m6 l3 input-field">
+                    <input type="text" id="tw_edit">
+                    <label for="tw_edit">twitter</label>
+                  </div>
+                  <div class="col s12 m6 l3 input-field">
+                    <input type="text" id="google_edit">
+                    <label for="google_edit">Google<sup>+</sup></label>
+                  </div>
+                  <div class="col s12 m6 l3 input-field">
+                    <input type="date" id="party_edit" placeholder="Date of birth">
+                  </div>
+                  <div class="col s12 input-field">
+                    <button class="btn-large waves-effect waves-light update-btn round-btn">Update Profile</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <ul id='profileDrop' class='dropdown-content' style="top: 60px !important;">
+    <li><a href="/logout" style="line-height: 40px;margin-top: 0px;text-align: center;">Logout</a></li>
+  </ul>
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/materialize.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>

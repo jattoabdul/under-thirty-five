@@ -8,8 +8,21 @@ $(document)
     });
     $('select').material_select();
     $('.modal').modal();
-    $('.card-panel.write').click(function(){
+    $('input').addClass('animated');
+    $('.card-panel.write').click(function () {
       $('#writeModal').modal('open');
+    });
+    // $('body').on('focus', 'toBposted[contenteditable]', function () {   var $this
+    // = $(this);   $this.data('before', $this.html());   return $this; }).on('blur
+    // keyup paste input', 'toBposted[contenteditable]', function () {     var
+    // $this = $(this);     if ($this.data('before') !== $this.html()) {
+    // $this.data('before', $this.html());       $this.trigger('change');     }
+    // return $this;   });
+    $('.editable__placeholder, .modal-content__body').click(function () {
+      $('.editable__placeholder').addClass('hide');
+    });
+    $('#oyaPost').click(function () {
+      writeApost();
     });
 
     $('#gender_reg.toggle-input .male').click(function () {
@@ -27,9 +40,10 @@ $(document)
       var reg_gender = $('#gender_reg>.option.selected').text();
       var reg_phone = $('#phone_reg').val();
 
+      // TODO: Add shaky animation on every failed form input
       if (reg_name.length < 3 || reg_phone.length < 11) {
-          Materialize.toast("Please fill all fields to proceed");
-      } else if(!isValidEmail(reg_mail)) {
+        Materialize.toast("Please fill all fields to proceed");
+      } else if (!isValidEmail(reg_mail)) {
         Materialize.toast("Please enter your email correctly");
       } else if (reg_name.length > 3 && reg_mail.length > 5 && reg_phone.length >= 11) {
         $('#reg > div').addClass('hide');
@@ -37,6 +51,22 @@ $(document)
       } else {
         Materialize.toast('Please fill all field appropriately', 4000);
       }
+
+      // (function ($) {   $(document)     .on('change keydown keypress input',
+      // '#toBposted[data-placeholder]', function () {       var post =
+      // $('#toBposted').text();       if (post.length < 1) {         if
+      // (this.textContent) {           this.dataset.divPlaceholderContent = 'true';
+      //     } else {           delete(this.dataset.divPlaceholderContent); }       }
+      //    }); })(jQuery);
+      jQuery(function ($) {
+        $("#toBposted[contenteditable]")
+          .focusout(function () {
+            var element = $(this);
+            if (!element.text().trim().length) {
+              element.empty();
+            }
+          });
+      });
     });
 
     $('#reg > #step-2_reg .next-step').click(function () {
@@ -45,7 +75,7 @@ $(document)
       var reg_state = $('#state_origin_reg').val();
       var reg_town = $('#town_origin_reg').val();
 
-      if(reg_age >= 15 && reg_address.length > 5 && reg_state.length >= 3 && reg_town.length >= 3) {
+      if (reg_age >= 15 && reg_address.length > 5 && reg_state.length >= 3 && reg_town.length >= 3) {
         $('#reg > div').addClass('hide');
         $('#reg #step-3_reg').removeClass('hide');
       } else {
@@ -54,9 +84,13 @@ $(document)
     });
 
     $('#reg > #step-3_reg .next-step').click(function () {
-      var pass = $('#password_reg').val().trim();
-      var verPass = $('#password_confirm_reg').val().trim();
-      if(pass === verPass){
+      var pass = $('#password_reg')
+        .val()
+        .trim();
+      var verPass = $('#password_confirm_reg')
+        .val()
+        .trim();
+      if (pass === verPass) {
         createNewUser();
         return false;
       } else {
@@ -65,18 +99,20 @@ $(document)
       }
     });
 
-    $('#email_reg').blur(function(){
-      var typedMail = document.getElementById('email_reg').value;
-      if(isValidEmail(typedMail)){
+    $('#email_reg').blur(function () {
+      var typedMail = document
+        .getElementById('email_reg')
+        .value;
+      if (isValidEmail(typedMail)) {
         $.ajax({
           type: "POST",
           url: '/api/checkemailExistence',
           data: {
             query: typedMail
           },
-          success: function(msg) {
+          success: function (msg) {
             console.log(msg);
-            if(msg){
+            if (msg) {
               $('#step-1_reg > form > div:nth-child(4) > p:nth-child(4) > span').addClass('disabled');
               Materialize.toast("Email have been used before", 3000, 'rounded');
             } else {
@@ -93,8 +129,12 @@ function createNewUser() {
     type: "POST",
     url: "/api/signup",
     data: {
-      fullname: $("#fullname_reg").val().trim(),
-      mail: $("#email_reg").val().trim(),
+      fullname: $("#fullname_reg")
+        .val()
+        .trim(),
+      mail: $("#email_reg")
+        .val()
+        .trim(),
       gender: $('#gender_reg>.option.selected')
         .text()
         .toLowerCase(),
@@ -103,7 +143,9 @@ function createNewUser() {
       currentAddress: $('#current_address_reg').val(),
       originState: $('#state_origin_reg').val(),
       originTown: $('#town_origin_reg').val(),
-      password: $('#password_reg').val().trim()
+      password: $('#password_reg')
+        .val()
+        .trim()
     },
     success: function (data) {
       $('#reg > div').addClass('hide');
@@ -116,9 +158,7 @@ function createNewUser() {
     },
     error: function (error) {
       Materialize.toast("Sorry, there was an error creating you account", 5000);
-      // window
-      // .location
-      // .reload();
+      // window .location .reload();
       $('#reg > div').addClass('hide');
       $('#reg #step-1_reg').removeClass('hide');
     }
@@ -153,12 +193,12 @@ function attemptLogin() {
   return false;
 }
 
-function attemptReset(){
+function attemptReset() {
   $('input').removeClass('shake');
   $(".loginSpinner").removeClass("hide");
   var emailReset = $('#login_id').val();
   var passReset = $('#phone_num').val();
-  if(isValidEmail(emailReset) && isDigitsOnly(passReset)) {
+  if (isValidEmail(emailReset) && isDigitsOnly(passReset)) {
     $.ajax({
       type: 'POST',
       url: '/api/forgot',
@@ -166,19 +206,19 @@ function attemptReset(){
         email: emailReset,
         phone: passReset
       },
-      success: function(data){
+      success: function (data) {
         $(".loginSpinner").addClass("hide");
         Materialize.toast(data, 3000, 'rounded');
         $('.forget-view').addClass('hide');
         $('#forget_step2').removeClass('hide');
       },
-      error: function(e){
+      error: function (e) {
         $(".loginSpinner").addClass("hide");
-        if(e.responseText === "Phone number is incorrect"){
+        if (e.responseText === "Phone number is incorrect") {
           $('#phone_num').addClass('shake');
           $('#phone_num').focus();
           Materialize.toast(e.responseText, 4000, 'rounded');
-        } else if(e.responseText === "Email doesn't exist") {
+        } else if (e.responseText === "Email doesn't exist") {
           $('#login_id').addClass('shake');
           $('#login_id').focus();
           Materialize.toast(e.responseText, 4000, 'rounded');
@@ -201,9 +241,9 @@ function proceedToChangePass() {
       code: resetKey,
       email: $('#login_id').val()
     },
-    success: function(data){
+    success: function (data) {
       console.log(data);
-      if(data){
+      if (data) {
         $('.forget-view').addClass('hide');
         $('#forget_step3').removeClass('hide');
       } else {
@@ -212,16 +252,22 @@ function proceedToChangePass() {
         $('#reset_code').focus();
       }
     },
-    error: function(e) {
+    error: function (e) {
       toast('there was an error verifying your code', 4000);
     }
   });
 }
 
 function changePassword() {
-  var pass = $('#password_reset').val().trim();
-  var verPass = $('#password_confirm_reset').val().trim();
-  if(pass !== verPass){
+  $(".loginSpinner").removeClass("hide");
+  $('input').removeClass('shake');
+  var pass = $('#password_reset')
+    .val()
+    .trim();
+  var verPass = $('#password_confirm_reset')
+    .val()
+    .trim();
+  if (pass !== verPass) {
     toast('Passwords do not match', 4000);
   } else {
     $.ajax({
@@ -232,11 +278,11 @@ function changePassword() {
         newPass: $('#password_reset').val(),
         code: $('#reset_code').val()
       },
-      success: function(data){
+      success: function (data) {
         toast(data);
         window.location.pathname = login;
       },
-      error: function(e) {
+      error: function (e) {
         toast(e.responseText);
         console.log(e);
       }
@@ -244,14 +290,76 @@ function changePassword() {
   }
 }
 
+function writeApost() {
+  $(".loginSpinner").removeClass("hide");
+  $('#oyaPost').addClass('disabled');
+  $.ajax({
+    url: "/api/writePost",
+    type: 'POST',
+    data: {
+      post: $('#toBposted').text()
+    },
+    success: function (data) {
+      $('#oyaPost').removeClass('disabled');
+      $(".loginSpinner").addClass("hide");
+      $('#toBposted').text('');
+      $('#writeModal').modal('close');
+      // FIXME: use socket to handle this!
+
+    },
+    error: function (e) {
+      $('#oyaPost').addClass('disabled');
+      $('#oyaPost').removeClass('disabled');
+      $(".loginSpinner").addClass("hide");
+    }
+  });
+}
+
+function editProfile(){
+  $(".loginSpinner").removeClass("hide");
+  var data = {};
+  data.fullname = $('#fullname_edit').val() || '';
+  data.email = $('#email_edit').val() || '';
+  data.occupation = $('#occupation_edit').val() || '';
+  data.current_address = $('#address_edit').val() || '';
+  data.phone = $('#phone_edit').val() || '';
+  data.state = $('#state_edit').val() || '';
+  data.town = $('#town_edit').val() || '';
+  data.local_gov = $('#local_gov_edit').val() || '';
+  data.party = $('#party_edit').val() || '';
+  data.fb = $('#fb_edit').val() || '';
+  data.gplus = $('#google_edit').val() || '';
+  data.tw = $('#tw_edit').val() || '';
+  data.dob = $('#dob_edit').val() || '';
+
+  console.log(data);
+  $.ajax({
+    data: data,
+    url: '/api/edit_profile',
+    type: 'patch',
+    success: function(data) {
+      $(".loginSpinner").addClass("hide");
+      toast(data);
+    },
+    error: function(e) {
+      $(".loginSpinner").addClass("hide");
+      console.log(e);
+      toast('update unsuccessful, try again');
+    }
+  });
+
+  return false;
+}
 
 function isValidEmail(email) {
   "use strict";
 
-  if (!email || email == "") return false;
+  if (!email || email == "")
+    return false;
 
   email = email.trim();
-  if (email == "" || !email) return false;
+  if (email == "" || !email)
+    return false;
   let regex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
   return regex.test(email);
 }
@@ -262,10 +370,10 @@ function isDigitsOnly(string) {
   return (!isNaN(parseInt(string)) && isFinite(string));
 }
 
-function toast(message, duration){
-  if(message){
-    if(duration){
-      Materialize.toast(message, duration,'rounded');
+function toast(message, duration) {
+  if (message) {
+    if (duration) {
+      Materialize.toast(message, duration, 'rounded');
     } else {
       Materialize.toast(message, 3000, 'rounded');
     }
@@ -273,3 +381,121 @@ function toast(message, duration){
     console.log("doing nothing");
   }
 }
+
+function hardTrim(text) {
+
+  if (!exists(text)) {
+    return ""
+  }
+  text = text
+    .replace(/^\&nbsp\;|<br?\>*/gi, "")
+    .replace(/\&nbsp\;|<br?\>$/gi, "")
+    .trim();
+
+  return text
+}
+
+function createUpdate(posterName, posterPic, posterLocalG, creationTime, postContent) {
+  var post = "";
+  post += '<div class="card-panel update">';
+  post += '<div class="head">';
+  post += '<img src="./images/abiola-4.jpg" alt="Abiola" class="profile">';
+  post += '<h4 class="creator_fullname">Ariwoola Roqeeb</h4>';
+  post += '<p class="creator_origin">Itesiwaju Local Government</p>';
+  post += '<p class="posted_when">Just now</p>';
+  post += '</div>';
+  post += '<div class="body">';
+  post += '<p>Computers and Technologies are exponentially getting more powerful and will t' +
+      'ake away millions of jobs but      creating even bigger opportunities. Companies' +
+      ' and Organisations are now virtualizing key business value chain processes into ' +
+      'Platforms and Digital networks</p>';
+  post += '</div>';
+  post += '<div class="foot">';
+  post += '<p>';
+  post += '<span class="no_of_views left post-widget">';
+  post += '<i class="icon ion-ios-eye-outline"></i>';
+  post += '1299 views';
+  post += '</span>';
+  post += '<span class="no_of_queries left post-widget">';
+  post += '<i class="icon ion-ios-chatboxes-outline"></i>';
+  post += '4 queries';
+  post += '</span>';
+  post += '</p>';
+  post += '</div>';
+  post += '</div>';
+}
+
+var hostname = window.location.hostname;
+var socket = io();
+
+socket.on('newPost', function (res) { 
+  var postData = res.postData;
+  // body, author_id, createdOn, author_pic 
+  $.ajax({
+    type: 'post',
+    url: '/api/getBasicUserData',
+    data: {
+      id: postData.author_id
+    },
+    success: function(data){
+      var author_data = data;
+      var author_name = author_data.fullname;
+      var author_localG = author_data.local_government;
+      var author_state = author_data.origin_state;
+      var author_occupation = author_data.occupation;
+      var author_pic = author_data.profile_pic;
+      var postBody = postData.body;
+      var postTime = postData.createdOn;
+
+      var post = "";
+      post += '<div class="card-panel update">';
+      post += '<div class="head">';
+      post += '<img src="' + author_pic + '" alt="' + author_name + '" class="profile">';
+      post += '<h4 class="creator_fullname">' + author_name + '</h4>';
+      post += '<p class="creator_origin">' + author_localG + ' - ' + author_state + '</p>';
+      post += '<p class="posted_when"><abbr class="timeago" title="' + postTime + '"></abbr></p>';
+      post += '</div>';
+      post += '<div class="body">';
+      post += '<p>' + postBody + '</p>';
+      post += '</div>';
+      post += '<div class="foot">';
+      post += '<p>';
+      post += '<span class="no_of_views left post-widget">';
+      post += '<i class="icon ion-ios-eye-outline"></i> &nbsp;';
+      post += '<span class="view_figure">0</span> views';
+      post += '</span>';
+      post += '<span class="no_of_queries left post-widget">';
+      post += '<i class="icon ion-ios-chatboxes-outline"></i> &nbsp;';
+      post += '<span class="queries_figure">0</span> queries';
+      post += '</span>';
+      post += '</p>';
+      post += '</div>';
+      post += '</div>';
+
+
+      $('#gbogboPost').prepend(post);
+
+
+      jQuery(".posted_when>.timeago").timeago();
+    }, 
+    error: function(error){
+      console.log(error);
+    }
+  })
+  
+  // var picUrl = "https://www.gravatar.com/avatar/ " + author_pic ;
+	// var time = new Date(res.statusData.time).toISOString();
+	// var addStatus = '<div class="post"><div class="timestamp"><abbr class="timeago" title="'+time+
+	// 			'"></abbr></div><a class="colorize" href="/users/'+res.statusData.username+
+	// 			'"><div class="smallpic"><img class="smallpic_img" src="'+res.statusData.image+
+	// 			'"/></div>	<div class="smallname">'+res.statusData.username+
+	// 			'</div></a><br><div class="statusbody">'+res.statusData.body+'</div></div>';
+  //   $('#socket').prepend(addStatus);
+
+  //   var pageuser = $('#theusername').text();
+  //   if (pageuser == res.statusData.username && pageuser != myname) {
+  //   	$('#postsOuter').prepend(addStatus);
+  //   }
+
+  //   jQuery("abbr.timeago").timeago();
+});

@@ -3,20 +3,7 @@
 </head>
 
 <body class="board">
-  <div class="navbar-fixedd">
-    <nav class="white">
-      <div class="nav-wrapper">
-        <a href="#" class="brand-logo left">
-          <img src="./images/logo_coloured.jpg" alt="Under35">
-        </a>
-        <ul class="right">
-          <li><a href="#" class="notification"><img src="./images/message_icon.jpg" alt="m"></a></li>
-          <li><a href="#" class="notification"><span class="new"></span><img src="./images/alert_icon.jpg" alt="m"></a></li>
-          <li><a href="#" class="profile"><img class="dropdown-button" data-activates='profileDrop' data-hover="false" data-belowOrigin="true" data-constrainWidth="false" src="./images/abiola-4.jpg" alt="m"></a></li>
-        </ul>
-      </div>
-    </nav>
-  </div>
+  {{> innerNav }}
   <main class="row zmb">
     <div class="container">
       <br>
@@ -26,10 +13,10 @@
             <ul class="tabs">
               <li class="tab col s2"><a href="#timeline">Timeline</a></li>
               <li class="tab col s2">
-                <a target="_self" href="profile.html">Profile</a>
+                <a target="_self" href="/profile">Profile</a>
               </li>
               <li class="tab col s2">
-                <a target="_self" href="#">Followers</a>
+                <a target="_self" href="/followers">Followers</a>
               </li>
             </ul>
           </div>
@@ -37,36 +24,7 @@
         <div id="timeline" class="board-layout col s12 row">
           <br>
           <div class="col s12 m4 l3">
-            <div class="card">
-              <div class="card-content">
-                <img src="./images/abiola-4@2x.jpg" alt="" class="profile">
-                <h4 class="user_fullname">Abiola Odunayi</h4>
-                <h5 class="user_profession">UX designer</h5>
-                <p class="user_origin">Itesiwaju Local Goverment - Oyo state</p>
-                <img src="./images/pdp_small.jpg" alt="" class="user_party">
-              </div>
-              <div class="user_stats">
-                <div class="user_stat">
-                  <p class="no">300</p>
-                  <p class="desc">Followers</p>
-                </div>
-                <div class="user_stat queries">
-                  <p class="no">30</p>
-                  <p class="desc">Queries</p>
-                </div>
-              </div>
-              <ul class="social">
-                <li>
-                  <a href="#"><img src="./images/facebook.svg" alt=""> &nbsp; www.facebook.com/abiole3</a>
-                </li>
-                <li>
-                  <a href="#"><img src="./images/google.svg" alt=""> &nbsp; abioe3u@gmail.com</a>
-                </li>
-                <li>
-                  <a href="#"><img src="./images/twitter.svg" alt=""> &nbsp; www.twitter.com/abeuola</a>
-                </li>
-              </ul>
-            </div>
+            {{> profileCard }}
           </div>
           <div class="col s12 m8 l9">
             <div class="card-panel write">
@@ -75,47 +33,122 @@
               </div>
               <p class="guide">Write something…</p>
             </div>
-            <div class="card-panel update">
-              <div class="head">
-                <img src="./images/abiola-4.jpg" alt="Abiola" class="profile">
-                <h4 class="creator_fullname">Ariwoola Roqeeb</h4>
-                <p class="creator_origin">Itesiwaju Local Government</p>
-                <p class="posted_when">Just now</p>
-              </div>
-              <div class="body">
-                <p>Computers and Technologies are exponentially getting more powerful and will take away millions of jobs but
-                  creating even bigger opportunities. Companies and Organisations are now virtualizing key business value
-                  chain processes into Platforms and Digital networks</p>
-              </div>
-              <div class="foot">
-                <p>
-                  <span class="no_of_views left post-widget">
+            
+            <div id="gbogboPost">
+              {{#each posts}}
+              <div class="card-panel update">
+                <div class="head">
+                  <img src="./images/abiola-4.jpg" alt="Abiola" class="profile">
+                  <h4 class="creator_fullname">Ariwoola Roqeeb</h4>
+                  <p class="creator_origin">Itesiwaju Local Government</p>
+                  <p class="posted_when">Just now</p>
+                </div>
+                <div class="body">
+                  <p>Computers and Technologies are exponentially getting more powerful and will take away millions of jobs
+                    but creating even bigger opportunities. Companies and Organisations are now virtualizing key business
+                    value chain processes into Platforms and Digital networks</p>
+                </div>
+                <div class="foot">
+                  <p>
+                    <span class="no_of_views left post-widget">
                     <i class="icon ion-ios-eye-outline"></i>
                     1299 views
                   </span>
-                  <span class="no_of_queries left post-widget">
+                    <span class="no_of_queries left post-widget">
                     <i class="icon ion-ios-chatboxes-outline"></i>
                     4 queries
                   </span>
-                </p>
+                  </p>
+                </div>
               </div>
+              {{/each}}
             </div>
+
           </div>
         </div>
       </div>
     </div>
   </main>
-  <ul id='profileDrop' class='dropdown-content' style="top: 60px !important;">
-    <li><a href="/logout" style="line-height: 40px;margin-top: 0px;text-align: center;">Logout</a></li>
-  </ul>
 
   <div id="writeModal" class="modal">
     <div class="modal-content">
-      <!-- <h4>Modal Header</h4> -->
-      <p>A bunch of text</p>
+      <div class="modal-content__head">
+        <p class="green-text text-darken-1">New Post</p>
+      </div>
+      <div class="modal-content__body">
+        <!-- <p class="editable__placeholder"></p> -->
+        <img src="{{ userDetails.profile_pic }}" alt="Writer Image" id="writerPic">
+        <div id="toBposted" contenteditable="true" placeholder='We can&rsquo;t hear until you say it'></div>
+      </div>
     </div>
     <div class="modal-footer">
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Post</a>
+      <a href="#!" class="modal-action waves-effect waves-light btn-flat green white-text" id="oyaPost">Post</a>
     </div>
   </div>
-  {{> footer }}
+  
+  {{> profileMenu }} {{> footer }}
+
+
+  <script>
+    $(document).ready(function(){
+      $.ajax({
+        type:'post',
+        url: '/api/fetchPosts',
+        success: function(datas) {
+          datas.forEach(function(onePost) {
+            console.log(onePost);
+            $.ajax({
+              url: '/api/getBasicUserData',
+              data: {
+                id: onePost.author_id
+              },
+              type: 'post',
+              success: function(author_data){
+                var postBody = onePost.body;
+                var author_name = author_data.fullname;
+                var author_localG = author_data.local_government;
+                var author_state = author_data.origin_state;
+                var author_occupation = author_data.occupation;
+                var author_pic = author_data.profile_pic;
+                var postTime = onePost.createdOn;
+
+                var post = "";
+                post += '<div class="card-panel update">';
+                post += '<div class="head">';
+                post += '<img src="' + author_pic + '" alt="' + author_name + '" class="profile">';
+                post += '<h4 class="creator_fullname">' + author_name + '</h4>';
+                post += '<p class="creator_origin">' + author_localG + ' - ' + author_state + '</p>';
+                post += '<p class="posted_when"><abbr class="timeago" title="' + postTime + '"></abbr></p>';
+                post += '</div>';
+                post += '<div class="body">';
+                post += '<p>' + postBody + '</p>';
+                post += '</div>';
+                post += '<div class="foot">';
+                post += '<p>';
+                post += '<span class="no_of_views left post-widget">';
+                post += '<i class="icon ion-ios-eye-outline"></i> &nbsp;';
+                post += '<span class="view_figure">0</span> views';
+                post += '</span>';
+                post += '<span class="no_of_queries left post-widget">';
+                post += '<i class="icon ion-ios-chatboxes-outline"></i> &nbsp;';
+                post += '<span class="queries_figure">0</span> queries';
+                post += '</span>';
+                post += '</p>';
+                post += '</div>';
+                post += '</div>';
+
+
+                $('#gbogboPost').prepend(post);
+              },
+              error: function(err) {
+                console.log(err);
+              }
+            })
+          });
+        },
+        error: function(error) {
+          Materialize.toast('please check your connection', 4000, 'rounded');
+        }
+      })
+    })
+  </script>

@@ -120,11 +120,17 @@
 
   <div id="writeModal" class="modal">
     <div class="modal-content">
-      <!-- <h4>Modal Header</h4> -->
-      <p>A bunch of text</p>
+      <div class="modal-content__head">
+          <p class="green-text text-darken-1">New Post</p>
+      </div>
+      <div class="modal-content__body">
+        <!-- <p class="editable__placeholder"></p> -->
+        <img src="./images/abiola-4.jpg" alt="Writer Image" id="writerPic">
+        <div id="toBposted" contenteditable="true" placeholder='We can&rsquo;t hear until you say it'></div>
+      </div>
     </div>
     <div class="modal-footer">
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Post</a>
+      <a href="#!" class="modal-action waves-effect waves-light btn-flat green white-text" id="oyaPost">Post</a>
     </div>
   </div>
 

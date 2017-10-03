@@ -73,6 +73,12 @@ body.board nav .dropdown-content li>span {
 	font-size: 5.5rem;
 }
 
+.navbar-fixedd {
+	position: fixed;
+  width: 100%;
+  top: 0;
+}
+
 ul.social i.icon {
 	margin-right: 1rem;
 }
@@ -492,9 +498,9 @@ footer ul.social li img {
 }
 
 .access-panel {
-  max-width: 372px;
-  margin: 7% auto 0;
-  display: block;
+	max-width: 372px;
+	margin: 7% auto 0;
+	display: block;
 }
 
 .zmb {
@@ -684,6 +690,10 @@ textarea.materialize-textarea {
 	box-shadow: 0 0 0;
 }
 
+body.board {
+	padding-top: 3.5rem;
+}
+
 body.board .navbar-fixedd nav {
 	box-shadow: 0 0 0;
 }
@@ -702,19 +712,22 @@ body.board .navbar-fixedd nav {
 }
 
 .navbar-fixedd nav a.profile img {
-	max-width: 2.9rem;
-	margin-top: 10%;
-	padding-bottom: 0.5rem;
+  max-width: 2.9rem;
+  margin-top: 10%;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  padding-bottom: 0.5rem;
 }
 
 .navbar-fixedd nav li a span.new {
-	width: 14px;
-	height: 14px;
-	background-color: #ff3737;
-	border-radius: 50%;
-	position: absolute;
-	top: 10%;
-	right: 25%;
+  width: 12px;
+  height: 12px;
+  background-color: #ff3737;
+  border-radius: 50%;
+  position: absolute;
+  top: 15%;
+  right: 25%;
 }
 
 .navbar-fixedd nav ul a {
@@ -738,7 +751,9 @@ body.board main>.container {
 }
 
 .tab-fence .tabs {
-	background: transparent !important;
+  background: transparent !important;
+  position: relative;
+  right: 5rem;
 }
 
 .tab-fence .tabs .indicator {
@@ -758,6 +773,7 @@ body.board main>.container {
 	width: fit-content;
 	padding: 0 12px;
 	margin: 0 2rem;
+	position: relative;
 }
 
 .tab-fence .tabs a.active {
@@ -771,10 +787,13 @@ body.board .card-panel {
 }
 
 .board-layout img.profile {
-	max-width: 121px;
-	max-height: 121px;
-	display: block;
-	margin: auto;
+  max-width: 121px;
+  max-height: 121px;
+  display: block;
+  margin: auto;
+  border-radius: 50%;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
 }
 
 .board-layout h4.user_fullname {
@@ -809,134 +828,148 @@ body.board .card-panel {
 }
 
 .board-layout .user_stat {
-  width: 49%;
-  display: inline-block;
+	width: 49%;
+	display: inline-block;
 }
 
 .board-layout .user_stat.queries {
 	border-left: solid 1px #f6f6f6;
 }
+
 .board-layout .user_stat p.no {
 	font-size: 18px;
 	font-weight: 600;
 	text-align: center;
 	color: #4a4a4a;
 }
+
 .board-layout .user_stat p.desc {
 	font-size: 12px;
 	text-align: center;
 	color: #cccccc;
 }
+
 .board-layout ul.social {
-  padding-bottom: 1rem;
+	padding-bottom: 1rem;
 }
+
 .board-layout ul.social li a {
-  padding: 10px 40px;
-  font-size: 10px;
-  text-align: left;
-  color: #abafb2;
-  display: flex;
-  line-height: 180%;
+	padding: 10px 20px;
+	font-size: 10px;
+	text-align: left;
+	color: #abafb2;
+	display: flex;
+	line-height: 180%;
 }
+
 .board-layout ul.social li a img {
-	width:19px;
+	width: 19px;
 	height: 19px;
 	display: inline-block;
 }
 
 .write {
-  margin-bottom: 2rem;
-  cursor: pointer;
+	margin-bottom: 2rem;
+	cursor: pointer;
 }
 
 .write .tab_fence {
-  border-bottom: solid 2px #f0f0f0;
-  padding-bottom: 1rem;
+	border-bottom: solid 2px #f0f0f0;
+	padding-bottom: 1rem;
 }
 
-.write > .tab_fence > a {
-  font-size: 12px;
-  font-weight: 600;
-  text-align: left;
-  color: #4a4a4a !important;
-  padding: 0.5rem 1rem;
+.write>.tab_fence>a {
+	font-size: 12px;
+	font-weight: 600;
+	text-align: left;
+	color: #4a4a4a !important;
+	padding: 0.5rem 1rem;
 }
 
-.write > .tab_fence > a.active {
-  border-bottom: #55ba6f solid 2px;
-  padding-bottom: 1.2rem;
+.write>.tab_fence>a.active {
+	border-bottom: #55ba6f solid 2px;
+	padding-bottom: 1.2rem;
 }
 
 .write p.guide {
-  font-size: 12px;
-  line-height: 1.67;
-  text-align: justify;
-  color: #a7aaad;
-  margin: 2rem 0.5rem 1.5rem 1rem;
+	font-size: 12px;
+	line-height: 1.67;
+	text-align: justify;
+	color: #a7aaad;
+	margin: 2rem 0.5rem 1.5rem 1rem;
 }
 
 .update.card-panel {
-  padding: 25px 2rem 3rem;
+	padding: 25px 2rem 3rem;
 }
 
 .update .head {
-  position: relative;
-  display: flow-root;
-  border-bottom: #ededed solid 2px;
-  padding-bottom: 1rem;
+	position: relative;
+	display: flow-root;
+	border-bottom: #ededed solid 2px;
+	padding-bottom: 1rem;
 }
+
 .update .head img.profile {
-  width: 51px;
-  display: inline-block;
-  float: left;
+	width: 51px;
+	display: inline-block;
+	float: left;
 }
+
 .update .head .creator_fullname {
-  font-size: 14px;
-  font-weight: 600;
-  text-align: left;
-  color: #4a4a4a;
-  display: inline-block;
-  margin-top: -1rem;
-  margin-left: 1rem;
+	font-size: 14px;
+	font-weight: 600;
+	text-align: left;
+	color: #4a4a4a;
+	display: inline-block;
+	margin-top: -1rem;
+	margin-left: 1rem;
 }
+
 .update .head .creator_origin {
-  font-size: 10px;
-  text-align: left;
-  color: #acacac;
-  margin-top: -0.5rem;
-  margin-left: 4.3rem;
+	font-size: 10px;
+	text-align: left;
+	color: #acacac;
+	margin-top: -0.5rem;
+	margin-left: 4.3rem;
 }
+
 .update .head .posted_when {
-  font-size: 12px;
-  text-align: left;
-  color: #4a4a4a;
-  position: absolute;
-  right: 2%;
-  top: 1%;
+	font-size: 12px;
+	text-align: left;
+	color: #4a4a4a;
+	position: absolute;
+	right: 2%;
+	top: 1%;
 }
+
 .update .body {
-  padding: 0.5rem 0.5rem 2rem;
-  border-bottom: 2px solid #ededed;
+	padding: 0.5rem 0.5rem 2rem;
+	border-bottom: 2px solid #ededed;
 }
+
 .update .body p {
 	font-size: 12px;
 	text-align: left;
 	color: #acacac;
 }
+
 .update .foot {
 	padding: 0.5rem 0.5rem 0;
 }
+
 .update .foot .post-widget {
-  font-size: 12px;
-  text-align: left;
-  color: #4a4a4a;
-  margin-right: 2rem;
+	font-size: 12px;
+	text-align: left;
+	color: #4a4a4a;
+	margin-right: 2rem;
 }
 
-.update .foot p > .no_of_views i.icon {
+.update .foot p>.no_of_views i.icon {
 	font-size: 14px;
-  margin-right: 1px;
+	margin-right: 1px;
 }
+
 .update .title {
 	font-size: 14px;
 	font-weight: 600;
@@ -944,13 +977,14 @@ body.board .card-panel {
 	color: #4a4a4a;
 	float: left;
 }
+
 .update .title+.btn.follow {
-  font-size: 10px;
-  font-weight: 600;
-  text-align: center;
-  color: #ffffff;
-  height: 30px;
-  line-height: 100%;
+	font-size: 10px;
+	font-weight: 600;
+	text-align: center;
+	color: #ffffff;
+	height: 30px;
+	line-height: 100%;
 	border-radius: 2rem;
 	margin-top: 0.5rem;
 }
@@ -977,31 +1011,149 @@ body.board .card-panel {
 }
 
 .update .body .job-time_span {
-  font-size: 12px;
-  line-height: 1.67px;
-  text-align: justify;
-  color: #b1b4b6;
-  margin-bottom: 1.5rem;
+	font-size: 12px;
+	line-height: 1.67px;
+	text-align: justify;
+	color: #b1b4b6;
+	margin-bottom: 1.5rem;
 }
 
 .update .body .job-logo {
-  width: 45px;
-  top: 25px;
-  position: absolute;
-  right: 0;
+	width: 45px;
+	top: 25px;
+	position: absolute;
+	right: 0;
 }
 
 .update .body .job-details {
-  font-size: 12px;
-  line-height: 1.67;
-  text-align: justify;
-  color: #a7aaad;
-  margin-top: 1rem;
+	font-size: 12px;
+	line-height: 1.67;
+	text-align: justify;
+	color: #a7aaad;
+	margin-top: 1rem;
 }
 
+.modal .modal-content {
+	padding: 0px;
+	border-radius: 5px;
+}
 
+.modal .modal-content .modal-content__head {
+	background: #E0E0E0;
+	padding: 0.01rem 1rem;
+	color: black;
+	font-weight: 600;
+	border-radius: 5px 5px 0 0;
+}
 
+.modal .modal-content .modal-content__head p {
+	font-size: 1.5rem;
+  line-height: 5px;
+}
 
+.modal .modal-content .modal-content__body {
+	position: relative;
+	padding: 0.1rem 0.5rem 0.1rem 4.5rem;
+}
+
+.modal .modal-content #toBposted {
+  font-size: 18px !important;
+  font-weight: 400;
+  letter-spacing: 0;
+  border: 0;
+  line-height: 28px !important;
+  padding-top: 1.3rem;
+  padding-left: 0.5rem;
+  white-space: pre-wrap;
+  overflow-y: auto;
+  max-height: 20rem;
+}
+
+/* #toBposted[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
+	content: attr(data-placeholder);
+	float: left;
+	margin-left: 2px;
+	color: #b3b3b3;
+} */
+
+#toBposted[placeholder]:empty:before {
+	content: attr(placeholder);
+	/* color: #555; */
+	float: left;
+	margin-left: 2px;
+	color: #b3b3b3;
+}
+
+#toBposted[placeholder]:empty:focus:before {
+	content: "";
+}
+
+.modal #toBposted * {
+	font-family: 'Open Sans', sans-serif;
+}
+
+.modal .modal-content #toBposted:focus,
+.modal .modal-content #toBposted:active {
+	border: 0;
+	outline: 0;
+}
+
+.modal .modal-content .editable__placeholder {
+	font-size: 25px;
+	font-weight: 500;
+	letter-spacing: 0;
+	color: #9E9E9E;
+	position: absolute;
+	top: -5px;
+	left: 5rem;
+}
+
+.modal .modal-content #writerPic {
+  border-radius: 50%;
+  height: 3rem;
+  width: 3rem;
+  position: fixed;
+  top: 4.5rem;
+  left: 1rem;
+}
+
+.round-btn {
+	border-radius: 4rem;
+}
+
+.follow-action {
+	position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.followers .card-panel {
+	position: relative;
+}
+
+.followers .update .head {
+  margin-bottom: 2rem;
+}
+
+.top.btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+}
+
+label {
+	text-transform: uppercase;
+}
+
+#profileDrop li a {
+	line-height: 40px;
+  margin-top: 0px;
+  text-align: center;
+}
+
+.container {
+	min-width: 80%
+}
 
 
 @media only screen and (min-width: 601px) {

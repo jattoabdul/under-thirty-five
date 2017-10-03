@@ -1,4 +1,6 @@
 const express = require("express"),
+  http = require('http'),
+  socketio = require('socket.io'),
   router = express.Router(),
   helmet = require('helmet'),
   hbs = require('hbs'),
@@ -60,6 +62,78 @@ const GetPosts = () => {
     });
 };
 
+const GetUserDetails = (email) => {
+  return User
+    .findOne({email})
+    .lean()
+    .exec((err, doc) => {
+      if (err) {
+        console.log(JSON.stringify(err, undefined, 2));
+        return err;
+      } else {
+        return doc;
+      }
+    });
+};
+
+const FetchUsers = (lmt = 0) => {
+  return User.find({}, 'fullname occupation local_government email profile_pic')
+    .limit(lmt)
+    .exec((err, data) => {
+      if (!err) {
+        return data;
+      } else {
+        console.log(JSON.stringify(err, null, 2));
+        return err;
+      }
+    });
+};
+
+const FetchNewPosts = (lmt = 20) => {
+  Post.aggregate([
+    { "$match": {} },
+    { "$sort": { "updated_at": -1 } },
+    { "$limit": lmt },
+    { "$lookup": {
+      "localField": "author_id",
+      "from": "users",
+      "foreignField": "_id",
+      "as": "authorinfo"
+    } },
+    { "$unwind": "$authorinfo" },
+    { "$project": { 
+      "body": 1,
+      "createdOn": 1,
+      "updated_at": 1,
+      "date": 1,
+      "views": 1,
+      "authorinfo.fullname": 1,
+      "authorinfo.local_government": 1,
+      "authorinfo.origin_state": 1,
+      "authorinfo.profile_pic": 1
+    }}
+  ]).exec((err, doc) => {
+    if(!err) {
+      console.log(doc);
+      return doc;
+    } else {
+      console.log(JSON.stringify(err, null, 2));
+      return err;
+    }
+  });
+};
+
+/**
+ * Get some user details
+ * @param {String} email
+ * @param {Array} selects
+ * @return Promise of User Data
+ */
+const GetSomeUserDetails = (email, selects) => {
+  let toPick = selects.join(' ');
+  return User.findOne({email})
+}
+
 /**
  * generate a Picture profile link via gravatar
  * function accepts email, hash it(md5), then generate a gravatar link with it
@@ -67,7 +141,10 @@ const GetPosts = () => {
  * @return url or false if email supplied is invalid
  */
 const generateProfilepicLink = (email) => {
-  let hash = crypto.createHash('md5').update(email).digest('hex');
+  let hash = crypto
+    .createHash('md5')
+    .update(email)
+    .digest('hex');
   if (validator.isEmail(email)) {
     return `https://www.gravatar.com/avatar/${hash}`;
   } else {
@@ -80,13 +157,12 @@ const generateProfilepicLink = (email) => {
  * @return {String} random key
  */
 const generateKey = () => {
-  var key = shortid.generate();
-  while(!(validator.isAlphanumeric(key))) {
+  let key = shortid.generate();
+  while (!(validator.isAlphanumeric(key))) {
     key = shortid.generate();
   }
   return key;
 };
-
 
 /**
  * logout user
@@ -140,7 +216,7 @@ hbs.registerHelper('getCurrentYear', () => {
 hbs.registerHelper('if_eq', function (a, b, opts) {
   if (a == b) // Or === depending on your needs
     return opts.fn(this);
-  else
+  else 
     return opts.inverse(this);
   }
 );
@@ -159,11 +235,11 @@ router.get('/', (req, res) => {
 
 router.get('/login', (req, res) => {
   if (req.session.user) {
-    res.redirect('/timeline')
+    res.redirect('/timeline');
   } else {
     res.render('login', {title: "Under35 | Sign in"});
   }
-})
+});
 
 router.get('/register', (req, res) => {
   res.render('register', {title: "Under35 | Sign up"});
@@ -186,14 +262,21 @@ router.post('/api/login', (req, res) => {
     email: credential
   }, (err, data) => {
     if (err) {
-      res.sendStatus(401);
+      res
+        .status(401)
+        .send("there was an error authenticating you");
+      console.log(JSON.stringify(err, null, 2));
     } else if (data && data !== null) {
       let pass = data.password;
       if (bcrypt.compareSync(password, pass)) {
+        // console.log(JSON.stringify(data, null, 2));
         let user = {
+          email: data.email,
+          name: data.fullname,
           id: data._id,
-          name: data.fullname
+          pic: data.profile_pic
         };
+        console.log(user);
         req.session.user = user;
         req.session.user.expires = new Date(Date.now() + (3 * 24 * 3600 * 1000));
         User.findOneAndUpdate(data._id, {
@@ -271,7 +354,9 @@ router.post('/api/signup', (req, res) => {
         newUser
           .save()
           .then(() => {
-            res.status(200).send('Welcome on board!');
+            res
+              .status(200)
+              .send('Welcome on board!');
           })
           .catch(err => {
             console.log(JSON.stringify(err, undefined, 2));
@@ -385,10 +470,12 @@ router.post('/api/change_password/', (req, res) => {
       .status(200)
       .send('you don\'t have to tamper with the reset code please');
   } else {
-    User.findOne({email},'passResetKey', (err, rez) => {
+    User.findOne({
+      email
+    }, 'passResetKey', (err, rez) => {
       console.log(rez.passResetKey, code);
-      if(!err){
-        if(rez.passResetKey === code){
+      if (!err) {
+        if (rez.passResetKey === code) {
           const saltRounds = 5;
           bcrypt.hash(newPass, saltRounds, (error, hash) => {
             if (!error) {
@@ -415,11 +502,15 @@ router.post('/api/change_password/', (req, res) => {
             }
           });
         } else {
-          res.status(400).send("incorrect code supplied");
+          res
+            .status(400)
+            .send("incorrect code supplied");
         }
       } else {
         console.log(JSON.stringify(err, undefined, 2));
-        res.status(500).send("Server could not verify your reset code");
+        res
+          .status(500)
+          .send("Server could not verify your reset code");
       }
     });
   }
@@ -437,10 +528,12 @@ router.post('/api/change_password/', (req, res) => {
       .status(200)
       .send('you don\'t have to tamper with the reset code please');
   } else {
-    User.findOne({email},'passResetKey', (err, rez) => {
+    User.findOne({
+      email
+    }, 'passResetKey', (err, rez) => {
       console.log(rez.passResetKey, code);
-      if(!err){
-        if(rez.passResetKey === code){
+      if (!err) {
+        if (rez.passResetKey === code) {
           const saltRounds = 5;
           bcrypt.hash(newPass, saltRounds, (error, hash) => {
             if (!error) {
@@ -466,34 +559,50 @@ router.post('/api/change_password/', (req, res) => {
             }
           });
         } else {
-          res.status(400).send("incorrect code supplied");
+          res
+            .status(400)
+            .send("incorrect code supplied");
         }
       } else {
         console.log(JSON.stringify(err, undefined, 2));
-        res.status(500).send("Server could not verify your reset code");
+        res
+          .status(500)
+          .send("Server could not verify your reset code");
       }
     });
   }
 })
 
 router.post('/api/check_reset_code', (req, res) => {
-  let { code, email } = req.body;
-  if(code && email){
-    if(!(validator.isEmail(email))){
-      res.status(400).send('Email is invalid');
-    } else if(!(validator.isAlphanumeric(code))) {
-      res.status(400).send('Oga! try again');
+  let {code, email} = req.body;
+  if (code && email) {
+    if (!(validator.isEmail(email))) {
+      res
+        .status(400)
+        .send('Email is invalid');
+    } else if (!(validator.isAlphanumeric(code))) {
+      res
+        .status(400)
+        .send('Oga! try again');
     } else {
-      User.findOne({email}, 'passResetKey',(err, rez) => {
-        if(code === rez.passResetKey) {
-          res.status(200).send(true);
+      User.findOne({
+        email
+      }, 'passResetKey', (err, rez) => {
+        if (code === rez.passResetKey) {
+          res
+            .status(200)
+            .send(true);
         } else {
-          res.status(400).send(false);
+          res
+            .status(400)
+            .send(false);
         }
       })
     }
   } else {
-    res.status(400).send('Email and password must be supplied');
+    res
+      .status(400)
+      .send('Email and password must be supplied');
   }
 })
 
@@ -537,18 +646,238 @@ app.get('/logout', logout);
 
 // protected pages
 router.get('/timeline', (req, res) => {
-  res.render('timeline', {title: "Under35 | Timeline"})
-})
+  let userInfo = req.session.user;
+  Promise
+    .all([GetUserDetails(userInfo.email), FetchNewPosts()])
+    .then(datas => {
+      let userDetails = datas[0];
+      let posts = datas[1];
+      if (userDetails.followers) {
+        userDetails.followersCount = userDetails.followers.length
+      } else {
+        userDetails.followersCount = 0;
+      }
+      if (!userDetails.no_of_queries) 
+        userDetails.no_of_queries = 0;
+      
+      res.render('timeline', {
+        title: "Under35 | Timeline",
+        userDetails, posts
+      })
+    });
+});
 
 router.get('/profile', (req, res) => {
-  res.render('profile', {title: "Under35 | Profile"})
-})
+  let userInfo = req.session.user;
+  Promise
+    .all([GetUserDetails(userInfo.email)])
+    .then(datas => {
+      let userDetails = datas[0];
+      if (userDetails.followers) {
+        userDetails.followersCount = userDetails.followers.length
+      } else {
+        userDetails.followersCount = 0;
+      }
+      if (!userDetails.no_of_queries) 
+        userDetails.no_of_queries = 0;
+      
+      res.render('profile', {
+        title: "Under35 | Profile",
+        userDetails
+      })
+    });
+});
 
 router.get('/followers', (req, res) => {
-  res.render('timeline', {title: "Under35 | Followers"});
-})
+  let userInfo = req.session.user;
+  Promise.all([
+    GetUserDetails(userInfo.email),
+    FetchUsers(20)
+  ]).then(datas => {
+    let userDetails = datas[0];
+    let Users = datas[1];
+    if (userDetails.followers) {
+      userDetails.followersCount = userDetails.followers.length
+    } else {
+      userDetails.followersCount = 0;
+    }
+    if (!userDetails.no_of_queries) 
+      userDetails.no_of_queries = 0;
+    
+    res.render('followers', {
+      title: "Under35 | Followers",
+      userDetails,
+      Users
+    });
+  });
+});
+
+router.get('/edit_profile', (req, res) => {
+  let userInfo = req.session.user;
+
+  let userName = userInfo.name;
+  let userEmail = userInfo.email;
+
+  Promise
+    .all([GetUserDetails(userEmail)])
+    .then(datas => {
+      let user_detail = datas[0];
+      let {
+        fullname,
+        email,
+        occupation,
+        current_address,
+        phone_number,
+        origin_state,
+        origin_town,
+        local_government,
+        party,
+        fb_id,
+        tw_id,
+        gPlus_id,
+        date_of_birth
+      } = user_detail;
+
+      res.render('edit_profile', {
+        title: 'Edit Profile',
+        details: user_detail
+      });
+    });
+});
 
 // protected APIs
+router.patch('/api/edit_profile', (req, res) => {
+  let {
+    fullname,
+    email,
+    occupation,
+    current_address,
+    phone,
+    state,
+    town,
+    local_gov,
+    party,
+    fb,
+    gplus,
+    tw,
+    dob
+  } = req.body;
+
+  update = {};
+  if (fullname) {
+    update.fullname = fullname;
+  }
+  if (email && validator.isEmail(email)) {
+    update.email = email;
+  }
+  if (occupation) {
+    update.occupation = occupation;
+  }
+  if (current_address) {
+    update.current_address = current_address;
+  }
+  if (phone) {
+    update.phone_number = phone;
+  }
+  if (state) {
+    update.origin_state = state;
+  }
+  if (town) {
+    update.origin_town = town;
+  }
+  if (local_gov) {
+    update.local_government = local_gov;
+  }
+  if (party) {
+    update.party = party;
+  }
+  if (fb) {
+    update.fb_id = fb;
+  }
+  if (gplus) {
+    update.gPlus_id = gplus;
+  }
+  if (tw) {
+    update.tw_id = tw;
+  }
+  if (dob) {
+    update.date_of_birth = dob;
+  }
+  User.findOneAndUpdate({
+    email
+  }, update, (err, data) => {
+    if (!err) {
+      res
+        .status(200)
+        .send("Your data has been successfully updated!");
+    } else {
+      res
+        .status(500)
+        .send("there was an error updating your data");
+    }
+  })
+});
+router.post('/api/profile', (req, res) => {
+  let lmt = req.body.limit
+  User.find({}, 'fullname occupation local_government email')
+    .limit(lmt)
+    .exec((err, data) => {
+      res
+        .status(200)
+        .send(data);
+    })
+})
+router.post('/api/writePost', (req, res) => {
+  if (req.session.user) {
+    var body = req.body.post;
+    var email = req.session.user.email;
+    var author_id = req.session.user.id;
+    var user_pic = req.session.user.id;
+    var postData = {
+      body, author_id, createdOn: new Date().getTime()
+    };
+    console.log('newPost', JSON.stringify(postData, null, 2));
+
+    let newPost = new Post(postData)
+    newPost.save().then(() => {
+        console.log(req.session.user.name + ' has posted a new status');
+        postData.author_pic = user_pic;
+        io
+          .sockets
+          .emit('newPost', {postData});
+        res.status(200).send("Post successfully broadcasted");
+    }).catch(err => {
+      console.log("Post error:", JSON.stringify(err, null, 2));
+      res.status(500).send(err);
+    });
+  } else {
+    res.redirect('/login');
+  }
+});
+router.post('/api/getBasicUserData', (req, res) => {
+  if(req.session.user) {
+    var userID = req.body.id;
+    User.findById(userID,'profile_pic fullname occupation origin_state local_government', (err, data) => {
+      if(!err) {
+        res.status(200).send(data);
+      } else {
+        console.log(JSON.stringify(err, null, 2));
+        res.status(500).send(err);
+      }
+    });
+  }
+});
+router.post('/api/fetchPosts', (req, res) => {
+  var lmt = req.body.limit || 20;
+  Post.find({}).limit().exec((err, doc) => {
+    if(!err){
+      res.status(200).send(doc);
+    } else {
+      console.log(JSON.stringify(err, null, 2));
+      res.status(500).send(err);
+    }
+  })
+})
 router.put('/api/changePass/onDash', (req, res) => {
   let username = req.session.user.username;
   let newPass = req.body.newpass;
@@ -571,33 +900,8 @@ router.put('/api/changePass/onDash', (req, res) => {
   })
 });
 
-router.put('/api/changeDetails', (req, res) => {
-  let username = req.session.user.username;
-
-  let newfname = req.body.firstname;
-  let newlname = req.body.lastname;
-  let newEmail = req.body.email;
-
-  User.findOneAndUpdate({
-    username: username
-  }, {
-    firstname: newfname,
-    lastname: newlname,
-    email: newEmail
-  }, (err, data) => {
-    if (!err) {
-      console.log(JSON.stringify(data, undefined, 2));
-      res.send({message: 'update successful', code: 'OK'});
-      req.session.user.name = data.fullname;
-    } else {
-      console.log(JSON.stringify(err, undefined, 2));
-      res.send({message: 'update failed', code: 'NOT_OK'});
-    }
-  });
-});
-
 router.post('/api/upload/image', fileParser, (req, res) => {
-  var imageFile = req.files.file;
+  let imageFile = req.files.file;
   cloudinary
     .uploader
     .upload(imageFile.path, (result) => {
@@ -714,7 +1018,10 @@ router.delete('/api/deletePost', (req, res) => {
 
 app.use(router);
 
-const port = app.set('PORT', process.env.PORT || 8080);
-app.listen(app.get('PORT'), () => {
+const server = http.createServer(app);
+const io = socketio(server);
+const port = app.set('PORT', process.env.PORT || config.port);
+
+server.listen(app.get('PORT'), () => {
   console.log(`server running on port ${app.get('PORT')}`);
 });

@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose'),
+  crypto = require('crypto'),
+  Schema = mongoose.Schema;
 
-var userSchema = new Schema({
+let userSchema = new Schema({
   fullname: {
     type: String,
     required: false,
@@ -14,6 +14,9 @@ var userSchema = new Schema({
     trim: true,
     unique: true,
     lowercase: true
+  },
+  profile_pic : {
+    type: String
   },
   password: {
     type: String,
@@ -31,6 +34,20 @@ var userSchema = new Schema({
     type: String,
     required: true
   },
+  occupation: {
+    type: String
+  },
+  local_government: String,
+  party: String,
+  summary: String,
+  no_of_queries: Number,
+  followers: [{name: String, occupation: String, local_government: String, profile_url: String}],
+  education: [{institution: String, programe: String, startDate: Number, endDate: Number}],
+  professional_experience: [{post: String, where: String, startDate: Number, endDate: Number}],
+  activities_societies: [{course: String, where: String, details: String, startDate: Number, endDate: Number, reference_link: String}],
+  fb_id: String,
+  gPlus_id: String,
+  tw_id: String,
   phone_number: {
     type: String
   },
@@ -65,15 +82,11 @@ var userSchema = new Schema({
   }
 }, { runSettersOnQuery: true });
 
-// userSchema.methods.validatePassword = function (pswd) {
-//   bcrypt.compareSync(password, pswd);
-//   return this.password === pswd;
-// };
-
 userSchema.pre('save', function(next) {
   this.email = this.email.toLowerCase();
 
-  // this.fullname = this.firstname + ' ' + this.lastname;
+  let hash = crypto.createHash('md5').update(this.email).digest('hex');
+  this.profile_pic = `https://www.gravatar.com/avatar/${hash}`;
 
   var currentDate = new Date().valueOf();
   this.updated_at = currentDate;

@@ -1,0 +1,30 @@
+<div class="card">
+  <div class="card-content">
+    <img src="{{ userDetails.profile_pic}}?s=200" alt="" class="profile">
+    <h4 class="user_fullname">{{ userDetails.fullname }}</h4>
+    <h5 class="user_profession">{{{ userDetails.occupation }}}</h5>
+    <p class="user_origin">{{{ userDetails.local_government }}} {{#if userDetails.origin_state }}- {{ userDetails.origin_state }}{{/if}}</p>
+    <img src="./images/pdp_small.jpg" alt="" class="user_party">
+  </div>
+  <div class="user_stats">
+    <div class="user_stat">
+      <p class="no">{{ userDetails.followersCount }}</p>
+      <p class="desc">Followers</p>
+    </div>
+    <div class="user_stat queries">
+      <p class="no">{{ userDetails.no_of_queries }}</p>
+      <p class="desc">Queries</p>
+    </div>
+  </div>
+  <ul class="social">
+    <li>
+      <a href="{{#if userDetails.fb_id }}https://fb.me/{{{ userDetails.fb_id }}}{{else}}/edit_profile{{/if}}"><img src="./images/facebook.svg" alt=""> &nbsp; {{#if userDetails.fb_id}}www.facebook.com/{{ userDetails.fb_id }}{{else}}Update your Social details{{/if}}</a>
+    </li>
+    <li>
+      <a href="{{#if userDetails.gPlus_id}}{{ userDetails.gPlus_id }}{{else}}/edit_profile{{/if}}"><img src="./images/google.svg" alt=""> &nbsp; {{#if userDetails.gPlus_id }}{{ userDetails.gPlus_id }}{{else}}update your details{{/if}}</a>
+    </li>
+    <li>
+      <a href="{{#if userDetails.tw_id }}{{ userDetails.tw_id }}{{else}}#{{/if}}"><img src="./images/twitter.svg" alt=""> &nbsp; www.tw_iditter.com/{{ userDetails.tw_id }}</a>
+    </li>
+  </ul>
+</div> 

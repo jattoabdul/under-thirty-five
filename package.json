@@ -2,11 +2,11 @@
   "name": "under35",
   "version": "1.0.0",
   "description": "Under35 #NotTooYoungToRun",
-  "main": "index.js",
+  "main": "under35.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index",
-    "startw": "nodemon index.js -e .js,.hbs"
+    "start": "node under35",
+    "startw": "nodemon under35.js -e .js,.hbs"
   },
   "repository": {
     "type": "git",
@@ -32,6 +32,7 @@
     "nodemailer": "^4.0.1",
     "nodemailer-smtp-transport": "^2.7.4",
     "shortid": "^2.2.8",
+    "socket.io": "^2.0.3",
     "validator": "^8.0.0"
   },
   "engines": {

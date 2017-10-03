@@ -3,34 +3,18 @@ var Schema = mongoose.Schema;
 var moment = require('moment');
 
 var postSchema = new Schema({
-  title: { type: String, unique: true},
-  description: String,
-  author: String,
   body: String,
-  featured: {type: Boolean, default: false},
+  author_id: String,
   createdOn: { type: Number, default: (new Date()).getTime() },
   updated_at: Schema.Types.Mixed,
-  slug: {
-    type: String,
-    require: false,
-    trim: true,
-    lowercase: true
-  },
-  category: {
-    type: String,
-    index: true,
-    default: 'general'
-  },
-  comments: [{body: String,date: Date,author: String,email: String}],
-  month: { type: String},
-  year: { type: Number},
-  published: { type: Boolean, default: true},
   meta: {
     likes: Number,
-    favs: Number,
     shares: Number
   },
-  media: {
+  views: Number,
+  videos:[{url:String, title:String}],
+  audios:[{url:String, title:String}],
+  images: [{
     public_id: Schema.Types.Mixed,
     version: Schema.Types.Mixed,
     signature: Schema.Types.Mixed,
@@ -46,7 +30,7 @@ var postSchema = new Schema({
     url: Schema.Types.Mixed,
     secure_url: Schema.Types.Mixed,
     original_filename: Schema.Types.Mixed
-  }
+  }]
 }, {runSettersOnQuery: true});
 
 // postSchema.index({slug: 1, category: -1});
@@ -58,24 +42,27 @@ postSchema.query.byCategory = function (category) {
 };
 
 postSchema.pre('save', function (next) {
-  this.slug = this
-    .title
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
-  this.updated_at = new Date().getTime();
+  // this.slug = this
+  //   .title
+  //   .replace(/\s+/g, '-')
+  //   .replace(/[^\w\-]+/g, '')
+  //   .replace(/\-\-+/g, '-')
+  //   .replace(/^-+/, '')
+  //   .replace(/-+$/, '');
 
+  var currentDate = new Date().getTime();
+  this.updated_at = currentDate;
+  if (!this.createdOn)
+    this.createdOn = currentDate;
   next();
 });
 
-postSchema.virtual('url').get(function () {
-    var date = moment(this.date),
-      formatted = date.format('YYYY[/]MM[/]');
+// postSchema.virtual('url').get(function () {
+//     var date = moment(this.date),
+//       formatted = date.format('YYYY[/]MM[/]');
 
-    return '/' + formatted + this.slug;
-  });
+//     return '/' + formatted + this.slug;
+//   });
 
 var Post = mongoose.model('Post', postSchema);
 
