@@ -4,7 +4,10 @@ var moment = require('moment');
 
 var postSchema = new Schema({
   body: String,
-  author_id: String,
+  author_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
   createdOn: { type: Number, default: (new Date()).getTime() },
   updated_at: Schema.Types.Mixed,
   meta: {

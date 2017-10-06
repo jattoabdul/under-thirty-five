@@ -31,7 +31,7 @@ cloudinary.config({cloud_name: config.cloud_name, api_key: config.api_key, api_s
 const online_DB_uri = `mongodb://${config.db_user}:${config.db_pass}@ds143754.mlab.com:43754/under35`,
   local_DB_uri = `mongodb://localhost:27017/under35`;
 
-mongoose.connect(online_DB_uri, {
+mongoose.connect(local_DB_uri, {
   useMongoClient: true
 }, (err, db) => {
   if (err) {
@@ -89,31 +89,52 @@ const FetchUsers = (lmt = 0) => {
     });
 };
 
+const fetchFollowed = (userID) => {
+  return User.find({_id: userID}, 'following').populate('following').exec((err, data) => {
+    if(!err) {
+      console.log(JSON.stringify(data, null, 2));
+      return(data)
+    } else {
+      console.log(JSON.stringify(err, null, 2));
+      return err;
+    }
+  })
+}
+
 const FetchNewPosts = (lmt = 20) => {
   Post.aggregate([
-    { "$match": {} },
-    { "$sort": { "updated_at": -1 } },
-    { "$limit": lmt },
-    { "$lookup": {
-      "localField": "author_id",
-      "from": "users",
-      "foreignField": "_id",
-      "as": "authorinfo"
-    } },
-    { "$unwind": "$authorinfo" },
-    { "$project": { 
-      "body": 1,
-      "createdOn": 1,
-      "updated_at": 1,
-      "date": 1,
-      "views": 1,
-      "authorinfo.fullname": 1,
-      "authorinfo.local_government": 1,
-      "authorinfo.origin_state": 1,
-      "authorinfo.profile_pic": 1
-    }}
+    {
+      "$match": {}
+    }, {
+      "$sort": {
+        "updated_at": -1
+      }
+    }, {
+      "$limit": lmt
+    }, {
+      "$lookup": {
+        "localField": "author_id",
+        "from": "users",
+        "foreignField": "_id",
+        "as": "authorinfo"
+      }
+    }, {
+      "$unwind": "$authorinfo"
+    }, {
+      "$project": {
+        "body": 1,
+        "createdOn": 1,
+        "updated_at": 1,
+        "date": 1,
+        "views": 1,
+        "authorinfo.fullname": 1,
+        "authorinfo.local_government": 1,
+        "authorinfo.origin_state": 1,
+        "authorinfo.profile_pic": 1
+      }
+    }
   ]).exec((err, doc) => {
-    if(!err) {
+    if (!err) {
       console.log(doc);
       return doc;
     } else {
@@ -647,24 +668,26 @@ app.get('/logout', logout);
 // protected pages
 router.get('/timeline', (req, res) => {
   let userInfo = req.session.user;
-  Promise
-    .all([GetUserDetails(userInfo.email), FetchNewPosts()])
-    .then(datas => {
-      let userDetails = datas[0];
-      let posts = datas[1];
-      if (userDetails.followers) {
-        userDetails.followersCount = userDetails.followers.length
-      } else {
-        userDetails.followersCount = 0;
-      }
-      if (!userDetails.no_of_queries) 
-        userDetails.no_of_queries = 0;
-      
-      res.render('timeline', {
-        title: "Under35 | Timeline",
-        userDetails, posts
-      })
-    });
+  Promise.all([
+    GetUserDetails(userInfo.email),
+    FetchNewPosts()
+  ]).then(datas => {
+    let userDetails = datas[0];
+    let posts = datas[1];
+    if (userDetails.followers) {
+      userDetails.followersCount = userDetails.followers.length
+    } else {
+      userDetails.followersCount = 0;
+    }
+    if (!userDetails.no_of_queries) 
+      userDetails.no_of_queries = 0;
+    
+    res.render('timeline', {
+      title: "Under35 | Timeline",
+      userDetails,
+      posts
+    })
+  });
 });
 
 router.get('/profile', (req, res) => {
@@ -692,7 +715,7 @@ router.get('/followers', (req, res) => {
   let userInfo = req.session.user;
   Promise.all([
     GetUserDetails(userInfo.email),
-    FetchUsers(20)
+    FetchUsers()
   ]).then(datas => {
     let userDetails = datas[0];
     let Users = datas[1];
@@ -811,6 +834,7 @@ router.patch('/api/edit_profile', (req, res) => {
         .status(200)
         .send("Your data has been successfully updated!");
     } else {
+      console.log(JSON.stringify(err, null, 2));
       res
         .status(500)
         .send("there was an error updating your data");
@@ -834,49 +858,109 @@ router.post('/api/writePost', (req, res) => {
     var author_id = req.session.user.id;
     var user_pic = req.session.user.id;
     var postData = {
-      body, author_id, createdOn: new Date().getTime()
+      body,
+      author_id,
+      createdOn: new Date().getTime()
     };
     console.log('newPost', JSON.stringify(postData, null, 2));
 
     let newPost = new Post(postData)
-    newPost.save().then(() => {
+    newPost
+      .save()
+      .then(() => {
         console.log(req.session.user.name + ' has posted a new status');
         postData.author_pic = user_pic;
         io
           .sockets
           .emit('newPost', {postData});
-        res.status(200).send("Post successfully broadcasted");
-    }).catch(err => {
-      console.log("Post error:", JSON.stringify(err, null, 2));
-      res.status(500).send(err);
-    });
+        res
+          .status(200)
+          .send("Post successfully broadcasted");
+      })
+      .catch(err => {
+        console.log("Post error:", JSON.stringify(err, null, 2));
+        res
+          .status(500)
+          .send(err);
+      });
   } else {
     res.redirect('/login');
   }
 });
 router.post('/api/getBasicUserData', (req, res) => {
-  if(req.session.user) {
+  if (req.session.user) {
     var userID = req.body.id;
-    User.findById(userID,'profile_pic fullname occupation origin_state local_government', (err, data) => {
-      if(!err) {
-        res.status(200).send(data);
+    User.findById(userID, 'profile_pic fullname occupation origin_state local_government', (err, data) => {
+      if (!err) {
+        res
+          .status(200)
+          .send(data);
       } else {
         console.log(JSON.stringify(err, null, 2));
-        res.status(500).send(err);
+        res
+          .status(500)
+          .send(err);
       }
     });
   }
 });
+router.post('/api/follow', (req, res) => {
+  var user_toFollow = req.body.toFollow;
+  var user_id = req.session.user.id;
+
+  User.findById(user_id, (err, doc) => {
+    doc
+      .following
+      .push(user_toFollow);
+    doc
+      .save()
+      .then(() => {
+        User.findById(user_id, (err, data) => {
+          console.log(JSON.stringify(data, null, 2));
+          res
+            .status(200)
+            .send(data);
+        })
+      }).catch(e => {
+        console.log(JSON.stringify(e, null, 2));
+        res.status(500).send("error following user");
+      })
+  })
+
+  // User.findByIdAndUpdate(user_id, {
+  //   $push: {
+  //     following: user_toFollow
+  //   }
+  // }, (err, result) => {
+  //   if (!err) {
+  //     console.log(JSON.stringify(result, null, 2));
+  //     res
+  //       .status(200)
+  //       .send("user successfully followed");
+  //   } else {
+  //     res
+  //       .status(500)
+  //       .send("there is an issue following this user, we are fixing this already");
+  //   }
+  // });
+});
 router.post('/api/fetchPosts', (req, res) => {
   var lmt = req.body.limit || 20;
-  Post.find({}).limit().exec((err, doc) => {
-    if(!err){
-      res.status(200).send(doc);
-    } else {
-      console.log(JSON.stringify(err, null, 2));
-      res.status(500).send(err);
-    }
-  })
+  Post
+    .find({})
+    .limit()
+    .exec((err, doc) => {
+      if (!err) {
+        res
+          .status(200)
+          .send(doc);
+      } else {
+        console.log(JSON.stringify(err, null, 2));
+        res
+          .status(500)
+          .send(err);
+      }
+    })
 })
 router.put('/api/changePass/onDash', (req, res) => {
   let username = req.session.user.username;
@@ -912,108 +996,6 @@ router.post('/api/upload/image', fileParser, (req, res) => {
         console.log('Error uploading to cloudinary: ', result);
       }
     });
-});
-
-router.post('/api/createPost', (req, res) => {
-  let title = req.body.title,
-    author = req.session.user.name || 'robotester',
-    description = req.body.description,
-    body = req.body.body,
-    category = req.body.category;
-
-  thisTime = new Date(),
-  createdOn = thisTime.getTime();
-  month = config.monthNames[thisTime.getMonth()],
-  year = thisTime.getFullYear(),
-  published = req.body.published,
-  media = req.body.media
-
-  let newPost = new Post({
-    author,
-    title,
-    description,
-    body,
-    category,
-    month,
-    media,
-    year,
-    published
-  });
-
-  newPost
-    .save()
-    .then(() => {
-      // TODO: add the postID to post category
-      res.send({message: 'Post created successfully', code: 'OK'});
-    })
-    .catch(err => {
-      console.log(JSON.stringify(err, undefined, 2));
-      res.send({message: 'error creating post', code: 'NOT_OK'});
-    });
-});
-
-router.post('/api/editPost/:slug', (req, res) => {
-  let slug = req.params.slug;
-  title = req.body.title,
-  author = req.session.user.name || 'robotester',
-  description = req.body.description,
-  body = req.body.body,
-  category = req.body.category;
-  thisTime = new Date(),
-  createdOn = thisTime.getTime();
-  month = config.monthNames[thisTime.getMonth()],
-  year = thisTime.getFullYear(),
-  published = req.body.published,
-  media = req.body.media
-
-  let postUpdate = {}
-  if (media != null) {
-    postUpdate = {
-      author,
-      title,
-      description,
-      body,
-      category,
-      month,
-      media,
-      year,
-      published
-    }
-  } else {
-    postUpdate = {
-      author,
-      title,
-      description,
-      body,
-      category,
-      month,
-      year,
-      published
-    }
-  }
-
-  Post.findOneAndUpdate({
-    slug: slug
-  }, postUpdate, (err) => {
-    if (!err) {
-      res.send({message: 'Post modified successfully', code: 'OK'});
-    } else {
-      res.send({message: 'error creating post', code: 'NOT_OK'});
-    }
-  })
-});
-
-router.delete('/api/deletePost', (req, res) => {
-  let slug = req.body.postID;
-  Post.deleteOne({
-    slug: slug
-  }, err => {
-    if (!err) {
-      res.send({message: 'post deleted successfully', code: 'OK'});
-    } else {
-      res.send({message: 'Could not delete post', code: 'NOT_OK'});
-    }
-  });
 });
 
 app.use(router);

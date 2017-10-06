@@ -37,6 +37,10 @@ let userSchema = new Schema({
   occupation: {
     type: String
   },
+  following: [{user_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }}],
   local_government: String,
   party: String,
   summary: String,

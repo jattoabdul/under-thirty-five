@@ -45,5 +45,8 @@
   "bugs": {
     "url": "https://github.com/jalasem/under35/issues"
   },
-  "homepage": "https://github.com/jalasem/under35#readme"
+  "homepage": "https://github.com/jalasem/under35#readme",
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  }
 }

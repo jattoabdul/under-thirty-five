@@ -14,8 +14,8 @@ $(document)
     });
     // $('body').on('focus', 'toBposted[contenteditable]', function () {   var $this
     // = $(this);   $this.data('before', $this.html());   return $this; }).on('blur
-    // keyup paste input', 'toBposted[contenteditable]', function () {     var
-    // $this = $(this);     if ($this.data('before') !== $this.html()) {
+    // keyup paste input', 'toBposted[contenteditable]', function () {     var $this
+    // = $(this);     if ($this.data('before') !== $this.html()) {
     // $this.data('before', $this.html());       $this.trigger('change');     }
     // return $this;   });
     $('.editable__placeholder, .modal-content__body').click(function () {
@@ -55,9 +55,9 @@ $(document)
       // (function ($) {   $(document)     .on('change keydown keypress input',
       // '#toBposted[data-placeholder]', function () {       var post =
       // $('#toBposted').text();       if (post.length < 1) {         if
-      // (this.textContent) {           this.dataset.divPlaceholderContent = 'true';
-      //     } else {           delete(this.dataset.divPlaceholderContent); }       }
-      //    }); })(jQuery);
+      // (this.textContent) {           this.dataset.divPlaceholderContent = 'true'; }
+      // else {           delete(this.dataset.divPlaceholderContent); }       } });
+      // })(jQuery);
       jQuery(function ($) {
         $("#toBposted[contenteditable]")
           .focusout(function () {
@@ -121,6 +121,11 @@ $(document)
           }
         });
       }
+    });
+
+    $('.follow-action.follow').click(function (e) {
+      var clickedTarget = $(this);
+      follow(clickedTarget);
     });
   });
 
@@ -315,7 +320,7 @@ function writeApost() {
   });
 }
 
-function editProfile(){
+function editProfile() {
   $(".loginSpinner").removeClass("hide");
   var data = {};
   data.fullname = $('#fullname_edit').val() || '';
@@ -330,18 +335,18 @@ function editProfile(){
   data.fb = $('#fb_edit').val() || '';
   data.gplus = $('#google_edit').val() || '';
   data.tw = $('#tw_edit').val() || '';
-  data.dob = $('#dob_edit').val() || '';
+  // data.dob = $('#dob_edit').val() || '';
 
   console.log(data);
   $.ajax({
     data: data,
     url: '/api/edit_profile',
     type: 'patch',
-    success: function(data) {
+    success: function (data) {
       $(".loginSpinner").addClass("hide");
       toast(data);
     },
-    error: function(e) {
+    error: function (e) {
       $(".loginSpinner").addClass("hide");
       console.log(e);
       toast('update unsuccessful, try again');
@@ -354,11 +359,11 @@ function editProfile(){
 function isValidEmail(email) {
   "use strict";
 
-  if (!email || email == "")
+  if (!email || email == "") 
     return false;
-
+  
   email = email.trim();
-  if (email == "" || !email)
+  if (email == "" || !email) 
     return false;
   let regex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
   return regex.test(email);
@@ -425,19 +430,41 @@ function createUpdate(posterName, posterPic, posterLocalG, creationTime, postCon
   post += '</div>';
 }
 
+function follow(clickedTarget) {
+  // var user_pic = clickedTarget.siblings('img.profile')[0].src;
+  var user_to_follow_id = clickedTarget.attr('id').split('follow_')[1];
+
+  $.ajax({
+    type: 'post',
+    url: '/api/follow',
+    data: {
+      toFollow: user_to_follow_id
+    },
+    success: function (data) {
+      clickedTarget.text('unfollow');
+      $(this).toggleClass('follow unfollow');
+      console.log(data);
+    },
+    error: function (err) {
+      console.log(JSON.stringify(err, null, 2));
+      toast(err.responseText);
+    }
+  })
+}
+
 var hostname = window.location.hostname;
 var socket = io();
 
-socket.on('newPost', function (res) { 
+socket.on('newPost', function (res) {
   var postData = res.postData;
-  // body, author_id, createdOn, author_pic 
+  // body, author_id, createdOn, author_pic
   $.ajax({
     type: 'post',
     url: '/api/getBasicUserData',
     data: {
       id: postData.author_id
     },
-    success: function(data){
+    success: function (data) {
       var author_data = data;
       var author_name = author_data.fullname;
       var author_localG = author_data.local_government;
@@ -472,30 +499,24 @@ socket.on('newPost', function (res) {
       post += '</div>';
       post += '</div>';
 
-
       $('#gbogboPost').prepend(post);
 
-
       jQuery(".posted_when>.timeago").timeago();
-    }, 
-    error: function(error){
+    },
+    error: function (error) {
       console.log(error);
     }
   })
-  
-  // var picUrl = "https://www.gravatar.com/avatar/ " + author_pic ;
-	// var time = new Date(res.statusData.time).toISOString();
-	// var addStatus = '<div class="post"><div class="timestamp"><abbr class="timeago" title="'+time+
-	// 			'"></abbr></div><a class="colorize" href="/users/'+res.statusData.username+
-	// 			'"><div class="smallpic"><img class="smallpic_img" src="'+res.statusData.image+
-	// 			'"/></div>	<div class="smallname">'+res.statusData.username+
-	// 			'</div></a><br><div class="statusbody">'+res.statusData.body+'</div></div>';
-  //   $('#socket').prepend(addStatus);
 
-  //   var pageuser = $('#theusername').text();
-  //   if (pageuser == res.statusData.username && pageuser != myname) {
-  //   	$('#postsOuter').prepend(addStatus);
-  //   }
-
-  //   jQuery("abbr.timeago").timeago();
+  // var picUrl = "https://www.gravatar.com/avatar/ " + author_pic ; var time =
+  // new Date(res.statusData.time).toISOString(); var addStatus = '<div
+  // class="post"><div class="timestamp"><abbr class="timeago" title="'+time+
+  // 			'"></abbr></div><a class="colorize"
+  // href="/users/'+res.statusData.username+ 			'"><div class="smallpic"><img
+  // class="smallpic_img" src="'+res.statusData.image+ 			'"/></div>	<div
+  // class="smallname">'+res.statusData.username+ 			'</div></a><br><div
+  // class="statusbody">'+res.statusData.body+'</div></div>';
+  // $('#socket').prepend(addStatus);   var pageuser = $('#theusername').text();
+  // if (pageuser == res.statusData.username && pageuser != myname) {
+  // 	$('#postsOuter').prepend(addStatus);   }   jQuery("abbr.timeago").timeago();
 });
