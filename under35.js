@@ -31,7 +31,7 @@ cloudinary.config({cloud_name: config.cloud_name, api_key: config.api_key, api_s
 const online_DB_uri = `mongodb://${config.db_user}:${config.db_pass}@ds143754.mlab.com:43754/under35`,
   local_DB_uri = `mongodb://localhost:27017/under35`;
 
-mongoose.connect(local_DB_uri, {
+mongoose.connect(online_DB_uri, {
   useMongoClient: true
 }, (err, db) => {
   if (err) {
