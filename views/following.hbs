@@ -17,8 +17,8 @@
               <li class="tab col s2">
                 <a target="_self" href="/profile">Profile</a>
               </li>
-              <li class="tab col s2"><a target="_self" href="/following">Following</a></li>
-              <li class="tab col s2"><a class="active" href="#followers">Followers</a></li>
+              <li class="tab col s2"><a class="active" href="#following">Following</a></li>
+              <li class="tab col s2"><a target="_self" href="/followers">Followers</a></li>
             </ul>
           </div>
         </div>
@@ -33,24 +33,15 @@
                 <h4 class="title">Followers</h4>
                 <p class="green-text right right-align">34 followers</p>
               </div>
-              {{#each Users}}
-              <a href="/profile/{{id}}">
+              {{#each followingUsersList}}  
                 <div class="head">
                   <img src="{{ profile_pic }}" alt="{{ fullname }}" class="profile">
                   <h4 class="creator_fullname">{{ fullname }}</h4>
                   <p class="creator_origin">{{ occupation }}</p>
-                  <p class="creator_origin">{{ local_government }} {{#if origin_state}}- {{ origin_state }}{{/if}}</p>
-                  <button class=" waves-effect waves-light btn red rounded right round-btn follow follow-action" id="follow_{{ id }}">follow</button>
+                  <p class="creator_origin">{{ local_government }} {{#if origin_state}} - {{ origin_state }}{{/if}}</p>
+                  <button class=" waves-effect waves-light btn teal rounded right round-btn unfollow follow-action" id="follow_{{ id }}">unfollow</button>
                 </div>
-              </a>
               {{/each}}
-              <!--<div class="head">
-                <img src="./images/abiola-4.jpg" alt="Abiola" class="profile">
-                <h4 class="creator_fullname">Abiola Odunayi</h4>
-                <p class="creator_origin">UX Designer</p>
-                <p class="creator_origin">Itesiwaju Local Governement</p>
-                <button class="btn red rounded right round-btn follow follow-action">follow</button>
-              </div>-->
             </div>
           </div>
         </div>

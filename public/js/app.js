@@ -128,6 +128,11 @@ $(document)
       var clickedTarget = $(this);
       follow(clickedTarget);
     });
+
+    $('.follow-action.unfollow').click(function (e) {
+      var clickedTarget = $(this);
+      unFollow(clickedTarget);
+    });
   });
 
 function createNewUser() {
@@ -432,7 +437,6 @@ function createUpdate(posterName, posterPic, posterLocalG, creationTime, postCon
 }
 
 function follow(clickedTarget) {
-  // var user_pic = clickedTarget.siblings('img.profile')[0].src;
   var user_to_follow_id = clickedTarget.attr('id').split('follow_')[1];
 
   $.ajax({
@@ -444,6 +448,27 @@ function follow(clickedTarget) {
     success: function (data) {
       clickedTarget.text('unfollow');
       $(this).toggleClass('follow unfollow');
+      console.log(data);
+    },
+    error: function (err) {
+      console.log(JSON.stringify(err, null, 2));
+      toast(err.responseText);
+    }
+  })
+}
+
+function unFollow(clickedTarget) {
+  var user_to_follow_id = clickedTarget.attr('id').split('follow_')[1];
+
+  $.ajax({
+    type: 'post',
+    url: '/api/unfollow',
+    data: {
+      toFollow: user_to_follow_id
+    },
+    success: function (data) {
+      clickedTarget.text('follow');
+      $(this).toggleClass('unfollow follow');
       console.log(data);
     },
     error: function (err) {

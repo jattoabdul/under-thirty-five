@@ -118,6 +118,21 @@ const fetchFollowed = (userID) => {
   })
 }
 
+const FetchUserFollowings = (followings=[]) => {
+  let followingUsers = [];
+  followings.map((following)=> {
+    User.findOne({_id: following._id}, 'fullname occupation local_government origin_state profile_pic email')
+      .exec((err, data) => {
+        if (!err) {
+          followingUsers.push(data);
+        } else {
+          return err;
+        }
+      })
+  })
+  return followingUsers;
+}
+
 const FetchNewPosts = (lmt = 20) => {
   Post.aggregate([
     {
@@ -263,6 +278,20 @@ hbs.registerHelper('getPostTime', (timeT) => {
   return new Date(timeT).toDateString();
 });
 
+hbs.registerHelper('ifIn', function(elem, list, options) {
+  if(list.indexOf(elem) > -1) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
+hbs.registerHelper('ifNotIn', function(elem, list, options) {
+  if(list.indexOf(elem) === -1) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 router.get('/', (req, res) => {
   if (req.session.user) {
     res.redirect('/timeline')
@@ -312,10 +341,11 @@ router.post('/api/login', (req, res) => {
           email: data.email,
           name: data.fullname,
           id: data._id,
-          pic: data.profile_pic
+          pic: data.profile_pic,
+          following: data.following
         };
-        console.log(user);
         req.session.user = user;
+        console.log('current user data in session', user);
         req.session.user.expires = new Date(Date.now() + (3 * 24 * 3600 * 1000));
         User.findOneAndUpdate(data._id, {
           last_login: new Date().getTime()
@@ -777,6 +807,43 @@ router.get('/followers', (req, res) => {
   });
 });
 
+router.get('/following', (req, res) => {
+  let userInfo = req.session.user;
+  console.log('mtcheew', userInfo.following);
+  Promise.all([
+    GetUserDetails(userInfo.email),
+  ]
+  ).then(
+    data => {
+      Promise.all([
+        GetUserDetails(data[0].email),
+        FetchUsers(),
+        FetchUserFollowings(data[0].following)
+      ]).then(datas => {
+        let userDetails = datas[0];
+        let Users = datas[1];
+        let followingUsersList = datas[2];
+        if (userDetails.following) {
+          userDetails.followingCount = userDetails.following.length
+        } else {
+          userDetails.followingCount = 0;
+        }
+        if (!userDetails.no_of_queries) {
+          userDetails.no_of_queries = 0;
+        }
+        res.render('following', {
+          title: "Under35 | Following",
+          userDetails,
+          Users,
+          followingUsersList
+        });
+      });
+    }
+  )
+
+  
+});
+
 router.get('/edit_profile', (req, res) => {
   let userInfo = req.session.user;
 
@@ -954,6 +1021,48 @@ router.post('/api/follow', (req, res) => {
     doc
       .following
       .push(user_toFollow);
+    doc
+      .save()
+      .then(() => {
+        User.findById(user_id, (err, data) => {
+          console.log(JSON.stringify(data, null, 2));
+          res
+            .status(200)
+            .send(data);
+        })
+      }).catch(e => {
+        console.log(JSON.stringify(e, null, 2));
+        res.status(500).send("error following user");
+      })
+  })
+
+  // User.findByIdAndUpdate(user_id, {
+  //   $push: {
+  //     following: user_toFollow
+  //   }
+  // }, (err, result) => {
+  //   if (!err) {
+  //     console.log(JSON.stringify(result, null, 2));
+  //     res
+  //       .status(200)
+  //       .send("user successfully followed");
+  //   } else {
+  //     res
+  //       .status(500)
+  //       .send("there is an issue following this user, we are fixing this already");
+  //   }
+  // });
+});
+
+router.post('/api/unfollow', (req, res) => {
+  var user_toFollow = req.body.toFollow;
+  var user_id = req.session.user.id;
+
+  User.findById(user_id, (err, doc) => {
+    const index = doc.following.indexOf(user_toFollow);
+    doc
+      .following
+      .splice(index, 1);
     doc
       .save()
       .then(() => {
