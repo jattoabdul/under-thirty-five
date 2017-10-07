@@ -114,12 +114,12 @@
 
                 var post = "";
                 post += '<div class="card-panel update">';
-                post += '<div class="head">';
+                post += '<a href="/profile/'+ onePost.author_id +'"><div class="head">';
                 post += '<img src="' + author_pic + '" alt="' + author_name + '" class="profile">';
-                post += '<a href="/profile/'+ onePost.author_id +'"><h4 class="creator_fullname">' + author_name + '</h4></a>';
+                post += '<h4 class="creator_fullname">' + author_name + '</h4>';
                 post += '<p class="creator_origin">' + author_localG + ' - ' + author_state + '</p>';
                 post += '<p class="posted_when"><abbr class="timeago" title="' + postTime + '"></abbr></p>';
-                post += '</div>';
+                post += '</div></a>';
                 post += '<div class="body">';
                 post += '<p>' + postBody + '</p>';
                 post += '</div>';
