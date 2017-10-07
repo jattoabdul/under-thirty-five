@@ -32,17 +32,17 @@
     <ul class="social">
       {{#if userDetails.fb_id }}
       <li>
-        <a href="https://fb.me/{{ userDetails.fb_id }}"><img src="/images/facebook.svg" alt=""> &nbsp; Facebook</a>
+        <a target="_blank" href="https://fb.me/{{ userDetails.fb_id }}"><img src="/images/facebook.svg" alt=""> &nbsp; Facebook</a>
       </li>
       {{/if}}
       {{#if userDetails.gPlus_id}}
       <li>
-        <a href="https://plus.google.com/+{{ userDetails.gPlus_id }}"><img src="/images/google.svg" alt=""> &nbsp; Google Plus</a>
+        <a target="_blank" href="https://plus.google.com/+{{ userDetails.gPlus_id }}"><img src="/images/google.svg" alt=""> &nbsp; Google Plus</a>
       </li>
       {{/if}}
       {{#if userDetails.tw_id }}
       <li>
-        <a href="https://twitter.com/{{ userDetails.tw_id }}"><img src="/images/twitter.svg" alt=""> &nbsp; Twitter</a>
+        <a target="_blank" href="https://twitter.com/{{ userDetails.tw_id }}"><img src="/images/twitter.svg" alt=""> &nbsp; Twitter</a>
       </li>
       {{/if}}
       {{#unless userDetails.fb_id }}
