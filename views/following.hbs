@@ -1,0 +1,52 @@
+{{> head}}
+
+</head>
+
+<body class="board">
+  {{> innerNav }}
+  <main class="row zmb">
+    <div class="container">
+      <br>
+      <div class="row">
+        <div class="tab-fence">
+          <div class="col s12">
+            <ul class="tabs">
+              <li class="tab col s2">
+                <a target="_self" href="/timeline">Timeline</a>
+              </li>
+              <li class="tab col s2">
+                <a target="_self" href="/profile">Profile</a>
+              </li>
+              <li class="tab col s2"><a class="active" href="#following">Following</a></li>
+              <li class="tab col s2"><a target="_self" href="/followers">Followers</a></li>
+            </ul>
+          </div>
+        </div>
+        <div id="followers" class="board-layout col s12 row">
+          <br>
+          <div class="col s12 m4 l3">
+            {{> profileCard }}
+          </div>
+          <div class="col s12 m8 l9 followers">
+            <div class="card-panel update">
+              <div class="head">
+                <h4 class="title">Followers</h4>
+                <p class="green-text right right-align">34 followers</p>
+              </div>
+              {{#each followingUsersList}}  
+                <div class="head">
+                  <img src="{{ profile_pic }}" alt="{{ fullname }}" class="profile">
+                  <h4 class="creator_fullname">{{ fullname }}</h4>
+                  <p class="creator_origin">{{ occupation }}</p>
+                  <p class="creator_origin">{{ local_government }} {{#if origin_state}} - {{ origin_state }}{{/if}}</p>
+                  <button class=" waves-effect waves-light btn teal rounded right round-btn unfollow follow-action" id="follow_{{ id }}">unfollow</button>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  {{> profileMenu }}
+  {{> footer}}
