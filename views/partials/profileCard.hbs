@@ -19,13 +19,13 @@
   {{#unless userDetails.isMe }}
     <ul class="social">
       <li>
-        <a href="{{#if userDetails.fb_id }}https://fb.me/{{{ userDetails.fb_id }}}{{else}}/edit_profile{{/if}}"><img src="/images/facebook.svg" alt=""> &nbsp; {{#if userDetails.fb_id}}www.facebook.com/{{ userDetails.fb_id }}{{else}}Link Facebook{{/if}}</a>
+        <a target="_blank" href="{{#if userDetails.fb_id }}https://fb.me/{{{ userDetails.fb_id }}}{{else}}/edit_profile{{/if}}"><img src="/images/facebook.svg" alt=""> &nbsp; {{#if userDetails.fb_id}}https://fb.me/{{ userDetails.fb_id }}{{else}}Link Facebook{{/if}}</a>
       </li>
       <li>
-        <a href="{{#if userDetails.gPlus_id}}{{ userDetails.gPlus_id }}{{else}}/edit_profile{{/if}}"><img src="/images/google.svg" alt=""> &nbsp; {{#if userDetails.gPlus_id }}{{ userDetails.gPlus_id }}{{else}}Link Google Plus{{/if}}</a>
+        <a target="_blank" href="{{#if userDetails.gPlus_id}}https://plus.google.com/+{{ userDetails.gPlus_id }}{{else}}/edit_profile{{/if}}"><img src="/images/google.svg" alt=""> &nbsp; {{#if userDetails.gPlus_id }}https://plus.google.com/+{{ userDetails.gPlus_id }}{{else}}Link Google Plus{{/if}}</a>
       </li>
       <li>
-        <a href="{{#if userDetails.tw_id }}{{ userDetails.tw_id }}{{else}}/edit_profile{{/if}}"><img src="/images/twitter.svg" alt=""> &nbsp; {{#if userDetails.tw_id }}{{ userDetails.tw_id }}{{else}}Link Twitter{{/if}}</a>
+        <a target="_blank" href="{{#if userDetails.tw_id }}https://twitter.com/{{ userDetails.tw_id }}{{else}}/edit_profile{{/if}}"><img src="/images/twitter.svg" alt=""> &nbsp; {{#if userDetails.tw_id }}https://twitter.com/{{ userDetails.tw_id }}{{else}}Link Twitter{{/if}}</a>
       </li>
     </ul>
     {{else}}
