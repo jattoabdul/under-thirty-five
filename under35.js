@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require("express"),
   http = require('http'),
   socketio = require('socket.io'),
@@ -24,6 +26,7 @@ const express = require("express"),
   _ = require('lodash'),
   app = express();
 
+const environment = process.env.NODE_ENV || "development";
 mongoose.Promise = global.Promise;
 
 cloudinary.config({cloud_name: config.cloud_name, api_key: config.api_key, api_secret: config.api_secret});
@@ -31,13 +34,13 @@ cloudinary.config({cloud_name: config.cloud_name, api_key: config.api_key, api_s
 const online_DB_uri = `mongodb://${config.db_user}:${config.db_pass}@ds143754.mlab.com:43754/under35`,
   local_DB_uri = `mongodb://localhost:27017/under35`;
 
-mongoose.connect(online_DB_uri, {
+mongoose.connect( environment === "production" ? online_DB_uri : local_DB_uri, {
   useMongoClient: true
 }, (err, db) => {
   if (err) {
     console.log("Couldn't connect to database");
   } else {
-    console.log("Database Connected!");
+    console.log(`Connected To ${environment} Database`);
   }
 });
 
