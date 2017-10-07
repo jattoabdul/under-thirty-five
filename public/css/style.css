@@ -1264,3 +1264,9 @@ label {
 		float: none !important;
 	}
 }
+
+.social-accounts-empty {
+	padding: 10px;
+	font-size: 10px;
+	text-align: center;
+}

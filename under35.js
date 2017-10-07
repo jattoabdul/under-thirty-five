@@ -79,6 +79,20 @@ const GetUserDetails = (email) => {
     });
 };
 
+const GetOtherUserDetails = (userId) => {
+  return User
+    .findOne({ _id: userId })
+    .lean()
+    .exec((err, doc) => {
+      if (err) {
+        console.log(JSON.stringify(err, undefined, 2));
+        return err;
+      } else {
+        return doc;
+      }
+    });
+};
+
 const FetchUsers = (lmt = 0) => {
   return User.find({}, 'fullname occupation local_government email profile_pic')
     .limit(lmt)
@@ -712,6 +726,31 @@ router.get('/profile', (req, res) => {
         userDetails
       })
     });
+});
+
+router.get('/profile/:id', (req, res) => {
+  let userId = req.params.id;
+  if (userId === req.session.user.id) {
+   return res.redirect('/profile');
+  }
+  Promise
+  .all([GetOtherUserDetails(userId)])
+  .then(datas => {
+    let userDetails = datas[0];
+    if (userDetails.followers) {
+      userDetails.followersCount = userDetails.followers.length
+    } else {
+      userDetails.followersCount = 0;
+    }
+    if (!userDetails.no_of_queries) 
+      userDetails.no_of_queries = 0;
+    
+    userDetails.isMe = true;
+    res.render('profile', {
+      title: "Under35 | Profile",
+      userDetails
+    });
+  });
 });
 
 router.get('/followers', (req, res) => {
