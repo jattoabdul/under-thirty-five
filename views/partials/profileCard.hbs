@@ -4,7 +4,7 @@
     <h4 class="user_fullname">{{ userDetails.fullname }}</h4>
     <h5 class="user_profession">{{{ userDetails.occupation }}}</h5>
     <p class="user_origin">{{{ userDetails.local_government }}} {{#if userDetails.origin_state }}- {{ userDetails.origin_state }}{{/if}}</p>
-    <img src="./images/pdp_small.jpg" alt="" class="user_party">
+    <img src="/images/pdp_small.jpg" alt="" class="user_party">
   </div>
   <div class="user_stats">
     <div class="user_stat">
@@ -24,15 +24,42 @@
       <p class="desc">Posts</p>
     </div>
   </div>
-  <ul class="social">
-    <li>
-      <a href="{{#if userDetails.fb_id }}https://fb.me/{{{ userDetails.fb_id }}}{{else}}/edit_profile{{/if}}"><img src="./images/facebook.svg" alt=""> &nbsp; {{#if userDetails.fb_id}}www.facebook.com/{{ userDetails.fb_id }}{{else}}Update your Social details{{/if}}</a>
-    </li>
-    <li>
-      <a href="{{#if userDetails.gPlus_id}}{{ userDetails.gPlus_id }}{{else}}/edit_profile{{/if}}"><img src="./images/google.svg" alt=""> &nbsp; {{#if userDetails.gPlus_id }}{{ userDetails.gPlus_id }}{{else}}update your details{{/if}}</a>
-    </li>
-    <li>
-      <a href="{{#if userDetails.tw_id }}{{ userDetails.tw_id }}{{else}}#{{/if}}"><img src="./images/twitter.svg" alt=""> &nbsp; www.tw_iditter.com/{{ userDetails.tw_id }}</a>
-    </li>
-  </ul>
+  {{#unless userDetails.isMe }}
+    <ul class="social">
+      <li>
+        <a target="_blank" href="{{#if userDetails.fb_id }}https://fb.me/{{{ userDetails.fb_id }}}{{else}}/edit_profile{{/if}}"><img src="/images/facebook.svg" alt=""> &nbsp; {{#if userDetails.fb_id}}https://fb.me/{{ userDetails.fb_id }}{{else}}Link Facebook{{/if}}</a>
+      </li>
+      <li>
+        <a target="_blank" href="{{#if userDetails.gPlus_id}}https://plus.google.com/+{{ userDetails.gPlus_id }}{{else}}/edit_profile{{/if}}"><img src="/images/google.svg" alt=""> &nbsp; {{#if userDetails.gPlus_id }}https://plus.google.com/+{{ userDetails.gPlus_id }}{{else}}Link Google Plus{{/if}}</a>
+      </li>
+      <li>
+        <a target="_blank" href="{{#if userDetails.tw_id }}https://twitter.com/{{ userDetails.tw_id }}{{else}}/edit_profile{{/if}}"><img src="/images/twitter.svg" alt=""> &nbsp; {{#if userDetails.tw_id }}https://twitter.com/{{ userDetails.tw_id }}{{else}}Link Twitter{{/if}}</a>
+      </li>
+    </ul>
+    {{else}}
+    <ul class="social">
+      {{#if userDetails.fb_id }}
+      <li>
+        <a target="_blank" href="https://fb.me/{{ userDetails.fb_id }}"><img src="/images/facebook.svg" alt=""> &nbsp; Facebook</a>
+      </li>
+      {{/if}}
+      {{#if userDetails.gPlus_id}}
+      <li>
+        <a target="_blank" href="https://plus.google.com/+{{ userDetails.gPlus_id }}"><img src="/images/google.svg" alt=""> &nbsp; Google Plus</a>
+      </li>
+      {{/if}}
+      {{#if userDetails.tw_id }}
+      <li>
+        <a target="_blank" href="https://twitter.com/{{ userDetails.tw_id }}"><img src="/images/twitter.svg" alt=""> &nbsp; Twitter</a>
+      </li>
+      {{/if}}
+      {{#unless userDetails.fb_id }}
+        {{#unless userDetails.gPlus_id }}
+          {{#unless userDetails.tw_id }}
+            <div class="social-accounts-empty">No linked social accounts</div>
+          {{/unless}}
+        {{/unless}}
+      {{/unless}}
+    </ul>
+  {{/unless}}
 </div> 

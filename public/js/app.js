@@ -124,6 +124,7 @@ $(document)
     });
 
     $('.follow-action.follow').click(function (e) {
+      e.preventDefault();
       var clickedTarget = $(this);
       follow(clickedTarget);
     });
