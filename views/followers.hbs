@@ -33,13 +33,15 @@
                 <p class="green-text right right-align">34 followers</p>
               </div>
               {{#each Users}}
-              <div class="head">
-                <img src="{{ profile_pic }}" alt="{{ fullname }}" class="profile">
-                <h4 class="creator_fullname">{{ fullname }}</h4>
-                <p class="creator_origin">{{ occupation }}</p>
-                <p class="creator_origin">{{ local_government }} {{#if origin_state}}- {{ origin_state }}{{/if}}</p>
-                <button class=" waves-effect waves-light btn red rounded right round-btn follow follow-action" id="follow_{{ id }}">follow</button>
-              </div>
+              <a href="/profile/{{id}}">
+                <div class="head">
+                  <img src="{{ profile_pic }}" alt="{{ fullname }}" class="profile">
+                  <h4 class="creator_fullname">{{ fullname }}</h4>
+                  <p class="creator_origin">{{ occupation }}</p>
+                  <p class="creator_origin">{{ local_government }} {{#if origin_state}}- {{ origin_state }}{{/if}}</p>
+                  <button class=" waves-effect waves-light btn red rounded right round-btn follow follow-action" id="follow_{{ id }}">follow</button>
+                </div>
+              </a>
               {{/each}}
               <!--<div class="head">
                 <img src="./images/abiola-4.jpg" alt="Abiola" class="profile">
