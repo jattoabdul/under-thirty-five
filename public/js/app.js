@@ -14,8 +14,8 @@ $(document)
     });
     // $('body').on('focus', 'toBposted[contenteditable]', function () {   var $this
     // = $(this);   $this.data('before', $this.html());   return $this; }).on('blur
-    // keyup paste input', 'toBposted[contenteditable]', function () {     var $this
-    // = $(this);     if ($this.data('before') !== $this.html()) {
+    // keyup paste input', 'toBposted[contenteditable]', function () {     var
+    // $this = $(this);     if ($this.data('before') !== $this.html()) {
     // $this.data('before', $this.html());       $this.trigger('change');     }
     // return $this;   });
     $('.editable__placeholder, .modal-content__body').click(function () {
@@ -133,6 +133,30 @@ $(document)
       var clickedTarget = $(this);
       unFollow(clickedTarget);
     });
+
+    $('#search_profile').keyup(function () {
+      var query = $('#search_profile').val();
+      $.ajax({
+        type: 'get',
+        url: 'https://jsonplaceholder.typicode.com/users',
+        // data: {
+        //   query: query
+        // },
+        success: function (data) {
+          $('#searchResults').removeClass('hide');
+        },
+        error: function (err) {
+          console.log(JSON.stringify(err, null, 2));
+        }
+      })
+    });
+
+    $(document).click(function (e) {
+      var target = e.target;
+      if (!$(target).is('#searchResults')) {
+        $('#searchResults').addClass('hide');
+      }
+    })
   });
 
 function createNewUser() {
@@ -437,7 +461,9 @@ function createUpdate(posterName, posterPic, posterLocalG, creationTime, postCon
 }
 
 function follow(clickedTarget) {
-  var user_to_follow_id = clickedTarget.attr('id').split('follow_')[1];
+  var user_to_follow_id = clickedTarget
+    .attr('id')
+    .split('follow_')[1];
 
   $.ajax({
     type: 'post',
@@ -458,7 +484,9 @@ function follow(clickedTarget) {
 }
 
 function unFollow(clickedTarget) {
-  var user_to_follow_id = clickedTarget.attr('id').split('follow_')[1];
+  var user_to_follow_id = clickedTarget
+    .attr('id')
+    .split('follow_')[1];
 
   $.ajax({
     type: 'post',
