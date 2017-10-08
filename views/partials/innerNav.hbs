@@ -2,13 +2,32 @@
   <nav class="white">
     <div class="nav-wrapper">
       <a href="/timeline" class="brand-logo left">
-          <img src="/images/logo_coloured.jpg" alt="Under35">
-        </a>
+        <img src="/images/logo_coloured.jpg" alt="Under35">
+      </a>
+      {{!-- <ul class="left">
+        <li class="search">
+          <i class="grey-text icon ion-ios-search-strong"></i>
+          <input type="search" id="search_profile" class="grey-text" />
+        </li>
+      </ul> --}}
       <ul class="right">
+        <li class="search">
+          <input type="search" id="search_profile" class="grey-text" />
+          <i class="grey-text icon ion-ios-search-strong"></i>
+        </li>
         <li><a href="#" class="notification"><img src="/images/message_icon.jpg" alt="m"></a></li>
         <li><a href="#" class="notification"><span class="new"></span><img src="/images/alert_icon.jpg" alt="m"></a></li>
         <li><a href="#" class="profile"><img class="dropdown-button" data-activates='profileDrop' data-hover="false" data-belowOrigin="true" data-constrainWidth="false" src="{{ userDetails.profile_pic }}" alt="m"></a></li>
       </ul>
     </div>
   </nav>
+</div>
+<div id="searchResults" class="white hide">
+  <ul style="margin: 0;">
+    <li><a href="#">Ajala Abdulsamii olalekan</a></li>
+    <li><a href="#">Ajala Abdulsamii olalekan</a></li>
+    <li><a href="#">Ajala Abdulsamii olalekan</a></li>
+    <li><a href="#">Ajala Abdulsamii olalekan</a></li>
+    <li><a href="#">Ajala Abdulsamii olalekan</a></li>
+  </ul>
 </div>
