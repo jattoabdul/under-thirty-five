@@ -527,13 +527,15 @@ socket.on('newPost', function (res) {
       var author_pic = author_data.profile_pic;
       var postBody = postData.body;
       var postTime = postData.createdOn;
+      var author_location =
+      author_localG ? author_localG + ' - ' + author_state : author_state;
 
       var post = "";
       post += '<div class="card-panel update">';
       post += '<div class="head">';
       post += '<img src="' + author_pic + '" alt="' + author_name + '" class="profile">';
       post += '<h4 class="creator_fullname">' + author_name + '</h4>';
-      post += '<p class="creator_origin">' + author_localG + ' - ' + author_state + '</p>';
+      post += '<p class="creator_origin">' + author_location + '</p>';
       post += '<p class="posted_when"><abbr class="timeago" title="' + postTime + '"></abbr></p>';
       post += '</div>';
       post += '<div class="body">';
