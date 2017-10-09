@@ -1097,21 +1097,28 @@ router.post('/api/unfollow', (req, res) => {
 });
 router.post('/api/fetchPosts', (req, res) => {
   var lmt = req.body.limit || 20;
-  Post
-    .find({})
-    .limit()
-    .exec((err, doc) => {
-      if (!err) {
-        res
-          .status(200)
-          .send(doc);
-      } else {
-        console.log(JSON.stringify(err, null, 2));
-        res
-          .status(500)
-          .send(err);
-      }
-    })
+  var userId = req.session.user.id;
+  var following;
+  User
+  .findOne({ _id: userId })
+  .exec((err, doc) => {
+    following = doc.following;
+    Post
+      .find({ $or: [{ author_id: { $in: following } }, { author_id: userId } ]})
+      .limit()
+      .exec((err, doc) => {
+        if (!err) {
+          res
+            .status(200)
+            .send(doc);
+        } else {
+          console.log(JSON.stringify(err, null, 2));
+          res
+            .status(500)
+            .send(err);
+        }
+      });
+    });
 })
 router.put('/api/changePass/onDash', (req, res) => {
   let username = req.session.user.username;
