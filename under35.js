@@ -1149,6 +1149,28 @@ router.post('/api/upload/image', fileParser, (req, res) => {
     });
 });
 
+// TODO: complete this search endpoint
+router.get('/api/search', (req, res) => {
+  const lmt = 10;
+  // find User with query
+  if (req.query.name) {
+    User.find({
+      where: {
+        
+      }
+    }, 'fullname email profile_pic')
+    .limit(lmt)
+    .exec((err, data) => {
+      if (!err) {
+        res.send(data);
+      } else {
+        console.log(JSON.stringify(err, null, 2));
+        err;
+      }
+    });
+  }
+});
+
 app.use(router);
 
 const server = http.createServer(app);
