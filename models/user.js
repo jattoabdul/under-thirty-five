@@ -86,6 +86,8 @@ let userSchema = new Schema({
   }
 }, { runSettersOnQuery: true });
 
+userSchema.index({fullname: 'text', 'email': 'text'});
+
 userSchema.pre('save', function(next) {
   this.email = this.email.toLowerCase();
 

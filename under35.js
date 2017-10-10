@@ -1156,6 +1156,28 @@ router.post('/api/upload/image', fileParser, (req, res) => {
     });
 });
 
+// TODO: complete this search endpoint
+router.get('/api/search', (req, res) => {
+  const lmt = 10;
+  // find User with query
+  if (req.query.search) {
+    User.find({fullname: { $regex: '.*' + req.query.search + '.*', $options: 'i'} })
+    .limit(lmt)
+    .exec((err, doc) => {
+      if (!err) {
+        res
+        .status(200)
+        .send(doc);
+      } else {
+        res
+        .status(500)
+        .send(err);
+      }
+    });
+  }
+});
+
+
 app.use(router);
 
 const server = http.createServer(app);
