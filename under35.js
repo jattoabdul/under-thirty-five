@@ -1160,23 +1160,23 @@ router.post('/api/upload/image', fileParser, (req, res) => {
 router.get('/api/search', (req, res) => {
   const lmt = 10;
   // find User with query
-  if (req.query.name) {
-    User.find({
-      where: {
-        
-      }
-    }, 'fullname email profile_pic')
+  if (req.query.search) {
+    User.find({fullname: { $regex: '.*' + req.query.search + '.*', $options: 'i'} })
     .limit(lmt)
-    .exec((err, data) => {
+    .exec((err, doc) => {
       if (!err) {
-        res.send(data);
+        res
+        .status(200)
+        .send(doc);
       } else {
-        console.log(JSON.stringify(err, null, 2));
-        err;
+        res
+        .status(500)
+        .send(err);
       }
     });
   }
 });
+
 
 app.use(router);
 

@@ -135,18 +135,24 @@ $(document)
     });
 
     $('#search_profile').keyup(function () {
-      var query = $('#search_profile').val();
+      var query = $('#search_profile').val().toLowerCase();
       $.ajax({
         type: 'get',
-        url: 'https://jsonplaceholder.typicode.com/users',
-        // data: {
-        //   query: query
-        // },
+        url: '/api/search',
+        data: {
+          search: query
+        },
         success: function (data) {
           $('#searchResults').removeClass('hide');
+          $('#searchItemsUl').empty();
+          $.map(data, (user) => {
+            $('#searchItemsUl')
+            .append(`<li><a href="/profile/${user._id}">${user.fullname}</a></li>`)
+          });
         },
         error: function (err) {
-          console.log(JSON.stringify(err, null, 2));
+          // console.log(JSON.stringify(err, null, 2));
+          Materialize.toast(JSON.stringify(err.message, null, 2));
         }
       })
     });
