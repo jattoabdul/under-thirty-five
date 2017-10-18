@@ -1175,7 +1175,7 @@ label {
 	min-width: 80%
 }
 
-.querying_box .querying_box input[type="text"] {
+.querying_box input[type="text"] {
   border: 1px solid;
   padding: 0px 1em;
   margin-top: 1em;
