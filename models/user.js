@@ -35,7 +35,7 @@ let userSchema = new Schema({
     required: true
   },
   occupation: {
-    type: String
+    type: String 
   },
   following: [{user_id: {
     type: Schema.Types.ObjectId,

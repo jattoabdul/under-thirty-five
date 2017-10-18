@@ -981,6 +981,7 @@ body.board .card-panel {
 	text-align: left;
 	color: #4a4a4a;
 	margin-right: 2rem;
+	cursor: pointer;
 }
 
 .update .foot p>.no_of_views i.icon {

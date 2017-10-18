@@ -1,0 +1,8 @@
+Post.find({})
+            .populate('postedBy')
+            .populate('comments.postedBy')
+            .exec(function(error, posts) {
+                console.log(JSON.stringify(posts, null, "\t"))
+            })
+            
+db.people.update({name: "John"}, {$push: {friends: {firstName: "Harry", lastName: "Potter"}}});
