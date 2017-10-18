@@ -1175,11 +1175,37 @@ label {
 	min-width: 80%
 }
 
-.querying_box input[type="text"] {
+.querying_box .querying_box input[type="text"] {
   border: 1px solid;
   padding: 0px 1em;
   margin-top: 1em;
   width: calc(100% - 2em);
+}
+
+.querying_box .head .query_text {
+  font-size: 13px;
+  font-weight: 300;
+  text-align: left;
+  color: #4a4a4a;
+  display: inline-block;
+  margin-top: -1rem;
+  margin-left: 1rem;
+}
+
+.querying_box .head .query_by {
+  font-size: 12px;
+  text-align: left;
+  color: #acacac;
+  margin-top: -0.5rem;
+  margin-left: 4.3rem;
+}
+
+.querying_box .head {
+  position: relative;
+  display: flow-root;
+  border-bottom: #ededed solid 1px;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 @media only screen and (min-width: 601px) {
