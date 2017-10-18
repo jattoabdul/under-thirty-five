@@ -1175,6 +1175,13 @@ label {
 	min-width: 80%
 }
 
+.querying_box input[type="text"] {
+  border: 1px solid;
+  padding: 0px 1em;
+  margin-top: 1em;
+  width: calc(100% - 2em);
+}
+
 @media only screen and (min-width: 601px) {
 	nav,
 	nav .nav-wrapper i,
