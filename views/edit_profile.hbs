@@ -1,4 +1,5 @@
 {{> head }}
+
 <body class="board">
   {{> innerNav }}
   <main class="row zmb">
@@ -12,7 +13,8 @@
               <div class="card-panel update">
                 <h5>Edit Profile</h5>
                 <!-- <button class="round-btn btn right update-btn top waves-effect waves-light">Update</button> -->
-                <hr><br>
+                <hr>
+                <br>
                 <form onsubmit="editProfile(); return false;" class="row">
                   <div class="col s12 m6 l6 input-field">
                     <input value="{{ details.fullname }}" type="text" id="fullname_edit" placeholder="fullname">
@@ -37,46 +39,46 @@
                   </div>
                   <div class="col s12 m6 l3 input-field">
                     <select name="state_edit" id="state_edit">
-                        <option value="" disabled selected>Choose your option</option>
-                        <option value="abuja">ABUJA FCT</option>
-                        <option value="abia">ABIA</option>
-                        <option value="adamawa">ADAMAWA</option>
-                        <option value="akwa_ibom">AKWA IBOM</option>
-                        <option value="anambra">ANAMBRA</option>
-                        <option value="bauchi">BAUCHI</option>
-                        <option value="bayelsa">BAYELSA</option>
-                        <option value="benue">BENUE</option>
-                        <option value="borno">BORNO</option>
-                        <option value="cross_river">CROSS RIVER</option>
-                        <option value="delta">DELTA</option>
-                        <option value="ebonyi">EBONYI</option>
-                        <option value="edo">EDO</option>
-                        <option value="ekiti">EKITI</option>
-                        <option value="enugu">ENUGU</option>
-                        <option value="gombe">GOMBE</option>
-                        <option value="imo">IMO</option>
-                        <option value="jigawa">JIGAWA</option>
-                        <option value="kaduna">KADUNA</option>
-                        <option value="kano">KANO</option>
-                        <option value="katsina">KATSINA</option>
-                        <option value="kebbi">KEBBI</option>
-                        <option value="kogi">KOGI</option>
-                        <option value="kwara">KWARA</option>
-                        <option value="lagos">LAGOS</option>
-                        <option value="nassarawa">NASSARAWA</option>
-                        <option value="niger">NIGER</option>
-                        <option value="ogun">OGUN</option>
-                        <option value="ondo">ONDO</option>
-                        <option value="osun">OSUN</option>
-                        <option value="oyo">OYO</option>
-                        <option value="plateau">PLATEAU</option>
-                        <option value="rivers">RIVERS</option>
-                        <option value="sokoto">SOKOTO</option>
-                        <option value="taraba">TARABA</option>
-                        <option value="yobe">YOBE</option>
-                        <option value="zamfara">ZAMFARA</option>
-                      </select>
-                      <label for="state_edit">STATE OF ORIGIN</label>
+                      <option value="" disabled selected>Choose your option</option>
+                      <option value="abuja">ABUJA FCT</option>
+                      <option value="abia">ABIA</option>
+                      <option value="adamawa">ADAMAWA</option>
+                      <option value="akwa_ibom">AKWA IBOM</option>
+                      <option value="anambra">ANAMBRA</option>
+                      <option value="bauchi">BAUCHI</option>
+                      <option value="bayelsa">BAYELSA</option>
+                      <option value="benue">BENUE</option>
+                      <option value="borno">BORNO</option>
+                      <option value="cross_river">CROSS RIVER</option>
+                      <option value="delta">DELTA</option>
+                      <option value="ebonyi">EBONYI</option>
+                      <option value="edo">EDO</option>
+                      <option value="ekiti">EKITI</option>
+                      <option value="enugu">ENUGU</option>
+                      <option value="gombe">GOMBE</option>
+                      <option value="imo">IMO</option>
+                      <option value="jigawa">JIGAWA</option>
+                      <option value="kaduna">KADUNA</option>
+                      <option value="kano">KANO</option>
+                      <option value="katsina">KATSINA</option>
+                      <option value="kebbi">KEBBI</option>
+                      <option value="kogi">KOGI</option>
+                      <option value="kwara">KWARA</option>
+                      <option value="lagos">LAGOS</option>
+                      <option value="nassarawa">NASSARAWA</option>
+                      <option value="niger">NIGER</option>
+                      <option value="ogun">OGUN</option>
+                      <option value="ondo">ONDO</option>
+                      <option value="osun">OSUN</option>
+                      <option value="oyo">OYO</option>
+                      <option value="plateau">PLATEAU</option>
+                      <option value="rivers">RIVERS</option>
+                      <option value="sokoto">SOKOTO</option>
+                      <option value="taraba">TARABA</option>
+                      <option value="yobe">YOBE</option>
+                      <option value="zamfara">ZAMFARA</option>
+                    </select>
+                    <label for="state_edit">STATE OF ORIGIN</label>
                   </div>
                   <div class="col s12 m6 l3 input-field">
                     <input value="{{ details.origin_town }}" type="text" id="town_edit">
@@ -88,10 +90,10 @@
                   </div>
                   <div class="col s12 m6 l4 input-field">
                     <select name="party_edit" id="party_edit">
-                        <option value="" disabled selected>Choose your Party</option>
-                        <option value="APC">APC</option>
-                        <option value="PDP">PDP</option>
-                        <option value="APGA">APGA</option>
+                      <option value="" disabled selected>Choose your Party</option>
+                      <option value="APC">APC</option>
+                      <option value="PDP">PDP</option>
+                      <option value="APGA">APGA</option>
                     </select>
                     <label for="party_edit">Party</label>
                   </div>
@@ -105,10 +107,12 @@
                   </div>
                   <div class="col s12 m6 l3 input-field">
                     <input value="{{ details.gPlus_id }}" type="text" id="google_edit">
-                    <label for="google_edit">Google<sup>+</sup></label>
+                    <label for="google_edit">Google
+                      <sup>+</sup>
+                    </label>
                   </div>
-                  <div class="col s12 m6 l3 input-field">
-                    <input value="{{ details.date_of_birth }}" type="date" id="dob_edit" placeholder="Date of birth">
+                  <div id="{{ details.date_of_birth }}" class="dob col s12 m6 l3 input-field {{ details.date_of_birth }}">
+                    <input type="date" id="dob_edit" placeholder="Date of birth">
                   </div>
                   <div class="col s12 input-field">
                     <button class="btn-large waves-effect waves-light update-btn round-btn">
@@ -125,5 +129,23 @@
       </div>
     </div>
   </main>
-{{> profileMenu }}
-{{> footer }}
+  {{> profileMenu }} {{> footer }}
+  <script>
+    $(document).ready(function () {
+      /* 
+      {{!-- var date = new Date(dob).toISOString().substring(0, 10); --}}
+      var date = moment(dob).format('YYYY-MM-DD')
+      var field = document.querySelector('.dob.input-field');
+      field.value = date; */
+
+      var dob = Number($('.dob.input-field').attr('id'));
+      var x = new Date(dob),
+        y = x.getFullYear(),
+        m = x.getMonth() + 1 < 10 ? '' + x.getMonth() + 1 : x.getMonth() + 1,
+        d = x.getDate() < 10 ? '0' + x.getDate() : x.getDate(),
+        input = document.querySelectorAll('.dob input');
+      for (i = 0; i < input.length; i++) {
+        input[i].value = y + '-' + m + '-' + d;
+      }
+    })
+  </script>

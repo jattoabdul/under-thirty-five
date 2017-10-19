@@ -14,8 +14,8 @@ $(document)
     });
     // $('body').on('focus', 'toBposted[contenteditable]', function () {   var $this
     // = $(this);   $this.data('before', $this.html());   return $this; }).on('blur
-    // keyup paste input', 'toBposted[contenteditable]', function () {     var
-    // $this = $(this);     if ($this.data('before') !== $this.html()) {
+    // keyup paste input', 'toBposted[contenteditable]', function () {     var $this
+    // = $(this);     if ($this.data('before') !== $this.html()) {
     // $this.data('before', $this.html());       $this.trigger('change');     }
     // return $this;   });
     $('.editable__placeholder, .modal-content__body').click(function () {
@@ -135,7 +135,9 @@ $(document)
     });
 
     $('#search_profile').keyup(function () {
-      var query = $('#search_profile').val().toLowerCase();
+      var query = $('#search_profile')
+        .val()
+        .toLowerCase();
       $.ajax({
         type: 'get',
         url: '/api/search',
@@ -146,8 +148,7 @@ $(document)
           $('#searchResults').removeClass('hide');
           $('#searchItemsUl').empty();
           $.map(data, (user) => {
-            $('#searchItemsUl')
-            .append(`<li><a href="/profile/${user._id}">${user.fullname}</a></li>`)
+            $('#searchItemsUl').append(`<li><a href="/profile/${user._id}">${user.fullname}</a></li>`)
           });
         },
         error: function (err) {
@@ -332,28 +333,33 @@ function changePassword() {
 }
 
 function writeApost() {
-  $(".loginSpinner").removeClass("hide");
-  $('#oyaPost').addClass('disabled');
-  $.ajax({
-    url: "/api/writePost",
-    type: 'POST',
-    data: {
-      post: $('#toBposted').text()
-    },
-    success: function (data) {
-      $('#oyaPost').removeClass('disabled');
-      $(".loginSpinner").addClass("hide");
-      $('#toBposted').text('');
-      $('#writeModal').modal('close');
-      // FIXME: use socket to handle this!
+  var newPostContent = $('#toBposted')
+    .text()
+    .trim();
+  if (newPostContent.length > 1) {
+    $(".loginSpinner").removeClass("hide");
+    $('#oyaPost').addClass('disabled');
+    $.ajax({
+      url: "/api/writePost",
+      type: 'POST',
+      data: {
+        post: newPostContent
+      },
+      success: function (data) {
+        $('#oyaPost').removeClass('disabled');
+        $(".loginSpinner").addClass("hide");
+        $('#toBposted').text('');
+        $('#writeModal').modal('close');
+        // FIXME: use socket to handle this!
 
-    },
-    error: function (e) {
-      $('#oyaPost').addClass('disabled');
-      $('#oyaPost').removeClass('disabled');
-      $(".loginSpinner").addClass("hide");
-    }
-  });
+      },
+      error: function (e) {
+        $('#oyaPost').addClass('disabled');
+        $('#oyaPost').removeClass('disabled');
+        $(".loginSpinner").addClass("hide");
+      }
+    });
+  }
 }
 
 function editProfile() {
@@ -371,7 +377,7 @@ function editProfile() {
   data.fb = $('#fb_edit').val() || '';
   data.gplus = $('#google_edit').val() || '';
   data.tw = $('#tw_edit').val() || '';
-  // data.dob = $('#dob_edit').val() || '';
+  data.dob = new Date($('#dob_edit').val()).getTime() || '';
 
   console.log(data);
   $.ajax({
@@ -533,8 +539,9 @@ socket.on('newPost', function (res) {
       var author_pic = author_data.profile_pic;
       var postBody = postData.body;
       var postTime = postData.createdOn;
-      var author_location =
-      author_localG ? author_localG + ' - ' + author_state : author_state;
+      var author_location = author_localG
+        ? author_localG + ' - ' + author_state
+        : author_state;
 
       var post = "";
       post += '<div class="card-panel update">';

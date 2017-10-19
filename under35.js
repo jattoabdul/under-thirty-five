@@ -41,7 +41,7 @@ mongoose.connect( environment === "production" ? online_DB_uri : local_DB_uri, {
     console.log("Couldn't connect to database");
   } else {
     console.log(`Connected To ${environment} Database`);
-  }
+  } 
 });
 
 // models
@@ -257,6 +257,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // app.set('serverPort', (process.env.PORT || 3030));
 process.env.PWD = process.cwd();
 app.use(express.static(path.join(process.env.PWD, 'public')));
+app.use(express.static(path.join('./node_modules/moment/')))
 
 hbs.registerPartials(path.join(process.env.PWD, 'views/partials'));
 app.set('views', path.join(process.env.PWD, 'views'));
@@ -872,7 +873,8 @@ router.get('/edit_profile', (req, res) => {
 
       res.render('edit_profile', {
         title: 'Edit Profile',
-        details: user_detail
+        details: user_detail,
+        userDetails: datas[0]
       });
     });
 });
