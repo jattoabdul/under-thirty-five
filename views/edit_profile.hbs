@@ -37,7 +37,7 @@
                     <input value="{{ details.phone_number }}" type="number" id="phone_edit">
                     <label for="phone_edit">Phone No.</label>
                   </div>
-                  <div class="col s12 m6 l3 input-field">
+                  <div id="{{ details.origin_state }}"" class="col s12 m6 l3 input-field stateO">
                     <select name="state_edit" id="state_edit">
                       <option value="" disabled selected>Choose your option</option>
                       <option value="abuja">ABUJA FCT</option>
@@ -88,7 +88,7 @@
                     <input value="{{ details.local_government }}" type="text" id="local_gov_edit">
                     <label for="local_gov_edit">Local Government</label>
                   </div>
-                  <div class="col s12 m6 l4 input-field">
+                  <div class="col s12 m6 l4 input-field partyO" id="{{ details.party }}">
                     <select name="party_edit" id="party_edit">
                       <option value="" disabled selected>Choose your Party</option>
                       <option value="APC">APC</option>
@@ -132,12 +132,6 @@
   {{> profileMenu }} {{> footer }}
   <script>
     $(document).ready(function () {
-      /* 
-      {{!-- var date = new Date(dob).toISOString().substring(0, 10); --}}
-      var date = moment(dob).format('YYYY-MM-DD')
-      var field = document.querySelector('.dob.input-field');
-      field.value = date; */
-
       var dob = Number($('.dob.input-field').attr('id'));
       var x = new Date(dob),
         y = x.getFullYear(),
@@ -147,5 +141,15 @@
       for (i = 0; i < input.length; i++) {
         input[i].value = y + '-' + m + '-' + d;
       }
+
+      /*$(`#state_edit option[value=${fetchedOriginState}]`).attr('selected','selected');*/
+
+      var fetchedOriginState = $('.stateO').attr('id');
+      $('#state_edit').val(fetchedOriginState);
+      $('#state_edit').material_select();
+
+      var fetchedParty = $(".partyO").attr('id');
+      $('#party_edit').val(fetchedParty);
+      $('#party_edit').material_select();
     })
   </script>
