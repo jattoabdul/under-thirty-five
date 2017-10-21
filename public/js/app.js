@@ -543,7 +543,7 @@ socket.on('newPost', function (res) {
         ? author_localG + ' - ' + author_state
         : author_state;
 
-      var post = "";
+      var post = '';
       post += '<div class="card-panel update">';
       post += '<div class="head">';
       post += '<img src="' + author_pic + '" alt="' + author_name + '" class="profile">';

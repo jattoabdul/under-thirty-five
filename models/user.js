@@ -45,7 +45,10 @@ let userSchema = new Schema({
   party: String,
   summary: String,
   no_of_queries: Number,
-  followers: [{name: String, occupation: String, local_government: String, profile_url: String}],
+  followers: [{user_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }}],
   education: [{institution: String, programe: String, startDate: Number, endDate: Number}],
   professional_experience: [{post: String, where: String, startDate: Number, endDate: Number}],
   activities_societies: [{course: String, where: String, details: String, startDate: Number, endDate: Number, reference_link: String}],
