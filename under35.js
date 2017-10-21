@@ -56,6 +56,7 @@ mongoose.connect(
 const Admin = require("./models/admin");
 (User = require("./models/user")),
   (Post = require("./models/post")),
+  (Queries = require("./models/queries")),
   (Category = require("./models/category")),
   (Metadata = require("./models/metadata")),
   (Subscriber = require("./models/subscriber"));
@@ -957,7 +958,7 @@ router.post("/api/writePost", (req, res) => {
     var body = req.body.post;
     var email = req.session.user.email;
     var author_id = req.session.user.id;
-    var user_pic = req.session.user.id;
+    var user_pic = req.session.user.profile_pic;
     var postData = {
       body,
       author_id,
@@ -982,6 +983,40 @@ router.post("/api/writePost", (req, res) => {
     res.redirect("/login");
   }
 });
+
+router.post("api/makeQueries", (req, res) => {
+  if (req.session.user) {
+    var userPic = req.session.user.profile_pic;
+    var queryData = {
+      text: req.body.text,
+      querier_id: req.session.user.id,
+      post_id: req.body.postId,
+      createdOn: new Date().getTime()
+    } 
+
+    let newQuery = new Queries(queryData);
+    newQuery
+      .save()
+      .then(() => {
+        // queryData.querier_pic = userPic;
+        // io.sockets.emit("newQuery", { queryData });
+        res
+          .status(200)
+          send({
+            message: "Query succesfully broadcasted"
+          });
+      })
+      .catch(err => {
+        res.status(500).send({
+          error: err,
+          message: "error making queries at this moment"
+        });
+      });
+  } else {
+    res.redirect("/login");
+  }
+});
+
 router.post("/api/getBasicUserData", (req, res) => {
   if (req.session.user) {
     var userID = req.body.id;
@@ -1032,23 +1067,6 @@ router.post("/api/follow", (req, res) => {
         });
       });
   });
-
-  // User.findByIdAndUpdate(user_id, {
-  //   $push: {
-  //     following: user_toFollow
-  //   }
-  // }, (err, result) => {
-  //   if (!err) {
-  //     console.log(JSON.stringify(result, null, 2));
-  //     res
-  //       .status(200)
-  //       .send("user successfully followed");
-  //   } else {
-  //     res
-  //       .status(500)
-  //       .send("there is an issue following this user, we are fixing this already");
-  //   }
-  // });
 });
 
 router.post("/api/unfollow", (req, res) => {
@@ -1083,22 +1101,6 @@ router.post("/api/unfollow", (req, res) => {
       });
     });
   });
-  // User.findByIdAndUpdate(user_id, {
-  //   $push: {
-  //     following: user_toFollow
-  //   }
-  // }, (err, result) => {
-  //   if (!err) {
-  //     console.log(JSON.stringify(result, null, 2));
-  //     res
-  //       .status(200)
-  //       .send("user successfully followed");
-  //   } else {
-  //     res
-  //       .status(500)
-  //       .send("there is an issue following this user, we are fixing this already");
-  //   }
-  // });
 });
 router.post("/api/fetchPosts", (req, res) => {
   var lmt = req.body.limit || 20;
@@ -1120,6 +1122,36 @@ router.post("/api/fetchPosts", (req, res) => {
       });
   });
 });
+
+router.post("/api/fetchQueries", (req, res) => {
+  if (req.session.user) {
+    var limit = req.body.limit || 10;
+    var postId = req.body.post_id;
+
+    Queries.find({
+      post_id: postId
+    })
+    .limit()
+    .exec((err, doc) => {
+      if (!err) {
+        res.status(200).send({
+          data: doc
+        });
+      } else {
+        res.status(500).send({
+          error: err,
+          message: "error fetching post queries"
+        });
+      }
+    });
+
+    
+  } else {
+    // redirect to login
+    res.redirect("/login");
+  }
+});
+
 router.put("/api/changePass/onDash", (req, res) => {
   let username = req.session.user.username;
   let newPass = req.body.newpass;
