@@ -1122,6 +1122,36 @@ router.post("/api/fetchPosts", (req, res) => {
       });
   });
 });
+
+router.post("/api/fetchQueries", (req, res) => {
+  if (req.session.user) {
+    var limit = req.body.limit || 10;
+    var postId = req.body.post_id;
+
+    Queries.find({
+      post_id: postId
+    })
+    .limit()
+    .exec((err, doc) => {
+      if (!err) {
+        res.status(200).send({
+          data: doc
+        });
+      } else {
+        res.status(500).send({
+          error: err,
+          message: "error fetching post queries"
+        });
+      }
+    });
+
+    
+  } else {
+    // redirect to login
+    res.redirect("/login");
+  }
+});
+
 router.put("/api/changePass/onDash", (req, res) => {
   let username = req.session.user.username;
   let newPass = req.body.newpass;
