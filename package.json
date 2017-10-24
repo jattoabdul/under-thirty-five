@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jalasem/under35.git"
+    "url": "git+https://github.com/jattoabdul/under-thirty-five.git"
   },
   "dependencies": {
     "async": "^2.5.0",
@@ -44,9 +44,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jalasem/under35/issues"
+    "url": "https://github.com/jattoabdul/under-thirty-five/issues"
   },
-  "homepage": "https://github.com/jalasem/under35#readme",
+  "homepage": "https://github.com/jattoabdul/under-thirty-five#readme",
   "devDependencies": {
     "nodemon": "^1.12.1"
   }
