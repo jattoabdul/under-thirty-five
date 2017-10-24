@@ -205,6 +205,7 @@ const FetchNewPosts = (lmt = 20) => {
         date: 1,
         views: 1,
         "authorinfo.fullname": 1,
+        "authorinfo._id": 1,
         "authorinfo.local_government": 1,
         "authorinfo.origin_state": 1,
         "authorinfo.profile_pic": 1
@@ -212,7 +213,55 @@ const FetchNewPosts = (lmt = 20) => {
     }
   ]).exec((err, doc) => {
     if (!err) {
-      console.log(doc);
+      return doc;
+    } else {
+      console.log(JSON.stringify(err, null, 2));
+      return err;
+    }
+  });
+};
+
+const FetchMyPosts = (authorId, lmt = 20) => {
+  Post.aggregate([
+    {
+      $match: {
+        'author_id': mongoose.Types.ObjectId(authorId)
+      }
+    },
+    {
+      $sort: {
+        updated_at: -1
+      }
+    },
+    {
+      $limit: lmt
+    },
+    {
+      $lookup: {
+        localField: "author_id",
+        from: "users",
+        foreignField: "_id",
+        as: "authorinfo"
+      }
+    },
+    {
+      $unwind: "$authorinfo"
+    },
+    {
+      $project: {
+        body: 1,
+        createdOn: 1,
+        updated_at: 1,
+        date: 1,
+        views: 1,
+        "authorinfo.fullname": 1,
+        "authorinfo.local_government": 1,
+        "authorinfo.origin_state": 1,
+        "authorinfo.profile_pic": 1
+      }
+    }
+  ]).exec((err, doc) => {
+    if (!err) {
       return doc;
     } else {
       console.log(JSON.stringify(err, null, 2));
@@ -728,11 +777,13 @@ router.get("/timeline", (req, res) => {
   Promise.all([GetUserDetails(userInfo.email), FetchNewPosts()]).then(datas => {
     let userDetails = datas[0];
     let posts = datas[1];
+    let myPosts = datas[2];
     if (userDetails.followers) {
       userDetails.followersCount = userDetails.followers.length;
     } else {
       userDetails.followersCount = 0;
     }
+    userDetails.followingCount = userDetails.following ? userDetails.following.length : 0;
     if (!userDetails.no_of_queries) userDetails.no_of_queries = 0;
 
     res.render("timeline", {
@@ -752,6 +803,7 @@ router.get("/profile", (req, res) => {
     } else {
       userDetails.followersCount = 0;
     }
+    userDetails.followingCount = userDetails.following ? userDetails.following.length : 0;    
     if (!userDetails.no_of_queries) userDetails.no_of_queries = 0;
 
     res.render("profile", {
@@ -773,6 +825,7 @@ router.get("/profile/:id", (req, res) => {
     } else {
       userDetails.followersCount = 0;
     }
+    userDetails.followingCount = userDetails.following ? userDetails.following.length : 0;        
     if (!userDetails.no_of_queries) userDetails.no_of_queries = 0;
 
     userDetails.isMe = true;
@@ -799,6 +852,7 @@ router.get("/followers", (req, res) => {
       } else {
         userDetails.followersCount = 0;
       }
+      userDetails.followingCount = userDetails.following ? userDetails.following.length : 0;
       if (!userDetails.no_of_queries) userDetails.no_of_queries = 0;
 
       res.render("followers", {
@@ -822,14 +876,12 @@ router.get("/following", (req, res) => {
       let userDetails = datas[0];
       let Users = datas[1];
       let followingUsersList = datas[2];
-      if (userDetails.following) {
-        userDetails.followingCount = userDetails.following.length;
+      if (userDetails.followers) {
+        userDetails.followersCount = userDetails.followers.length;
       } else {
-        userDetails.followingCount = 0;
+        userDetails.followersCount = 0;
       }
-      if (!userDetails.no_of_queries) {
-        userDetails.no_of_queries = 0;
-      }
+      userDetails.followingCount = userDetails.following ? userDetails.following.length : 0;
       res.render("following", {
         title: "Under35 | Following",
         userDetails,
@@ -984,33 +1036,34 @@ router.post("/api/writePost", (req, res) => {
   }
 });
 
-router.post("api/makeQueries", (req, res) => {
+router.post("/api/makeQueries", (req, res) => {
   if (req.session.user) {
-    var userPic = req.session.user.profile_pic;
+    var body = req.body.post;
+    var author_id = req.session.user.id;
+    var author_fullName = req.session.user.name;
+    var author_imageUrl = req.session.user.pic;
+    var post_id = req.body.postId;
     var queryData = {
-      text: req.body.text,
-      querier_id: req.session.user.id,
-      post_id: req.body.postId,
+      body,
+      author_id,
+      post_id,
+      author_imageUrl,
+      author_fullName,
       createdOn: new Date().getTime()
-    } 
+    };
 
     let newQuery = new Queries(queryData);
     newQuery
       .save()
-      .then(() => {
-        // queryData.querier_pic = userPic;
-        // io.sockets.emit("newQuery", { queryData });
-        res
-          .status(200)
-          send({
-            message: "Query succesfully broadcasted"
-          });
+      .then((result) => {
+        res.status(200).send({
+          result,
+          message: "Post successfully broadcasted"
+        });
       })
       .catch(err => {
-        res.status(500).send({
-          error: err,
-          message: "error making queries at this moment"
-        });
+        console.log("Post error:", JSON.stringify(err, null, 2));
+        res.status(500).send(err);
       });
   } else {
     res.redirect("/login");
@@ -1108,8 +1161,56 @@ router.post("/api/fetchPosts", (req, res) => {
   var following;
   User.findOne({ _id: userId }).exec((err, doc) => {
     following = doc.following;
+    following = following.map((element) => {
+        let newObj = {};
+        newObj['_id'] = mongoose.Types.ObjectId(element['_id']);
+        return mongoose.Types.ObjectId(element['_id']);
+    })
+    // Post.find({
+    //   $or: [{ author_id: { $in: following } }, { author_id: userId }]
+    // })
+    //   .limit()
+    Post.aggregate([
+      {
+        $match: {
+          $or: [
+            { author_id: { $in: following } },
+            { author_id: mongoose.Types.ObjectId(userId) }
+          ]
+        }
+      },
+      {
+        $limit: lmt
+      },
+      {
+        $lookup: {
+          localField: "_id",
+          from: "queries",
+          foreignField: "post_id",
+          as: "queries"
+        }
+      },
+    ])
+      .exec((err, doc) => {
+        if (!err) {
+          res.status(200).send(doc);
+        } else {
+            console.log(JSON.stringify(err, null, 2));
+            res.status(500).send(err);
+        }
+      });
+  });
+});
+
+
+router.get("/api/fetchMyPosts", (req, res) => {
+  var lmt = req.body.limit || 20;
+  var userId = req.session.user.id;
+  var following;
+  User.findOne({ _id: userId }).exec((err, doc) => {
+    following = doc.following;
     Post.find({
-      $or: [{ author_id: { $in: following } }, { author_id: userId }]
+      $or: [{ author_id: userId }]
     })
       .limit()
       .exec((err, doc) => {
@@ -1123,33 +1224,25 @@ router.post("/api/fetchPosts", (req, res) => {
   });
 });
 
-router.post("/api/fetchQueries", (req, res) => {
-  if (req.session.user) {
-    var limit = req.body.limit || 10;
-    var postId = req.body.post_id;
-
+router.get("/api/fetchMyQueries", (req, res) => {
+  var lmt = req.body.limit || 20;
+  var userId = req.session.user.id;
+  var following;
+  User.findOne({ _id: userId }).exec((err, doc) => {
+    following = doc.following;
     Queries.find({
-      post_id: postId
+      $or: [{ author_id: userId }]
     })
-    .limit()
-    .exec((err, doc) => {
-      if (!err) {
-        res.status(200).send({
-          data: doc
-        });
-      } else {
-        res.status(500).send({
-          error: err,
-          message: "error fetching post queries"
-        });
-      }
-    });
-
-    
-  } else {
-    // redirect to login
-    res.redirect("/login");
-  }
+      .limit()
+      .exec((err, doc) => {
+        if (!err) {
+          res.status(200).send(doc);
+        } else {
+          console.log(JSON.stringify(err, null, 2));
+          res.status(500).send(err);
+        }
+      });
+  });
 });
 
 router.put("/api/changePass/onDash", (req, res) => {

@@ -89,13 +89,102 @@
 
 
   <script>
+    function toggleCommentSection(e) {
+        const elementId = e.id;
+        const postId = elementId.split(' ')[1];
+        const currentDisplay = document.getElementById(`comment_section ${postId}`).style.display;
+        document.getElementById(`comment_section ${postId}`).style.display = currentDisplay === 'block' ? 'none' : 'block';
+    }
+    function timeSince(date) {
+
+      var seconds = Math.floor((new Date() - date) / 1000);
+
+      var interval = Math.floor(seconds / 31536000);
+
+      if (interval > 1) {
+        return interval + " years";
+      }
+      interval = Math.floor(seconds / 2592000);
+      if (interval > 1) {
+        return interval + " months";
+      }
+      interval = Math.floor(seconds / 86400);
+      if (interval > 1) {
+        return interval + " days";
+        
+      }
+      interval = Math.floor(seconds / 3600);
+      if (interval > 1) {
+        let value;
+        if (interval > 24) {
+            value = Math.round(interval/24)
+            let days = value > 1 ? ' days' : ' day';
+            return value + days;
+          }
+        return interval + " hours";
+      }
+      interval = Math.floor(seconds / 60);
+      if (interval > 1) {
+        if(interval >= 60) {
+          let value = Math.floor(interval/60);
+          let hours = value > 1 ? ' hours' : ' hour';
+          return value + hours;
+        }
+        return interval + " minutes";
+      }
+      return Math.floor(seconds) + " seconds";
+    }
+    function submitForm(e, events) {
+        const postId = events.target.id.split('-')[1];
+        let post = events.target.value;
+        if (events.keyCode == 13) {
+            $.ajax({
+                url: '/api/makeQueries',
+                type: 'post',
+                data: {
+                  post,
+                  postId
+                },
+                success: function({ message, result }){
+                  events.target.value = "";
+                  Materialize.toast(message, 1000, 'rounded');
+                  setTimeout(function() {
+                    window.location.reload();
+                  }, 1000)
+                  
+                },
+                error: function(err) {
+                    console.log(err.response, 'error');
+                }
+            })
+        }
+    }
     $(document).ready(function(){
       $.ajax({
         type:'post',
         url: '/api/fetchPosts',
         success: function(datas) {
           datas.forEach(function(onePost) {
-            console.log(onePost);
+             $.ajax({
+                url: '/api/fetchMyPosts',
+                type: 'get',
+                success: function(post_data){
+                    document.getElementById('myPostNum').innerHTML = post_data.length;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            })
+            $.ajax({
+                url: '/api/fetchMyQueries',
+                type: 'get',
+                success: function(post_data){
+                    document.getElementById('queryId').innerHTML = post_data.length;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            })
             $.ajax({
               url: '/api/getBasicUserData',
               data: {
@@ -109,17 +198,18 @@
                 var author_state = author_data.origin_state;
                 var author_occupation = author_data.occupation;
                 var author_pic = author_data.profile_pic;
+                var queries = onePost.queries;
                 var postTime = onePost.createdOn;
                 var author_location =
                 author_localG ? author_localG + ' - ' + author_state : author_state;
-
+                
                 var post = "";
                 post += '<div class="card-panel update">';
                 post += '<a href="/profile/'+ onePost.author_id +'"><div class="head">';
                 post += '<img src="' + author_pic + '" alt="' + author_name + '" class="profile">';
                 post += '<h4 class="creator_fullname">' + author_name + '</h4>';
                 post += '<p class="creator_origin">' + author_location + '</p>';
-                post += '<p class="posted_when"><abbr class="timeago" title="' + postTime + '"></abbr></p>';
+                post += '<p class="posted_when">' + timeSince(onePost.createdOn) + ' ago</p>';
                 post += '</div></a>';
                 post += '<div class="body">';
                 post += '<p>' + postBody + '</p>';
@@ -130,14 +220,27 @@
                 post += '<i class="icon ion-ios-eye-outline"></i> &nbsp;';
                 post += '<span class="view_figure">0</span> views';
                 post += '</span>';
-                post += '<span class="no_of_queries left post-widget">';
+                post += '<a id="comment_icon ' + onePost._id + '" onclick="toggleCommentSection(this)" class="no_of_queries left post-widget">';
                 post += '<i class="icon ion-ios-chatboxes-outline"></i> &nbsp;';
-                post += '<span class="queries_figure">0</span> queries';
-                post += '</span>';
+                post += '<span class="queries_figure">' + queries.length + '</span> queries';
+                post += '</a>';
                 post += '</p>';
                 post += '</div>';
+                post += '<div style="display: none" id="comment_section ' + onePost._id + '">';
+                post += '<input onKeyDown="submitForm(this, event)" type="text" id="post-' + onePost._id + '-query" placeholder="type query and hit enter">';
+                post += '<div class="querying_box ' + onePost._id + '">';
+                  queries.forEach((query) => {
+                    post += '<div class="head">';
+                    post += '<img src="' + query.author_imageUrl + '" alt="Abiola" class="profile">';
+                    post += '<h4 class="query_text">' + query.body + '</h4>';
+                    post += '<p class="query_by">' + query.author_fullName + '</p>';
+                    post += '<p class="posted_when">' + timeSince(query.createdOn) + ' ago</p>';
+                    post += '</div>';
+                  })
                 post += '</div>';
-
+                post += '</div>';
+                post += '</div>';
+                
 
                 $('#gbogboPost').prepend(post);
               },
@@ -151,5 +254,6 @@
           Materialize.toast('please check your connection', 4000, 'rounded');
         }
       })
+      
     })
   </script>

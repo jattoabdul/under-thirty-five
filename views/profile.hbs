@@ -78,5 +78,30 @@
       </div>
     </div>
   </main>
+ 
   {{> profileMenu }}
   {{> footer }}
+   <script>
+    $(document).ready(function(){
+    $.ajax({
+        url: '/api/fetchMyPosts',
+        type: 'get',
+        success: function(post_data){
+            document.getElementById('myPostNum').innerHTML = post_data.length;
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
+    $.ajax({
+        url: '/api/fetchMyQueries',
+        type: 'get',
+        success: function(post_data){
+            document.getElementById('queryId').innerHTML = post_data.length;
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
+    });
+  </script>

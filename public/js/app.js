@@ -111,7 +111,6 @@ $(document)
             query: typedMail
           },
           success: function (msg) {
-            console.log(msg);
             if (msg) {
               $('#step-1_reg > form > div:nth-child(4) > p:nth-child(4) > span').addClass('disabled');
               Materialize.toast("Email have been used before", 3000, 'rounded');
@@ -284,7 +283,6 @@ function proceedToChangePass() {
       email: $('#login_id').val()
     },
     success: function (data) {
-      console.log(data);
       if (data) {
         $('.forget-view').addClass('hide');
         $('#forget_step3').removeClass('hide');
@@ -326,7 +324,6 @@ function changePassword() {
       },
       error: function (e) {
         toast(e.responseText);
-        console.log(e);
       }
     });
   }
@@ -379,7 +376,6 @@ function editProfile() {
   data.tw = $('#tw_edit').val() || '';
   data.dob = new Date($('#dob_edit').val()).getTime() || '';
 
-  console.log(data);
   $.ajax({
     data: data,
     url: '/api/edit_profile',
@@ -390,7 +386,6 @@ function editProfile() {
     },
     error: function (e) {
       $(".loginSpinner").addClass("hide");
-      console.log(e);
       toast('update unsuccessful, try again');
     }
   });
@@ -425,7 +420,6 @@ function toast(message, duration) {
       Materialize.toast(message, 3000, 'rounded');
     }
   } else {
-    console.log("doing nothing");
   }
 }
 
@@ -486,10 +480,8 @@ function follow(clickedTarget) {
     success: function (data) {
       clickedTarget.text('unfollow');
       $(this).toggleClass('follow unfollow');
-      console.log(data);
     },
     error: function (err) {
-      console.log(JSON.stringify(err, null, 2));
       toast(err.responseText);
     }
   })
@@ -509,10 +501,8 @@ function unFollow(clickedTarget) {
     success: function (data) {
       clickedTarget.text('follow');
       $(this).toggleClass('unfollow follow');
-      console.log(data);
     },
     error: function (err) {
-      console.log(JSON.stringify(err, null, 2));
       toast(err.responseText);
     }
   })
@@ -573,7 +563,6 @@ socket.on('newPost', function (res) {
       jQuery(".posted_when>.timeago").timeago();
     },
     error: function (error) {
-      console.log(error);
     }
   })
 

@@ -1384,3 +1384,6 @@ nav #search_profile {
 	margin-top: 0px;
   margin-bottom: 0;
 }
+.comment_section {
+	display: none;
+}

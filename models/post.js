@@ -72,4 +72,3 @@ var Post = mongoose.model('Post', postSchema);
 module.exports = Post;
 
 // sample query Post.find().byCategory('feminisim').exec(function(err, posts) {
-// console.log(posts); });

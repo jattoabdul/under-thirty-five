@@ -14,10 +14,3 @@ let categorySchema = new Schema({
 let Category = mongoose.model('Category', categorySchema);
 
 module.exports = Category;
-
-// Category
-//   .find()
-//   .populate('posts.pubslihed')
-// .exec(function(err, stories) {
-//     //do your stuff here
-// });

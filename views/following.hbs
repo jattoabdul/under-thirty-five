@@ -31,7 +31,9 @@
             <div class="card-panel update">
               <div class="head">
                 <h4 class="title">Followers</h4>
-                <p class="green-text right right-align">34 followers</p>
+                <p class="green-text right right-align">{{followingUsersList.length}}
+                  following
+                </p>
               </div>
               {{#each followingUsersList}}  
                 <div class="head">
@@ -50,3 +52,27 @@
   </main>
   {{> profileMenu }}
   {{> footer}}
+   <script>
+    $(document).ready(function(){
+    $.ajax({
+        url: '/api/fetchMyPosts',
+        type: 'get',
+        success: function(post_data){
+            document.getElementById('myPostNum').innerHTML = post_data.length;
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
+    $.ajax({
+        url: '/api/fetchMyQueries',
+        type: 'get',
+        success: function(post_data){
+            document.getElementById('queryId').innerHTML = post_data.length;
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
+    });
+  </script>
