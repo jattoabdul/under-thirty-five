@@ -29,6 +29,7 @@
     "moment": "^2.18.1",
     "mongodb": "^2.2.30",
     "mongoose": "^4.11.3",
+    "mongoose-type-url": "^1.0.2",
     "morgan": "^1.8.2",
     "nodemailer": "^4.0.1",
     "nodemailer-smtp-transport": "^2.7.4",

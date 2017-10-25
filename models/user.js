@@ -2,6 +2,8 @@ const mongoose = require('mongoose'),
   crypto = require('crypto'),
   Schema = mongoose.Schema;
 
+require('mongoose-type-url');
+
 let userSchema = new Schema({
   fullname: {
     type: String,
@@ -49,8 +51,15 @@ let userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   }}],
-  education: [{institution: String, programe: String, startDate: Number, endDate: Number}],
-  professional_experience: [{post: String, where: String, startDate: Number, endDate: Number}],
+  education: [
+    { institution: String,
+      programe: String,
+      url: mongoose.SchemaTypes.Url,
+      startDate: Number,
+      endDate: Number
+    }
+  ],
+  professional_experience: [{post: String, where: String, url: mongoose.SchemaTypes.Url, startDate: Number, endDate: Number, jobDesc: String}],
   activities_societies: [{course: String, where: String, details: String, startDate: Number, endDate: Number, reference_link: String}],
   fb_id: String,
   gPlus_id: String,

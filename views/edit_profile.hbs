@@ -80,11 +80,11 @@
                     </select>
                     <label for="state_edit">STATE OF ORIGIN</label>
                   </div>
-                  <div class="col s12 m6 l3 input-field">
+                  <div class="col s12 m6 l4 input-field">
                     <input value="{{ details.origin_town }}" type="text" id="town_edit">
                     <label for="town_edit">TOWN OF ORIGIN</label>
                   </div>
-                  <div class="col s12 m6 l3 input-field">
+                  <div class="col s12 m6 l4 input-field">
                     <input value="{{ details.local_government }}" type="text" id="local_gov_edit">
                     <label for="local_gov_edit">Local Government</label>
                   </div>
@@ -96,6 +96,10 @@
                       <option value="APGA">APGA</option>
                     </select>
                     <label for="party_edit">Party</label>
+                  </div>
+                  <div class="col s12 m6 l12 input-field">
+                    <textarea id="summary" name="{{ details.summary }}" class="materialize-textarea"></textarea>
+                    <label for="summary">Summary</label>
                   </div>
                   <div class="col s12 m6 l3 input-field">
                     <input value="{{ details.fb_id }}" type="text" id="fb_edit">
