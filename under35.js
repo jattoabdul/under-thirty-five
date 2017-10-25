@@ -936,6 +936,7 @@ router.patch("/api/edit_profile", (req, res) => {
     town,
     local_gov,
     party,
+    summary,
     fb,
     gplus,
     tw,
@@ -943,50 +944,11 @@ router.patch("/api/edit_profile", (req, res) => {
   } = req.body;
 
   update = {};
-  if (fullname) {
-    update.fullname = fullname;
-  }
-  if (email && validator.isEmail(email)) {
-    update.email = email;
-  }
-  if (occupation) {
-    update.occupation = occupation;
-  }
-  if (current_address) {
-    update.current_address = current_address;
-  }
-  if (phone) {
-    update.phone_number = phone;
-  }
-  if (state) {
-    update.origin_state = state;
-  }
-  if (town) {
-    update.origin_town = town;
-  }
-  if (local_gov) {
-    update.local_government = local_gov;
-  }
-  if (party) {
-    update.party = party;
-  }
-  if (fb) {
-    update.fb_id = fb;
-  }
-  if (gplus) {
-    update.gPlus_id = gplus;
-  }
-  if (tw) {
-    update.tw_id = tw;
-  }
-  if (dob) {
-    update.date_of_birth = dob;
-  }
   User.findOneAndUpdate(
     {
       email
     },
-    update,
+    req.body,
     (err, data) => {
       if (!err) {
         res.status(200).send("Your data has been successfully updated!");

@@ -31,33 +31,28 @@
                 <button class="btn green right follow-action follow" id="follow_{{userDetails._id}}">follow</button>
               </div>
               <div class="body nobd">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                  commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                  ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                  ut aliquip ex ea commodo consequat. </p>
+                <p>{{ userDetails.summary }} </p>
               </div>
             </div>
             <div class="card-panel update">
               <div class="head">
                 <h4 class="title">Professional Experience</h4>
+                <a class="waves-effect waves-light modal-trigger right" href="#modal1">
+                  <i class="icon ion-plus-circled x2"></i>
+                </a>
+                
               </div>
               <div class="body nobd">
-                <h5 class="job-title">Assistant Lecturer</h5>
+                &nbsp;
+                <span class="blue-text">
+                  <i class="x1.5 icon ion-edit" id="edit2"></i>
+                  <i class="icon ion-android-done-all x1.5" id="save2"></i>
+                </span>
+                <h5 class="job-title">Assistant Lecturer
+                </h5>
                 <p class="job-location">Ladoke Akintola University of technology</p>
                 <p class="job-time_span">March 1990 - Present </p>
-                <img src="/images/ladoke_logo.jpg" alt="" class="job-logo right">
-                <p class="job-details">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                  commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                  ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                  ut aliquip ex ea commodo consequat.</p>
-              </div>
-              <div class="body nobd">
-                <h5 class="job-title">Assistant Lecturer</h5>
-                <p class="job-location">Ladoke Akintola University of technology</p>
-                <p class="job-time_span">March 1990 - Present </p>
-                <img src="/images/ladoke_logo.jpg" alt="" class="job-logo right">
+                <img src="https://logo.clearbit.com/lautech.edu.ng" alt="" class="job-logo right">
                 <p class="job-details">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
                   magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
                   commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
@@ -68,9 +63,21 @@
             <div class="card-panel update">
               <div class="head">
                 <h4 class="title">Education</h4>
+                <a class="waves-effect waves-light modal-trigger right" href="#modal2">
+                  <i class="icon ion-plus-circled x2"></i>
+                </a>
               </div>
               <div class="body nobd">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+                <span class="blue-text">
+                  <i class="x1.5 icon ion-edit" id="edit"></i>
+                  <i class="icon ion-android-done-all x1.5" id="save"></i>
+                </span>
+                &nbsp;
+                <h5 class="institution">Ladoke Akintola University of technology
+                </h5>
+                <p class="programme_certificate">Bsc. Geology and mining resources</p>
+                <p class="study_time_span">March 1990 - May 1995 </p>
+                <img src="https://logo.clearbit.com/lautech.edu.ng" alt="" class="job-logo right">
               </div>
             </div>
           </div>
@@ -78,7 +85,39 @@
       </div>
     </div>
   </main>
- 
+  
+  {{!-- add professional modal structure --}}
+  <div id="modal1" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Professional Experience</h4>
+      <form onsubmit="addProfessionalExp(); return false;" class="row">
+        <div class="col s12 m6 l6 input-field">
+          <input value="" type="text" id="something_edit" placeholder="something">
+          <label for="something_edit">something</label>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Add</a>
+    </div>
+  </div>
+
+  {{!-- add education modal structure --}}
+  <div id="modal2" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Education</h4>
+      <form onsubmit="addEducation(); return false;" class="row">
+        <div class="col s12 m6 l6 input-field">
+          <input value="" type="text" id="something_edit" placeholder="something">
+          <label for="something_edit">something</label>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Add</a>
+    </div>
+  </div>
+
   {{> profileMenu }}
   {{> footer }}
    <script>
@@ -103,5 +142,6 @@
             console.log(err);
         }
     })
+    $('.modal').modal();
     });
   </script>

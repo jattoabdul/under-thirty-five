@@ -157,6 +157,40 @@ $(document)
       })
     });
 
+    // start inline editing for education and professional experience
+    $('#edit').click(function(){
+      $('#edit').hide();
+      $('.update').addClass('editable');
+      $('.institution').attr('contenteditable', 'true');
+      $('#save').show();
+    });
+
+    $('#save').click(function(){
+      $('#save').hide();
+      $('.update').removeClass('editable');
+      $('.institution').removeAttr('contenteditable'); 
+    
+      $('#edit').show(); 
+    });
+
+
+    $('#edit2').click(function(){
+      $('#edit2').hide();
+      $('.update').addClass('editable');
+      $('.job-title').attr('contenteditable', 'true');
+      $('#save2').show();
+    });
+
+    $('#save2').click(function(){
+      $('#save2').hide();
+      $('.update').removeClass('editable');
+      $('.job-title').removeAttr('contenteditable'); 
+    
+      $('#edit2').show(); 
+    });
+
+    // end of inline editting
+
     $(document).click(function (e) {
       var target = e.target;
       if (!$(target).is('#searchResults')) {
@@ -371,6 +405,7 @@ function editProfile() {
   data.town = $('#town_edit').val() || '';
   data.local_gov = $('#local_gov_edit').val() || '';
   data.party = $('#party_edit').val() || '';
+  data.summary = $('#summary').val() || '';
   data.fb = $('#fb_edit').val() || '';
   data.gplus = $('#google_edit').val() || '';
   data.tw = $('#tw_edit').val() || '';

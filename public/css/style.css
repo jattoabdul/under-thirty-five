@@ -1052,6 +1052,28 @@ body.board .card-panel {
 	margin-top: 1rem;
 }
 
+.update .body .programme_certificate {
+	font-size: 13px;
+	line-height: 1.54;
+	text-align: justify;
+	color: #00b55b;
+}
+
+.update .body .institution {
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.25;
+	text-align: justify;
+	color: #222426;
+}
+#edit, #edit2 {
+	cursor: pointer;
+}
+
+#save, #save2 {
+	display: none;
+}
+
 .modal .modal-content {
 	padding: 0px;
 	border-radius: 5px;
