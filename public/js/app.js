@@ -12,17 +12,26 @@ $(document)
     $('.card-panel.write').click(function () {
       $('#writeModal').modal('open');
     });
-    // $('body').on('focus', 'toBposted[contenteditable]', function () {   var $this
-    // = $(this);   $this.data('before', $this.html());   return $this; }).on('blur
-    // keyup paste input', 'toBposted[contenteditable]', function () {     var $this
-    // = $(this);     if ($this.data('before') !== $this.html()) {
-    // $this.data('before', $this.html());       $this.trigger('change');     }
-    // return $this;   });
+
+    $('.edu-trigger').click(function () {
+      $('#modal2').modal('open');
+    });
+
+    $('.prof-trigger').click(function () {
+      $('#modal1').modal('open');
+    });
+
     $('.editable__placeholder, .modal-content__body').click(function () {
       $('.editable__placeholder').addClass('hide');
     });
     $('#oyaPost').click(function () {
       writeApost();
+    });
+    $('#oyaAddEdu').click(function () {
+      addEducation();
+    });
+    $('#oyaAddProf').click(function () {
+      addProfessionalExp();
     });
 
     $('#gender_reg.toggle-input .male').click(function () {
@@ -52,12 +61,11 @@ $(document)
         Materialize.toast('Please fill all field appropriately', 4000);
       }
 
-      // (function ($) {   $(document)     .on('change keydown keypress input',
-      // '#toBposted[data-placeholder]', function () {       var post =
-      // $('#toBposted').text();       if (post.length < 1) {         if
-      // (this.textContent) {           this.dataset.divPlaceholderContent = 'true'; }
-      // else {           delete(this.dataset.divPlaceholderContent); }       } });
-      // })(jQuery);
+      var options = {  
+        weekday: "long", year: "numeric", month: "short",  
+        day: "numeric"  
+      };
+
       jQuery(function ($) {
         $("#toBposted[contenteditable]")
           .focusout(function () {
@@ -98,6 +106,21 @@ $(document)
         return false;
       }
     });
+
+    function formatDate(date) {
+      var monthNames = [
+        "January", "February", "March",
+        "April", "May", "June", "July",
+        "August", "September", "October",
+        "November", "December"
+      ];
+      var dates = new Date(date);
+      var day = dates.getDate();
+      var monthIndex = dates.getMonth();
+      var year = dates.getFullYear();
+    
+      return monthNames[monthIndex] + ' ' + year;
+    };
 
     $('#email_reg').blur(function () {
       var typedMail = document
@@ -157,11 +180,149 @@ $(document)
       })
     });
 
-    // start inline editing for education and professional experience
+    // function to add education
+    function addEducation () {
+      var education = {
+        institution: $('#institution_edit').val().trim(),
+        programe: $('#programe_edit').val().trim(),
+        url: $('#url_edit_edu').val().trim(),
+        startDate: $('#startDate_edit_edu').val().trim(),
+        endDate: $('#endDate_edit_edu').val().trim(),    
+      }
+      if (education) {
+        $('#oyaAddEdu').addClass('disabled');
+        $.ajax({
+          url: "/api/add_useredudetails",
+          type: "POST",
+          data: {
+            fieldType: "education",
+            institution: education.institution,
+            programe: education.programe,
+            url: education.url,
+            startDate: education.startDate,
+            endDate: education.endDate
+          },
+          success: function(data) {
+            console.log('on Add Edu Data array', data);
+            $('#oyaAddEdu').removeClass('disabled');
+            $('#institution_edit').text('');
+            $('#programe_edit').text('');
+            $('#url_edit_edu').text('');
+            $('#startDate_edit_edu').text('');
+            $('#endDate_edit_edu').text('');
+            
+            var schools = data.data.education;
+            console.log('on add and fetch success', schools);
+            var schoolItem = "";
+            schools.forEach((school) => {
+              schoolItem += '<div class="body">';
+              schoolItem += '<span class="blue-text">';
+              schoolItem += '<i class="x1.5 icon ion-edit" id="edit"></i>';
+              schoolItem += '<i class="icon ion-android-done-all x1.5" id="save"></i>';
+              schoolItem += '</span>';
+              schoolItem += '&nbsp;';
+              schoolItem += '<h5 class="institution">' + school.institution + '';
+              schoolItem += '</h5>';
+              schoolItem += '<p class="programme_certificate">'+ school.programe +'</p>';
+              schoolItem += '<p class="study_time_span"><span class="startdate_edu">'+ formatDate(school.startDate) +'</span> - <span class="enddate_edu">'+ formatDate(school.endDate) +'</span></p>';
+              schoolItem += '<img src="https://logo.clearbit.com/' + school.url + '" alt="" class="job-logo right">';
+              schoolItem += '</div>';
+            });
+            $('#eduItem').empty();
+            // $('#eduItem').prepend(schoolItem);
+            $('#eduItem').html(schoolItem);
+            $('#modal2').modal('close');
+          },
+          error: function(error) {
+            $('#oyaAddEdu').addClass('disabled');
+            $('#oyaAddEdu').removeClass('disabled');
+            $('#modal2').modal('close');
+            console.log(error);
+          }
+        })
+
+      }
+      return;
+    }
+
+    //function to add prof experience
+    function addProfessionalExp () {
+      var professionalExp = {
+        post: $('#post_edit').val().trim(),
+        where: $('#where_edit').val().trim(),
+        url: $('#url_edit').val().trim(),
+        startDate: $('#startDate_edit').val().trim(),
+        endDate: $('#endDate_edit').val().trim(),    
+        jobDesc: $('#jobDesc_edit').val().trim(),    
+      }
+      if (professionalExp) {
+        $('#oyaAddProf').addClass('disabled');
+        $.ajax({
+          url: "/api/add_userprofdetails",
+          type: "POST",
+          data: {
+            fieldType: "professional_experience",
+            post: professionalExp.post,
+            where: professionalExp.where,
+            url: professionalExp.url,
+            startDate: professionalExp.startDate,
+            endDate: professionalExp.endDate,
+            jobDesc: professionalExp.jobDesc
+          },
+          success: function(data) {
+            console.log('on Add Prof Exp Data array', data);
+            $('#oyaAddProf').removeClass('disabled');
+            $('#post_edit').text('');
+            $('#where_edit').text('');
+            $('#url_edit').text('');
+            $('#startDate_edit').text('');
+            $('#endDate_edit').text('');
+            $('#jobDesc_edit').text('');
+
+            var experiences = data.data.professional_experience;
+            console.log('on add and fetch experiences success', experiences);
+            var experienceItem = "";
+            experiences.forEach((experience) => {
+              experienceItem += '<div class="body">';
+              experienceItem += '<span class="blue-text">';
+              experienceItem += '<i class="x1.5 icon ion-edit" id="edit2"></i>';
+              experienceItem += '<i class="icon ion-android-done-all x1.5" id="save2"></i>';
+              experienceItem += '</span>';
+              experienceItem += '<h5 class="job-title">' + experience.post + '';
+              experienceItem += '</h5>';
+              experienceItem += '<p class="job-location">' + experience.where + '</p>';
+              experienceItem += '<p class="job-time_span">';
+              experienceItem += '<span class="startdate_prof">'+ formatDate(experience.startDate) +'</span> - <span class="enddate_prof">'+ formatDate(experience.endDate) +'</span>';
+              experienceItem += '</p>';
+              experienceItem += '<img src="https://logo.clearbit.com/' + experience.url + '" alt="" class="job-logo right">';
+              experienceItem += '<p class="job-details">' + experience.jobDesc + '</p>';
+              experienceItem += '</div>';
+            });
+            $('#profItem').empty();
+            // $('#eduItem').prepend(schoolItem);
+            $('#profItem').html(experienceItem);
+            $('#modal1').modal('close');
+          },
+          error: function(error) {
+            $('#oyaAddProf').addClass('disabled');
+            $('#oyaAddProf').removeClass('disabled');
+            $('#modal1').modal('close');
+            console.log(error);
+          }
+        })
+
+      }
+      return;
+    }
+
+    // start inline editing for education
     $('#edit').click(function(){
       $('#edit').hide();
       $('.update').addClass('editable');
       $('.institution').attr('contenteditable', 'true');
+      $('.programme_certificate').attr('contenteditable', 'true');
+      $('.startdate_edu').attr('contenteditable', 'true');
+      $('.enddate_edu').attr('contenteditable', 'true');
       $('#save').show();
     });
 
@@ -169,15 +330,22 @@ $(document)
       $('#save').hide();
       $('.update').removeClass('editable');
       $('.institution').removeAttr('contenteditable'); 
-    
+      $('.programme_certificate').removeAttr('contenteditable', 'true');
+      $('.startdate_edu').removeAttr('contenteditable', 'true');
+      $('.enddate_edu').removeAttr('contenteditable', 'true');
       $('#edit').show(); 
     });
 
+    // start inline editing for professional experience
 
     $('#edit2').click(function(){
       $('#edit2').hide();
       $('.update').addClass('editable');
       $('.job-title').attr('contenteditable', 'true');
+      $('.job-location').attr('contenteditable', 'true');
+      $('.startdate_prof').attr('contenteditable', 'true');
+      $('.enddate_prof').attr('contenteditable', 'true');
+      $('.job-details').attr('contenteditable', 'true');
       $('#save2').show();
     });
 
@@ -185,7 +353,10 @@ $(document)
       $('#save2').hide();
       $('.update').removeClass('editable');
       $('.job-title').removeAttr('contenteditable'); 
-    
+      $('.job-location').removeAttr('contenteditable'); 
+      $('.startdate_prof').removeAttr('contenteditable'); 
+      $('.enddate_prof').removeAttr('contenteditable'); 
+      $('.job-details').removeAttr('contenteditable'); 
       $('#edit2').show(); 
     });
 

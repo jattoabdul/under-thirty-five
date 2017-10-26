@@ -37,47 +37,51 @@
             <div class="card-panel update">
               <div class="head">
                 <h4 class="title">Professional Experience</h4>
-                <a class="waves-effect waves-light modal-trigger right" href="#modal1">
+                <a class="waves-effect waves-light prof-trigger right" href="#modal1">
                   <i class="icon ion-plus-circled x2"></i>
                 </a>
-                
+
               </div>
-              <div class="body nobd">
-                &nbsp;
-                <span class="blue-text">
-                  <i class="x1.5 icon ion-edit" id="edit2"></i>
-                  <i class="icon ion-android-done-all x1.5" id="save2"></i>
-                </span>
-                <h5 class="job-title">Assistant Lecturer
-                </h5>
-                <p class="job-location">Ladoke Akintola University of technology</p>
-                <p class="job-time_span">March 1990 - Present </p>
-                <img src="https://logo.clearbit.com/lautech.edu.ng" alt="" class="job-logo right">
-                <p class="job-details">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                  commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                  ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                  ut aliquip ex ea commodo consequat.</p>
+              <div class="profItem" id="profItem">
+                  &nbsp;
+                {{#each userDetails.professional_experience}}
+                  <div class="body">
+                    <span class="blue-text">
+                      <i class="x1.5 icon ion-edit" id="edit2"></i>
+                      <i class="icon ion-android-done-all x1.5" id="save2"></i>
+                    </span>
+                    <h5 class="job-title">{{post}}
+                    </h5>
+                    <p class="job-location">{{where}}</p>
+                    <p class="job-time_span">
+                      <span class="startdate_prof">{{formatDate startDate "short"}}</span> - <span class="enddate_prof">{{formatDate endDate "short"}}</span>
+                    </p>
+                    <img src="https://logo.clearbit.com/{{url}}" alt="" class="job-logo right">
+                    <p class="job-details">{{jobDesc}}</p>
+                  </div>
+                {{/each}}
               </div>
             </div>
             <div class="card-panel update">
               <div class="head">
                 <h4 class="title">Education</h4>
-                <a class="waves-effect waves-light modal-trigger right" href="#modal2">
+                <a class="waves-effect waves-light edu-trigger right" href="#modal2">
                   <i class="icon ion-plus-circled x2"></i>
                 </a>
               </div>
-              <div class="body nobd">
-                <span class="blue-text">
-                  <i class="x1.5 icon ion-edit" id="edit"></i>
-                  <i class="icon ion-android-done-all x1.5" id="save"></i>
-                </span>
-                &nbsp;
-                <h5 class="institution">Ladoke Akintola University of technology
-                </h5>
-                <p class="programme_certificate">Bsc. Geology and mining resources</p>
-                <p class="study_time_span">March 1990 - May 1995 </p>
-                <img src="https://logo.clearbit.com/lautech.edu.ng" alt="" class="job-logo right">
+              <div class="eduItem" id="eduItem">
+                {{#each userDetails.education}}
+                  <div class="body">
+                    <span class="blue-text">
+                      <i class="x1.5 icon ion-edit" id="edit"></i>
+                      <i class="icon ion-android-done-all x1.5" id="save"></i>
+                    </span> &nbsp;
+                    <h5 class="institution">{{institution}}</h5>
+                    <p class="programme_certificate">{{programe}}</p>
+                    <p class="study_time_span"><span class="startdate_edu">{{formatDate startDate "short"}}</span> - <span class="enddate_edu">{{formatDate endDate "short"}}</span></p>
+                    <img src="https://logo.clearbit.com/{{url}}" alt="" class="job-logo right">
+                  </div>
+                {{/each}}
               </div>
             </div>
           </div>
@@ -85,63 +89,105 @@
       </div>
     </div>
   </main>
-  
+
   {{!-- add professional modal structure --}}
   <div id="modal1" class="modal modal-fixed-footer">
     <div class="modal-content">
-      <h4>Professional Experience</h4>
-      <form onsubmit="addProfessionalExp(); return false;" class="row">
+      <h4 class="center-align">Professional Experience</h4>
+      <form id="profForm" class="row">
         <div class="col s12 m6 l6 input-field">
-          <input value="" type="text" id="something_edit" placeholder="something">
-          <label for="something_edit">something</label>
+          <input value="" type="text" id="post_edit" placeholder="Designation e.g. Software Developer">
+          <label for="post_edit">position</label>
+        </div>
+        <div class="col s12 m6 l6 input-field">
+          <input value="" type="text" id="where_edit" placeholder="Company Name e.g. Andela">
+          <label for="where_edit">Company/Institution</label>
+        </div>
+        <div class="col s12 m6 l4 input-field">
+          <input value="" type="text" id="url_edit" placeholder="URL e.g company.com">
+          <label for="url_edit">Company/Institution Website</label>
+        </div>
+        <div class="col s12 m3 l4 input-field">
+          <input value="" type="text" class="datepicker" id="startDate_edit" placeholder="Start Date">
+          <label for="startDate_edit">Start Date</label>
+        </div>
+        <div class="col s12 m3 l4 input-field">
+          <input value="" type="text" class="datepicker" id="endDate_edit" placeholder="End Date">
+          <label for="endDate_edit">End Date</label>
+        </div>
+        <div class="col s12 m12 l12 input-field">
+          <textarea id="jobDesc_edit" name="" class="materialize-textarea"></textarea>
+          <label for="jobDesc_edit">Job Description</label>
         </div>
       </form>
     </div>
     <div class="modal-footer">
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Add</a>
+      <a href="#!" class="modal-action waves-effect waves-green btn-flat blue " id="oyaAddProf">Add</a>
     </div>
   </div>
 
   {{!-- add education modal structure --}}
   <div id="modal2" class="modal modal-fixed-footer">
     <div class="modal-content">
-      <h4>Education</h4>
-      <form onsubmit="addEducation(); return false;" class="row">
+      <h4 class="center-align">Education</h4>
+      <form id="eduForm" class="row">
         <div class="col s12 m6 l6 input-field">
-          <input value="" type="text" id="something_edit" placeholder="something">
-          <label for="something_edit">something</label>
+          <input value="" type="text" id="institution_edit" placeholder="Institution Name e.g University of Ilorin">
+          <label for="institution_edit">Institution</label>
+        </div>
+        <div class="col s12 m6 l6 input-field">
+          <input value="" type="text" id="programe_edit" placeholder="Programme e.g B.Sc Political Science">
+          <label for="programe_edit">Programme / Course</label>
+        </div>
+        <div class="col s12 m6 l4 input-field">
+          <input value="" type="text" id="url_edit_edu" placeholder="URL e.g. lautech.com">
+          <label for="url_edit_edu">Company/Institution Website</label>
+        </div>
+        <div class="col s12 m3 l4 input-field">
+          <input value="" type="text" class="datepicker" id="startDate_edit_edu">
+          <label for="startDate_edit_edu">Start Date</label>
+        </div>
+        <div class="col s12 m3 l4 input-field">
+          <input value="" type="text" class="datepicker" id="endDate_edit_edu">
+          <label for="endDate_edit_edu">End Date</label>
         </div>
       </form>
     </div>
     <div class="modal-footer">
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Add</a>
+      <a href="#!" class="modal-action waves-effect waves-green btn-flat blue" id="oyaAddEdu">Add</a>
     </div>
   </div>
 
-  {{> profileMenu }}
-  {{> footer }}
-   <script>
-    $(document).ready(function(){
-    $.ajax({
+  {{> profileMenu }} {{> footer }}
+  <script>
+    $(document).ready(function () {
+      $.ajax({
         url: '/api/fetchMyPosts',
         type: 'get',
-        success: function(post_data){
-            document.getElementById('myPostNum').innerHTML = post_data.length;
+        success: function (post_data) {
+          document.getElementById('myPostNum').innerHTML = post_data.length;
         },
-        error: function(err) {
-            console.log(err);
+        error: function (err) {
+          console.log(err);
         }
-    })
-    $.ajax({
+      })
+      $.ajax({
         url: '/api/fetchMyQueries',
         type: 'get',
-        success: function(post_data){
-            document.getElementById('queryId').innerHTML = post_data.length;
+        success: function (post_data) {
+          document.getElementById('queryId').innerHTML = post_data.length;
         },
-        error: function(err) {
-            console.log(err);
+        error: function (err) {
+          console.log(err);
         }
-    })
-    $('.modal').modal();
+      })
+      $('.datepicker').pickadate({
+        selectMonths: true,
+        selectYears: 15,
+        today: 'Today',
+        clear: 'Clear',
+        close: 'Ok',
+        closeOnSelect: true
+      });
     });
   </script>

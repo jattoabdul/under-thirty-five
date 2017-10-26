@@ -15,6 +15,7 @@ const express = require("express"),
   shortid = require("shortid"),
   config = require("./config.json"),
   fs = require("fs"),
+  moment = require('moment'),
   nodemailer = require("nodemailer"),
   smtpTransport = require("nodemailer-smtp-transport"),
   cloudinary = require("cloudinary"),
@@ -25,6 +26,8 @@ const express = require("express"),
   mongoose = require("mongoose"),
   _ = require("lodash"),
   app = express();
+
+moment().format();
 
 const environment = process.env.NODE_ENV || "development";
 mongoose.Promise = global.Promise;
@@ -363,6 +366,22 @@ app.set("view engine", "hbs");
 
 hbs.registerHelper("getCurrentYear", () => {
   return new Date().getFullYear();
+});
+
+const DateFormats = {
+  short: "MMMM YYYY",
+  long: "dddd DD.MM.YYYY HH:mm"
+};
+
+hbs.registerHelper("formatDate", (dateTime, format) => {
+  if (moment) {
+    // can use other formats like 'lll' too
+    format = DateFormats[format] || format;
+    return moment(dateTime).format(format);
+  }
+  else {
+    return dateTime;
+  }
 });
 
 hbs.registerHelper("if_eq", function(a, b, opts) {
@@ -943,7 +962,6 @@ router.patch("/api/edit_profile", (req, res) => {
     dob
   } = req.body;
 
-  update = {};
   User.findOneAndUpdate(
     {
       email
@@ -959,6 +977,99 @@ router.patch("/api/edit_profile", (req, res) => {
     }
   );
 });
+
+// post educational profile
+router.post("/api/add_useredudetails", (req, res) => {
+  var userId = req.session.user.id;
+  let { 
+    fieldType,
+    institution,
+    programe,
+    url,
+    startDate,
+    endDate
+   } = req.body;
+
+   let newEducation = {
+     institution,
+     programe,
+     url,
+     startDate,
+     endDate
+   }
+   User.findById(userId, (err, doc) => {
+    doc.education.push(newEducation);
+    doc
+      .save()
+      .then(() => {
+        User.findById(userId, (err, data) => {
+          res.status(200).send({
+            data,
+            message: "educational profile successfully added"
+          });
+        });
+      })
+      .catch(error => {
+        res.status(400).send({
+          message: "error adding education profile",
+          error
+        });
+      });
+   });
+});
+
+// patch educational profile
+router.patch("/api/edit_useredudetail", (req, res) => {
+  // add logic
+});
+
+// post professional experience
+router.post("/api/add_userprofdetails", (req, res) => {
+  var userId = req.session.user.id;
+  let {
+    fieldType,
+    post,
+    where,
+    url,
+    startDate,
+    endDate,
+    jobDesc
+   } = req.body;
+
+   let newProfExperience = {
+    post,
+    where,
+    url,
+    startDate,
+    endDate,
+    jobDesc
+   }
+   User.findById(userId, (err, doc) => {
+    doc.professional_experience.push(newProfExperience);
+    doc
+      .save()
+      .then(() => {
+        User.findById(userId, (err, data) => {
+          res.status(200).send({
+            data,
+            message: "professional experience successfully added"
+          });
+        });
+      })
+      .catch(error => {
+        res.status(400).send({
+          message: "error adding professional experience",
+          error
+        });
+      });
+   });
+});
+
+// patch educational profile
+router.patch("/api/edit_userprofdetail", (req, res) => {
+  // add logic
+});
+
 router.post("/api/profile", (req, res) => {
   let lmt = req.body.limit;
   User.find({}, "fullname occupation local_government email")
