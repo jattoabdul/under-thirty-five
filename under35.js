@@ -15,7 +15,6 @@ const express = require("express"),
   shortid = require("shortid"),
   config = require("./config.json"),
   fs = require("fs"),
-  moment = require('moment'),
   nodemailer = require("nodemailer"),
   smtpTransport = require("nodemailer-smtp-transport"),
   cloudinary = require("cloudinary"),
@@ -25,9 +24,18 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   mongoose = require("mongoose"),
   _ = require("lodash"),
+  passport = require('passport'), 
+  FacebookStrategy = require('passport-facebook').Strategy,
   app = express();
 
-moment().format();
+// models
+const Admin = require("./models/admin");
+(User = require("./models/user")),
+  (Post = require("./models/post")),
+  (Queries = require("./models/queries")),
+  (Category = require("./models/category")),
+  (Metadata = require("./models/metadata")),
+  (Subscriber = require("./models/subscriber"));
 
 const environment = process.env.NODE_ENV || "development";
 mongoose.Promise = global.Promise;
@@ -54,15 +62,6 @@ mongoose.connect(
     }
   }
 );
-
-// models
-const Admin = require("./models/admin");
-(User = require("./models/user")),
-  (Post = require("./models/post")),
-  (Queries = require("./models/queries")),
-  (Category = require("./models/category")),
-  (Metadata = require("./models/metadata")),
-  (Subscriber = require("./models/subscriber"));
 
 const GetPosts = () => {
   return Post.find({}).exec((err, data) => {
@@ -368,22 +367,6 @@ hbs.registerHelper("getCurrentYear", () => {
   return new Date().getFullYear();
 });
 
-const DateFormats = {
-  short: "MMMM YYYY",
-  long: "dddd DD.MM.YYYY HH:mm"
-};
-
-hbs.registerHelper("formatDate", (dateTime, format) => {
-  if (moment) {
-    // can use other formats like 'lll' too
-    format = DateFormats[format] || format;
-    return moment(dateTime).format(format);
-  }
-  else {
-    return dateTime;
-  }
-});
-
 hbs.registerHelper("if_eq", function(a, b, opts) {
   if (a == b)
     // Or === depending on your needs
@@ -407,6 +390,58 @@ hbs.registerHelper("ifNotIn", function(elem, list, options) {
     return options.fn(this);
   }
   return options.inverse(this);
+});
+
+passport.serializeUser(function(user, done) {
+  console.log(user, 'user information');
+  done(null, user._id);
+  });
+  
+  passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+      done(err, user);
+  });
+  });
+  
+
+passport.use(new FacebookStrategy({
+  clientID: '124646468223091',
+  clientSecret: '5e338efb40f8d8ba9e02174661e3b355',
+  callbackURL: 'http://localhost:3001/auth/facebook/callback',
+  profileFields:['id','displayName','emails']
+  }, function(accessToken, refreshToken, profile, done) {
+      var me = new User({
+          email:profile.emails[0].value,
+          name:profile.displayName,
+          gender: profile.gender || ' ',
+          origin_town: ' ',
+          origin_state: ' ',
+          password: '  '
+      });
+
+      /* save if new */
+      User.findOne({
+        email:me.email
+      }, (err, u) => {
+          if(!u) {
+              me.save(function(err, me) {
+                  if(err) return done(err);
+                  done(null, me);
+              });
+          } else {
+              console.log(u);
+              done(null, u);
+          }
+      });
+}
+));
+
+router.get('/auth/facebook', passport.authenticate('facebook', {scope:"email"}), () => {
+  
+});
+router.get('/auth/facebook/callback', passport.authenticate('facebook', 
+{ successRedirect: '/timeline', failureRedirect: '/' }), (req, res) => {
+  res.redirect('/timeline');
 });
 
 router.get("/", (req, res) => {
@@ -781,17 +816,25 @@ router.post("/api/checkemailExistence", (req, res) => {
 
 // / authorization middleware
 router.use((req, res, next) => {
-  if (req.session.user) {
+  if (req.session.user || req.user) {
+    if(req.user) {
+      req.session.user = req.user;
+    }
     next();
   } else {
     res.redirect("/login");
   }
 });
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.get("/logout", logout);
 
 // protected pages
 router.get("/timeline", (req, res) => {
+  console.log('req.user', req.session);
+  
   let userInfo = req.session.user;
   Promise.all([GetUserDetails(userInfo.email), FetchNewPosts()]).then(datas => {
     let userDetails = datas[0];
@@ -815,7 +858,6 @@ router.get("/timeline", (req, res) => {
 
 router.get("/profile", (req, res) => {
   let userInfo = req.session.user;
-  let currentUserDet = userInfo;
   Promise.all([GetUserDetails(userInfo.email)]).then(datas => {
     let userDetails = datas[0];
     if (userDetails.followers) {
@@ -828,15 +870,13 @@ router.get("/profile", (req, res) => {
 
     res.render("profile", {
       title: "Under35 | Profile",
-      userDetails,
-      currentUserDet
+      userDetails
     });
   });
 });
 
 router.get("/profile/:id", (req, res) => {
   let userId = req.params.id;
-  let currentUserDet = req.session.user;
   if (userId === req.session.user.id) {
     return res.redirect("/profile");
   }
@@ -853,8 +893,7 @@ router.get("/profile/:id", (req, res) => {
     userDetails.isMe = true;
     res.render("profile", {
       title: "Under35 | Profile",
-      userDetails,
-      currentUserDet
+      userDetails
     });
   });
 });
@@ -959,18 +998,57 @@ router.patch("/api/edit_profile", (req, res) => {
     town,
     local_gov,
     party,
-    summary,
     fb,
     gplus,
     tw,
     dob
   } = req.body;
 
+  update = {};
+  if (fullname) {
+    update.fullname = fullname;
+  }
+  if (email && validator.isEmail(email)) {
+    update.email = email;
+  }
+  if (occupation) {
+    update.occupation = occupation;
+  }
+  if (current_address) {
+    update.current_address = current_address;
+  }
+  if (phone) {
+    update.phone_number = phone;
+  }
+  if (state) {
+    update.origin_state = state;
+  }
+  if (town) {
+    update.origin_town = town;
+  }
+  if (local_gov) {
+    update.local_government = local_gov;
+  }
+  if (party) {
+    update.party = party;
+  }
+  if (fb) {
+    update.fb_id = fb;
+  }
+  if (gplus) {
+    update.gPlus_id = gplus;
+  }
+  if (tw) {
+    update.tw_id = tw;
+  }
+  if (dob) {
+    update.date_of_birth = dob;
+  }
   User.findOneAndUpdate(
     {
       email
     },
-    req.body,
+    update,
     (err, data) => {
       if (!err) {
         res.status(200).send("Your data has been successfully updated!");
@@ -981,99 +1059,6 @@ router.patch("/api/edit_profile", (req, res) => {
     }
   );
 });
-
-// post educational profile
-router.post("/api/add_useredudetails", (req, res) => {
-  var userId = req.session.user.id;
-  let { 
-    fieldType,
-    institution,
-    programe,
-    url,
-    startDate,
-    endDate
-   } = req.body;
-
-   let newEducation = {
-     institution,
-     programe,
-     url,
-     startDate,
-     endDate
-   }
-   User.findById(userId, (err, doc) => {
-    doc.education.push(newEducation);
-    doc
-      .save()
-      .then(() => {
-        User.findById(userId, (err, data) => {
-          res.status(200).send({
-            data,
-            message: "educational profile successfully added"
-          });
-        });
-      })
-      .catch(error => {
-        res.status(400).send({
-          message: "error adding education profile",
-          error
-        });
-      });
-   });
-});
-
-// patch educational profile
-router.patch("/api/edit_useredudetail", (req, res) => {
-  // add logic
-});
-
-// post professional experience
-router.post("/api/add_userprofdetails", (req, res) => {
-  var userId = req.session.user.id;
-  let {
-    fieldType,
-    post,
-    where,
-    url,
-    startDate,
-    endDate,
-    jobDesc
-   } = req.body;
-
-   let newProfExperience = {
-    post,
-    where,
-    url,
-    startDate,
-    endDate,
-    jobDesc
-   }
-   User.findById(userId, (err, doc) => {
-    doc.professional_experience.push(newProfExperience);
-    doc
-      .save()
-      .then(() => {
-        User.findById(userId, (err, data) => {
-          res.status(200).send({
-            data,
-            message: "professional experience successfully added"
-          });
-        });
-      })
-      .catch(error => {
-        res.status(400).send({
-          message: "error adding professional experience",
-          error
-        });
-      });
-   });
-});
-
-// patch educational profile
-router.patch("/api/edit_userprofdetail", (req, res) => {
-  // add logic
-});
-
 router.post("/api/profile", (req, res) => {
   let lmt = req.body.limit;
   User.find({}, "fullname occupation local_government email")
