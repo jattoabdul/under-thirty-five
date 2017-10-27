@@ -25,9 +25,20 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   mongoose = require("mongoose"),
   _ = require("lodash"),
+  passport = require('passport'), 
+  FacebookStrategy = require('passport-facebook').Strategy,
   app = express();
 
 moment().format();
+
+// models
+const Admin = require("./models/admin");
+(User = require("./models/user")),
+  (Post = require("./models/post")),
+  (Queries = require("./models/queries")),
+  (Category = require("./models/category")),
+  (Metadata = require("./models/metadata")),
+  (Subscriber = require("./models/subscriber"));
 
 const environment = process.env.NODE_ENV || "development";
 mongoose.Promise = global.Promise;
@@ -54,15 +65,6 @@ mongoose.connect(
     }
   }
 );
-
-// models
-const Admin = require("./models/admin");
-(User = require("./models/user")),
-  (Post = require("./models/post")),
-  (Queries = require("./models/queries")),
-  (Category = require("./models/category")),
-  (Metadata = require("./models/metadata")),
-  (Subscriber = require("./models/subscriber"));
 
 const GetPosts = () => {
   return Post.find({}).exec((err, data) => {
@@ -389,6 +391,58 @@ hbs.registerHelper("if_eq", function(a, b, opts) {
     // Or === depending on your needs
     return opts.fn(this);
   else return opts.inverse(this);
+});
+
+passport.serializeUser(function(user, done) {
+  console.log(user, 'user information');
+  done(null, user._id);
+  });
+  
+  passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+      done(err, user);
+  });
+  });
+  
+
+passport.use(new FacebookStrategy({
+  clientID: '124646468223091',
+  clientSecret: '5e338efb40f8d8ba9e02174661e3b355',
+  callbackURL: 'http://localhost:3001/auth/facebook/callback',
+  profileFields:['id','displayName','emails']
+  }, function(accessToken, refreshToken, profile, done) {
+      var me = new User({
+          email:profile.emails[0].value,
+          name:profile.displayName,
+          gender: profile.gender || ' ',
+          origin_town: ' ',
+          origin_state: ' ',
+          password: '  '
+      });
+
+      /* save if new */
+      User.findOne({
+        email:me.email
+      }, (err, u) => {
+          if(!u) {
+              me.save(function(err, me) {
+                  if(err) return done(err);
+                  done(null, me);
+              });
+          } else {
+              console.log(u);
+              done(null, u);
+          }
+      });
+}
+));
+
+router.get('/auth/facebook', passport.authenticate('facebook', {scope:"email"}), () => {
+  
+});
+router.get('/auth/facebook/callback', passport.authenticate('facebook', 
+{ successRedirect: '/timeline', failureRedirect: '/' }), (req, res) => {
+  res.redirect('/timeline');
 });
 
 hbs.registerHelper("getPostTime", timeT => {
@@ -781,12 +835,18 @@ router.post("/api/checkemailExistence", (req, res) => {
 
 // / authorization middleware
 router.use((req, res, next) => {
-  if (req.session.user) {
+  if (req.session.user || req.user) {
+    if(req.user) {
+      req.session.user = req.user;
+    }
     next();
   } else {
     res.redirect("/login");
   }
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get("/logout", logout);
 
