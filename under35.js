@@ -815,6 +815,7 @@ router.get("/timeline", (req, res) => {
 
 router.get("/profile", (req, res) => {
   let userInfo = req.session.user;
+  let currentUserDet = userInfo;
   Promise.all([GetUserDetails(userInfo.email)]).then(datas => {
     let userDetails = datas[0];
     if (userDetails.followers) {
@@ -827,13 +828,15 @@ router.get("/profile", (req, res) => {
 
     res.render("profile", {
       title: "Under35 | Profile",
-      userDetails
+      userDetails,
+      currentUserDet
     });
   });
 });
 
 router.get("/profile/:id", (req, res) => {
   let userId = req.params.id;
+  let currentUserDet = req.session.user;
   if (userId === req.session.user.id) {
     return res.redirect("/profile");
   }
@@ -850,7 +853,8 @@ router.get("/profile/:id", (req, res) => {
     userDetails.isMe = true;
     res.render("profile", {
       title: "Under35 | Profile",
-      userDetails
+      userDetails,
+      currentUserDet
     });
   });
 });

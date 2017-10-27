@@ -919,6 +919,7 @@ body.board .card-panel {
 
 .update.card-panel {
 	padding: 25px 2rem 3rem;
+	position: relative;
 }
 
 .update .head {
@@ -1039,9 +1040,9 @@ body.board .card-panel {
 
 .update .body .job-logo {
 	width: 45px;
-	top: 25px;
+	top: 7.5em;
 	position: absolute;
-	right: 0;
+	right: 2em;
 }
 
 .update .body .job-details {

@@ -35,14 +35,16 @@
                   following
                 </p>
               </div>
-              {{#each followingUsersList}}  
-                <div class="head">
-                  <img src="{{ profile_pic }}" alt="{{ fullname }}" class="profile">
-                  <h4 class="creator_fullname">{{ fullname }}</h4>
-                  <p class="creator_origin">{{ occupation }}</p>
-                  <p class="creator_origin">{{ local_government }} {{#if origin_state}} - {{ origin_state }}{{/if}}</p>
-                  <button class=" waves-effect waves-light btn teal rounded right round-btn unfollow follow-action" id="follow_{{ id }}">unfollow</button>
-                </div>
+              {{#each followingUsersList}}
+                <a href="/profile/{{id}}">  
+                  <div class="head">
+                    <img src="{{ profile_pic }}" alt="{{ fullname }}" class="profile">
+                    <h4 class="creator_fullname">{{ fullname }}</h4>
+                    <p class="creator_origin">{{ occupation }}</p>
+                    <p class="creator_origin">{{ local_government }} {{#if origin_state}} - {{ origin_state }}{{/if}}</p>
+                    <button class=" waves-effect waves-light btn teal rounded right round-btn unfollow follow-action" id="follow_{{ id }}">unfollow</button>
+                  </div>
+                </a>
               {{/each}}
             </div>
           </div>
