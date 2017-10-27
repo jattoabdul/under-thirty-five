@@ -408,7 +408,7 @@ passport.serializeUser(function(user, done) {
 passport.use(new FacebookStrategy({
   clientID: '124646468223091',
   clientSecret: '5e338efb40f8d8ba9e02174661e3b355',
-  callbackURL: 'http://localhost:3001/auth/facebook/callback',
+  callbackURL: 'https://under-thirty-five.herokuapp.com/auth/facebook/callback',
   profileFields:['id','displayName','emails']
   }, function(accessToken, refreshToken, profile, done) {
       var me = new User({
