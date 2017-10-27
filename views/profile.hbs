@@ -37,19 +37,23 @@
             <div class="card-panel update">
               <div class="head">
                 <h4 class="title">Professional Experience</h4>
+                {{#if_eq currentUserDet.id userDetails._id}}
                 <a class="waves-effect waves-light prof-trigger right" href="#modal1">
                   <i class="icon ion-plus-circled x2"></i>
                 </a>
+                {{/if_eq}}
 
               </div>
               <div class="profItem" id="profItem">
                   &nbsp;
                 {{#each userDetails.professional_experience}}
                   <div class="body">
+                    {{#if_eq currentUserDet.id userDetails._id}}
                     <span class="blue-text">
                       <i class="x1.5 icon ion-edit" id="edit2"></i>
                       <i class="icon ion-android-done-all x1.5" id="save2"></i>
                     </span>
+                    {{/if_eq}}
                     <h5 class="job-title">{{post}}
                     </h5>
                     <p class="job-location">{{where}}</p>
@@ -65,17 +69,21 @@
             <div class="card-panel update">
               <div class="head">
                 <h4 class="title">Education</h4>
+                {{#if_eq currentUserDet.id userDetails._id}}
                 <a class="waves-effect waves-light edu-trigger right" href="#modal2">
                   <i class="icon ion-plus-circled x2"></i>
                 </a>
+                {{/if_eq}}
               </div>
               <div class="eduItem" id="eduItem">
                 {{#each userDetails.education}}
                   <div class="body">
+                    {{#if_eq currentUserDet.id userDetails._id}}
                     <span class="blue-text">
                       <i class="x1.5 icon ion-edit" id="edit"></i>
                       <i class="icon ion-android-done-all x1.5" id="save"></i>
-                    </span> &nbsp;
+                    </span>
+                    {{/if_eq}} &nbsp;
                     <h5 class="institution">{{institution}}</h5>
                     <p class="programme_certificate">{{programe}}</p>
                     <p class="study_time_span"><span class="startdate_edu">{{formatDate startDate "short"}}</span> - <span class="enddate_edu">{{formatDate endDate "short"}}</span></p>
