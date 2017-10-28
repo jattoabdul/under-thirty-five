@@ -176,12 +176,12 @@ section .heading {
 }
 
 #cores p.description {
-	font-size: 9px;
-	text-align: center;
-	color: #9e9e9e;
-	max-width: 516px;
-	margin: auto;
-	margin-top: 28px;
+  font-size: 12px;
+  text-align: center;
+  color: #9e9e9e;
+  max-width: 516px;
+  margin: auto;
+  margin-top: 25px;
 }
 
 .point-icon {
