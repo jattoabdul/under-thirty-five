@@ -34,6 +34,36 @@ $(document)
       addProfessionalExp();
     });
 
+    $('.remove_prof_button').click(function () {
+      const id = $(this).attr('id');
+      $.ajax({
+        url: `/api/userprofdetail/${id}`,
+        type: "DELETE",
+        success: function(data) {
+          Materialize.toast(JSON.stringify(data.message, null, 2));
+          $(`#${id}`).detach();
+        },
+        error: function(error) {
+          Materialize.toast(JSON.stringify(error.message, null, 2));
+        }
+      })
+    });
+
+    $('.remove_edu_button').click(function () {
+      const id = $(this).attr('id');
+      $.ajax({
+        url: `/api/useredudetail/${id}`,
+        type: "DELETE",
+        success: function(data) {
+          Materialize.toast(JSON.stringify(data.message, null, 2), 2000);
+          $(`#${id}`).detach();
+        },
+        error: function(error) {
+          Materialize.toast(JSON.stringify(error.message, null, 2), 2000);
+        }
+      })
+    });
+
     $('#gender_reg.toggle-input .male').click(function () {
       $('#gender_reg.toggle-input .option').removeClass('selected');
       $('#gender_reg.toggle-input .male').addClass('selected');
@@ -215,10 +245,13 @@ $(document)
             console.log('on add and fetch success', schools);
             var schoolItem = "";
             schools.forEach((school) => {
-              schoolItem += '<div class="body">';
+              schoolItem += '<div id="' + school._id + '" class="body">';
               schoolItem += '<span class="blue-text">';
               schoolItem += '<i class="x1.5 icon ion-edit" id="edit"></i>';
               schoolItem += '<i class="icon ion-android-done-all x1.5" id="save"></i>';
+              schoolItem += '</span>';
+              schoolItem += '<span class="blue-text remove_edu">';
+              schoolItem += '<i class="icon ion-trash-b x1.5 remove_edu_button" id="' + school._id + '"></i>';
               schoolItem += '</span>';
               schoolItem += '&nbsp;';
               schoolItem += '<h5 class="institution">' + school.institution + '';
@@ -283,11 +316,14 @@ $(document)
             console.log('on add and fetch experiences success', experiences);
             var experienceItem = "";
             experiences.forEach((experience) => {
-              experienceItem += '<div class="body">';
+              experienceItem += '<div id="' + experience._id + '" class="body">';
               experienceItem += '<span class="blue-text">';
               experienceItem += '<i class="x1.5 icon ion-edit" id="edit2"></i>';
               experienceItem += '<i class="icon ion-android-done-all x1.5" id="save2"></i>';
               experienceItem += '</span>';
+              schoolItem += '<span class="blue-text remove_prof">';
+              schoolItem += '<i class="icon ion-trash-b x1.5 remove_prof_button"" id="' + experience._id + '"></i>';
+              schoolItem += '</span>';
               experienceItem += '<h5 class="job-title">' + experience.post + '';
               experienceItem += '</h5>';
               experienceItem += '<p class="job-location">' + experience.where + '</p>';

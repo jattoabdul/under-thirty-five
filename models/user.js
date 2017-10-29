@@ -50,7 +50,9 @@ let userSchema = new Schema({
     ref: 'User'
   }}],
   education: [
-    { institution: String,
+    {
+      id: String,
+      institution: String,
       programe: String,
       url: String,
       startDate: Date,
@@ -58,7 +60,9 @@ let userSchema = new Schema({
     }
   ],
   professional_experience: [
-    { post: String,
+    { 
+      id: String,
+      post: String,
       where: String,
       url: String,
       startDate: Date,
