@@ -47,11 +47,14 @@
               <div class="profItem" id="profItem">
                   &nbsp;
                 {{#each userDetails.professional_experience}}
-                  <div class="body">
-                    {{#if_eq currentUserDet.id userDetails._id}}
+                  <div id="{{_id}}" class="body">
+                    {{#if_eq ../currentUserDet.id ../userDetails._id}}
                     <span class="blue-text">
                       <i class="x1.5 icon ion-edit" id="edit2"></i>
                       <i class="icon ion-android-done-all x1.5" id="save2"></i>
+                    </span>
+                    <span class="blue-text remove_prof">
+                      <i class="icon ion-trash-b x1.5 remove_prof_button" id="{{_id}}"></i>
                     </span>
                     {{/if_eq}}
                     <h5 class="job-title">{{post}}
@@ -77,13 +80,17 @@
               </div>
               <div class="eduItem" id="eduItem">
                 {{#each userDetails.education}}
-                  <div class="body">
-                    {{#if_eq currentUserDet.id userDetails._id}}
+                  <div id="{{_id}}" class="body">
+                    {{#if_eq ../currentUserDet.id ../userDetails._id}}
                     <span class="blue-text">
                       <i class="x1.5 icon ion-edit" id="edit"></i>
                       <i class="icon ion-android-done-all x1.5" id="save"></i>
                     </span>
-                    {{/if_eq}} &nbsp;
+                    <span class="blue-text remove_edu">
+                      <i class="icon ion-trash-b x1.5 remove_edu_button" id="{{_id}}"></i>
+                    </span>
+                    {{/if_eq}}
+                    &nbsp;
                     <h5 class="institution">{{institution}}</h5>
                     <p class="programme_certificate">{{programe}}</p>
                     <p class="study_time_span"><span class="startdate_edu">{{formatDate startDate "short"}}</span> - <span class="enddate_edu">{{formatDate endDate "short"}}</span></p>

@@ -1067,12 +1067,31 @@ body.board .card-panel {
 	text-align: justify;
 	color: #222426;
 }
-#edit, #edit2 {
+#edit:hover, #edit2:hover {
 	cursor: pointer;
+	color: #00b55b;
 }
 
 #save, #save2 {
 	display: none;
+}
+
+.remove_prof {
+	padding-left: 5px;
+}
+
+.remove_prof_button:hover {
+	cursor: pointer;
+	color: #B50000;
+}
+
+.remove_edu {
+	padding-left: 5px;
+}
+
+.remove_edu_button:hover {
+	cursor: pointer;
+	color: #B50000;
 }
 
 .modal .modal-content {

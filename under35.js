@@ -1087,6 +1087,30 @@ router.patch("/api/edit_useredudetail", (req, res) => {
   // add logic
 });
 
+router.delete("/api/useredudetail/:id", (req, res) => {
+  const userId = req.session.user.id;
+  const detailsId = req.params.id;
+  User.update(
+    { _id: userId },
+    { $pull: { education: { _id: detailsId } } },
+    { multi: true },
+    (error, data) => {
+      if (error) {
+        console.log('delete edu detail error', error);
+        res.status(400).send({
+          message: "delete action unsuccessful",
+          error
+        });
+      }
+      console.log('delete edu detail success', data);
+      res.status(200).send({
+        message: "item successfully deleted",
+        data
+      });
+    });
+
+});
+
 // post professional experience
 router.post("/api/add_userprofdetails", (req, res) => {
   var userId = req.session.user.id;
@@ -1132,6 +1156,31 @@ router.post("/api/add_userprofdetails", (req, res) => {
 // patch educational profile
 router.patch("/api/edit_userprofdetail", (req, res) => {
   // add logic
+});
+
+router.delete("/api/userprofdetail/:id", (req, res) => {
+  const userId = req.session.user.id;
+  const detailsId = req.params.id;
+  console.log(userId, detailsId);
+  User.update(
+    { _id: userId },
+    { $pull: { professional_experience: { _id: detailsId } } },
+    { multi: true },
+    (error, data) => {
+      if (error) {
+        console.log('delete prof detail error', error);
+        res.status(400).send({
+          message: "delete action unsuccessful",
+          error
+        });
+      }
+      console.log('delete prof detail success', data);
+      res.status(200).send({
+        message: "item successfully deleted",
+        data
+      });
+    });
+
 });
 
 router.post("/api/profile", (req, res) => {
