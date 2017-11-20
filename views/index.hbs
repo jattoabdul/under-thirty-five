@@ -13,9 +13,9 @@
                     <img src="/images/logo.png" alt="Under35">
                 </a>
 				<ul class="right hide-on-small-only">
-					<li><a href="#">ABOUT US</a></li>
-					<li><a href="#">EVENTS</a></li>
-					<li><a href="#">BLOG</a></li>
+					<li><a href="/about-us">ABOUT US</a></li>
+					<li><a href="/event">EVENTS</a></li>
+					<li><a href="/blog">BLOG</a></li>
 					<li><a href="#">&nbsp;</a></li>
 					<li>
 						<a href="/login">
@@ -29,9 +29,9 @@
 
 					<!-- Dropdown Structure -->
 					<ul id='dropdown1' class='dropdown-content'>
-						<li><a href="#">ABOUT US</a></li>
-						<li><a href="#">EVENTS</a></li>
-						<li><a href="#">BLOG</a></li>
+						<li><a href="/about-us">ABOUT US</a></li>
+						<li><a href="/event">EVENTS</a></li>
+						<li><a href="/blog">BLOG</a></li>
 						<li><a href="/login">Sign in</a></li>
 						<li><a href="/register" class="sign_up">Sign up</a></li>
 					</ul>
@@ -80,13 +80,15 @@
 			<div class="heading_rule"></div>
 			<div class="row">
 				<div class="container">
+					{{!-- youth leaderboard array loop --}}
+					{{#each topYouths}}
 					<div class="col s12 m6 l4">
 						<div class="card youth-card">
 							<div class="card-content">
-								<img src="./images/ariwoola_james-james.png" alt="" class="center">
-								<p class="name">Ariwoola James</p>
-								<p class="profession">Medical Doctor</p>
-								<p class="user_highlights">200 followers | 231 comments</p>
+								<img src="./images/ariwoola_james-james.png" alt="{{fullname}}" class="center">
+								<p class="name">{{ fullname }}</p>
+								<p class="profession">{{ occupation }}</p>
+								<p class="user_highlights">{{ no_of_followers }} followers | {{ no_of_comments }} comments</p>
 							</div>
 							<div class="card_action">
 								<div class="action">
@@ -101,112 +103,8 @@
 							</div>
 						</div>
 					</div>
-					<div class="col s12 m6 l4">
-						<div class="card youth-card">
-							<div class="card-content">
-								<img src="./images/ariwoola_james-james.png" alt="" class="center">
-								<p class="name">Ariwoola James</p>
-								<p class="profession">Medical Doctor</p>
-								<p class="user_highlights">200 followers | 231 comments</p>
-							</div>
-							<div class="card_action">
-								<div class="action">
-									<img class="icn" src="./images/person_icon.png">
-									<p class="icon_name">View Profile</p>
-								</div>
-								<div class="action">
-									<!-- <img class="icn" src="./images/arrow_icon.png"> -->
-									<p class="center"><i class="icon ion-ios-arrow-thin-right green-text x2"></i></p>
-									<p class="icon_name">Follow</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col s12 m6 l4">
-						<div class="card youth-card">
-							<div class="card-content">
-								<img src="./images/ariwoola_james-james.png" alt="" class="center">
-								<p class="name">Ariwoola James</p>
-								<p class="profession">Medical Doctor</p>
-								<p class="user_highlights">200 followers | 231 comments</p>
-							</div>
-							<div class="card_action">
-								<div class="action">
-									<img class="icn" src="./images/person_icon.png">
-									<p class="icon_name">View Profile</p>
-								</div>
-								<div class="action">
-									<!-- <img class="icn" src="./images/arrow_icon.png"> -->
-									<p class="center"><i class="icon ion-ios-arrow-thin-right green-text x2"></i></p>
-									<p class="icon_name">Follow</p>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col s12 m6 l4">
-						<div class="card youth-card">
-							<div class="card-content">
-								<img src="./images/ariwoola_james-james.png" alt="" class="center">
-								<p class="name">Ariwoola James</p>
-								<p class="profession">Medical Doctor</p>
-								<p class="user_highlights">200 followers | 231 comments</p>
-							</div>
-							<div class="card_action">
-								<div class="action">
-									<img class="icn" src="./images/person_icon.png">
-									<p class="icon_name">View Profile</p>
-								</div>
-								<div class="action">
-									<!-- <img class="icn" src="./images/arrow_icon.png"> -->
-									<p class="center"><i class="icon ion-ios-arrow-thin-right green-text x2"></i></p>
-									<p class="icon_name">Follow</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col s12 m6 l4">
-						<div class="card youth-card">
-							<div class="card-content">
-								<img src="./images/ariwoola_james-james.png" alt="" class="center">
-								<p class="name">Ariwoola James</p>
-								<p class="profession">Medical Doctor</p>
-								<p class="user_highlights">200 followers | 231 comments</p>
-							</div>
-							<div class="card_action">
-								<div class="action">
-									<img class="icn" src="./images/person_icon.png">
-									<p class="icon_name">View Profile</p>
-								</div>
-								<div class="action">
-									<!-- <img class="icn" src="./images/arrow_icon.png"> -->
-									<p class="center"><i class="icon ion-ios-arrow-thin-right green-text x2"></i></p>
-									<p class="icon_name">Follow</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col s12 m6 l4">
-						<div class="card youth-card">
-							<div class="card-content">
-								<img src="./images/ariwoola_james-james.png" alt="" class="center">
-								<p class="name">Ariwoola James</p>
-								<p class="profession">Medical Doctor</p>
-								<p class="user_highlights">200 followers | 231 comments</p>
-							</div>
-							<div class="card_action">
-								<div class="action">
-									<img class="icn" src="./images/person_icon.png">
-									<p class="icon_name">View Profile</p>
-								</div>
-								<div class="action">
-									<!-- <img class="icn" src="./images/arrow_icon.png"> -->
-									<p class="center"><i class="icon ion-ios-arrow-thin-right green-text x2"></i></p>
-									<p class="icon_name">Follow</p>
-								</div>
-							</div>
-						</div>
-					</div>
+					{{/each}}
+					{{!-- end youth leaderboard array loop --}}
 					<div class="col s12">
 						<p class="center">
 							<a style="position:relative;" href="#" class="see_more btn-flat waves-effect"><span>See more</span> &nbsp;  <i class="icon ion-ios-arrow-right x2"></i></a>

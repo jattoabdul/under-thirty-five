@@ -35,6 +35,7 @@ moment().format();
 const Admin = require("./models/admin");
 (User = require("./models/user")),
   (Post = require("./models/post")),
+  (BlogPost = require("./models/blogpost")),
   (Queries = require("./models/queries")),
   (Category = require("./models/category")),
   (Metadata = require("./models/metadata")),
@@ -68,6 +69,17 @@ mongoose.connect(
 
 const GetPosts = () => {
   return Post.find({}).exec((err, data) => {
+    if (err) {
+      console.log(JSON.stringify(err, undefined, 2));
+      return err;
+    } else {
+      return data;
+    }
+  });
+};
+
+const GetBlogPosts = () => {
+  return BlogPost.find({}).exec((err, data) => {
     if (err) {
       console.log(JSON.stringify(err, undefined, 2));
       return err;
@@ -275,6 +287,62 @@ const FetchMyPosts = (authorId, lmt = 20) => {
   });
 };
 
+const getTopFollowed = () => {
+  let topFollowed = [
+    {
+      fullname: "aminujatto abdulqahhar",
+      email: "jattoade@gmail.com",
+      profile_pic: "http://robohash.com/jatto",
+      no_of_followers: 230,
+      no_of_comments: 150,
+      occupation: "software developer"
+    },
+    {
+      fullname: "ajala abdulsamii",
+      email: "jalasem@gmail.com",
+      profile_pic: "http://robohash.com/jalasem",
+      no_of_followers: 200,
+      no_of_comments: 140,
+      occupation: "software developer"
+    },
+    {
+      fullname: "aminujatto barakah",
+      email: "bajdlass1@gmail.com",
+      profile_pic: "http://robohash.com/bajdlass",
+      no_of_followers: 180,
+      no_of_comments: 130,
+      occupation: "home economist"
+    },
+    {
+      fullname: "aminujatto enejireyi",
+      email: "aminujatto@gmail.com",
+      profile_pic: "http://robohash.com/jattoae",
+      no_of_followers: 100,
+      no_of_comments: 121,
+      occupation: "political scientist"
+    },
+    {
+      fullname: "olasumbo muniru",
+      email: "olasumbomuniru@gmail.com",
+      profile_pic: "http://robohash.com/sumbo",
+      no_of_followers: 80,
+      no_of_comments: 110,
+      occupation: "legal practitioner"
+    }
+    ,
+    {
+      fullname: "aminujatto sakinah",
+      email: "sakinahjatto@gmail.com",
+      profile_pic: "http://robohash.com/sajat",
+      no_of_followers: 70,
+      no_of_comments: 10,
+      occupation: "On Air Personality"
+    }
+  ];
+
+  return topFollowed;
+}
+
 /**
  * Get some user details
  * @param {String} email
@@ -463,12 +531,83 @@ hbs.registerHelper("ifNotIn", function(elem, list, options) {
   return options.inverse(this);
 });
 
+// home route
 router.get("/", (req, res) => {
   if (req.session.user) {
     res.redirect("/timeline");
   } else {
-    res.render("index", { title: "Under35 | Home" });
+    Promise.all([getTopFollowed(), GetBlogPosts()]).then(data => {
+      let topYouths = data[0];
+      let mostRecentPosts = data[1].slice(Math.max(data[1].length - 6, 1));
+
+        res.render("index", {
+          title: "Under35 | Home",
+          topYouths,
+          mostRecentPosts
+        });
+      })
   }
+});
+
+// about us
+router.get("/about-us", (req, res) => {
+  let userInfo = req.session.user;
+  res.render("index", { title: "Under35 | About Us" });
+  // res.render("about-us", {
+  //   title: "Under35 | About Us"
+  // });
+});
+
+// blog routes
+router.get("/blog", (req, res) => {
+  let userInfo = req.session.user;
+  Promise.all([GetBlogPosts()]).then((data) => {
+    let allBlogPosts = data[0];
+
+    res.render("index", {
+      title: "Under35 | Blog",
+      allBlogPosts,
+      userInfo
+    });
+    // res.render("blog", {
+    //   title: "Under35 | Blog",
+    //   allBlogPosts,
+    //   userInfo
+    // });
+  })
+});
+
+router.get('/write', (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/login");
+  } else {
+    res.render("index", {
+      title: "Under35 | Write New Blog Post"
+    });
+    // res.render('writeblogpost', {
+    //   title: "Under35 | Write New Blog Post"
+    // });
+  }
+});
+
+router.get('/blog/:title', (req, res) => {
+  let title = req.params.title;
+  BlogPost.findOne({title: title}).then(post => {
+    res.render("article", {
+      title,
+      post
+    });
+  }).catch(err => console.log('Error getting the article'));
+
+});
+
+// event route
+
+router.get("/event", (req, res) => {
+  let userInfo = req.session.user;
+  res.json({
+    title: "Under35 | Event"
+  });
 });
 
 router.get("/login", (req, res) => {
@@ -1221,6 +1360,48 @@ router.post("/api/writePost", (req, res) => {
     res.redirect("/login");
   }
 });
+
+router.post('/api/writeBlogPost', (req, res) => {
+      if (req.session.user) {
+        var author_id = req.session.user.id;
+        // send file to cloudinary and get secured url as imageUrl
+        var imageUrl = 'https://unsplash.com/photos/WYd_PkCa1BY';
+
+        var blogData = {
+          title: '',
+          image: imageUrl || 'https://unsplash.com/photos/WYd_PkCa1BY',
+          content: '',
+          author_id,
+          createdOn: new Date().getTime()
+        };
+
+        let newBlogPost = new Post(blogData);
+        newBlogPost
+          .save()
+          .then(() => {
+            io.sockets.emit("newBlogPost", { blogData });
+            res.status(200).send("Blog Post successfully broadcasted");
+            // redirect back to /blog after save on front end
+          })
+      } else {
+        console.log('You must be an authenticated user / admin!');
+        res.redirect('/blog');
+      }
+  });
+
+
+//   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+//     let post = new Post({ title: req.body.title, image: req.files.image.name, content: req.body.content, creator: req.body.name })
+//     file.mv(`./public/assets/uploads/${file.name}`, err => console.log(err ? 'Error on save the image!' : 'Image Uploaded!'));
+//     post.save().then(() => {
+//       console.log('Post Saved!');
+//       res.redirect('/');
+//     }).catch(err => console.log(err));
+// } // Finish mimetype statement
+// } else {
+// console.log('You must Upload a image-post!');
+// res.redirect('/article');
+// }
 
 router.post("/api/makeQueries", (req, res) => {
   if (req.session.user) {
